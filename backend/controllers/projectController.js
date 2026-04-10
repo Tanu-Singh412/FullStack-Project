@@ -9,7 +9,7 @@ exports.addProject = async (req, res) => {
 
 if (req.files?.images) {
   images = req.files.images.map(
-    (f) => "http://localhost:5000/uploads/" + f.filename
+    (f) => "https://fullstack-project-1-n510.onrender.com/uploads/" + f.filename
   );
 }
 let dwgFile = null;
@@ -19,7 +19,7 @@ if (req.files && req.files.dwgFile) {
 
   dwgFile = {
     name: file.originalname,
-    url: "http://localhost:5000/uploads/" + file.filename,
+    url: "https://fullstack-project-1-n510.onrender.com/uploads/" + file.filename,
   };
 }
     // =========================
@@ -132,7 +132,7 @@ exports.updateProject = async (req, res) => {
     let newImages = [];
     if (req.files?.images) {
       newImages = req.files.images.map(
-        (f) => "http://localhost:5000/uploads/" + f.filename
+        (f) => "https://fullstack-project-1-n510.onrender.com/uploads/" + f.filename
       );
     }
 
@@ -146,7 +146,7 @@ exports.updateProject = async (req, res) => {
       const file = req.files.dwgFile[0];
       dwgFile = {
         name: file.originalname,
-        url: "http://localhost:5000/uploads/" + file.filename,
+        url: "https://fullstack-project-1-n510.onrender.com/uploads/" + file.filename,
       };
     }
 
