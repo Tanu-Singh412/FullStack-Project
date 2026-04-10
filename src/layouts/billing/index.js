@@ -500,19 +500,19 @@ export default function InvoicePage() {
         <h3 style={{ marginTop: 20 }}>Saved Invoices</h3>
         <div style={{ marginBottom: 10 }}>
           <button
-            style={{ background: filter === "all" ? "#000" : "#ccc", color: "#fff" }}
+            style={{ background: filter === "all" ? "#000" : "#ccc", color: "#fff", p: 1, margin: 1 }}
             onClick={() => setFilter("all")}
           >
             All
           </button>
           <button
-            style={{ background: filter === "month" ? "#000" : "#ccc", color: "#fff" }}
+            style={{ background: filter === "month" ? "#000" : "#ccc", color: "#fff", p: 1, margin: 1   }}
             onClick={() => setFilter("month")}
           >
             Monthly
           </button>
           <button
-            style={{ background: filter === "year" ? "#000" : "#ccc", color: "#fff" }}
+            style={{ background: filter === "year" ? "#000" : "#ccc", color: "#fff", p: 1, margin: 1   }}
             onClick={() => setFilter("year")}
           >
             Yearly
