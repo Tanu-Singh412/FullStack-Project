@@ -14,7 +14,7 @@ const app = express();
 connectDB();
 
 // Middleware
-app.use(cors({ origin: "http://localhost:3000" }));
+app.use(cors({ origin: "https://fullstack-project-1-n510.onrender.com" }));
 app.use(express.json());
 
 // Static
@@ -32,5 +32,5 @@ app.get("/", (req, res) => {
 
 // Server
 app.listen(5000, () => {
-  console.log("Server running on http://localhost:5000");
+  console.log("Server running on port 5000");
 });
