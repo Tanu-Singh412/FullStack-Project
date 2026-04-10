@@ -35,6 +35,23 @@ function Tables() {
                 <MDTypography variant="h6" color="white">
                   Client Management
                 </MDTypography>
+                <MDBox
+                  sx={{
+                    cursor: "pointer",
+                    border: "1px solid white",
+                    px: 2,
+                    py: 1,
+                    borderRadius: "8px",
+                    color: "#fff",
+                    fontSize: "14px",
+                    "&:hover": {
+                      backgroundColor: "rgba(255,255,255,0.2)",
+                    },
+                  }}
+                  onClick={() => navigate("/add-client")}
+                >
+                  + Add Client
+                </MDBox>
               </MDBox>
 
               <MDBox pt={3}>

@@ -29,7 +29,7 @@ const routes = [
   },
 
   {
-    type: "collapse",
+    type: "route",
     name: "Add Clients",
     key: "add_clients",
     icon: <Icon fontSize="small">person_add</Icon>,
@@ -47,7 +47,7 @@ const routes = [
   },
 
   {
-    type: "collapse",
+    type: "route",
     name: "Add Projects",
     key: "projects",
     icon: <Icon fontSize="small">store</Icon>,
