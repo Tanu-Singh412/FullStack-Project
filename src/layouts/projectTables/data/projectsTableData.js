@@ -199,7 +199,7 @@ export default function useProjectData() {
         ),
 
         client: <MDTypography variant="caption">{p.clientName}</MDTypography>,
-        Total: <MDTypography variant="caption"> ₹ {p.totalAmount}</MDTypography>,
+        total: <MDTypography variant="caption"> ₹ {p.totalAmount}</MDTypography>,
 
         payment: (
           <MDBox
