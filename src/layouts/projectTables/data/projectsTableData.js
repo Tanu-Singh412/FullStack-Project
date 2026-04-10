@@ -732,8 +732,9 @@ export default function useProjectData() {
               borderRadius: "8px",
               textTransform: "none",
               px: 3,
-              background: "#4caf50",
-              "&:hover": { background: "#388e3c" },
+              background: "#1976d2",
+              color: "#fff",
+              "&:hover": { background: "#1976d2" },
             }}
           >
             Add
