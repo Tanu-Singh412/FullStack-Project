@@ -66,7 +66,7 @@ export default function useProjectData() {
     { Header: "Image", accessor: "image" },
     { Header: "Project", accessor: "project" },
     { Header: "Client ID", accessor: "clientId" },
-        { Header: "Client", accessor: "client" },
+    { Header: "Client", accessor: "client" },
 
     { Header: "Description", accessor: "description" },
     { Header: "DWG File", accessor: "dwg" }, // ✅ NEW COLUMN
@@ -199,7 +199,7 @@ export default function useProjectData() {
         ),
 
         client: <MDTypography variant="caption">{p.clientName}</MDTypography>,
-                paid: <MDTypography variant="caption">  ₹ {p.totalAmount}</MDTypography>,
+        paid: <MDTypography variant="caption"> ₹ {p.totalAmount}</MDTypography>,
 
         payment: (
           <MDBox
@@ -220,7 +220,6 @@ export default function useProjectData() {
             }}
           >
             Payments
-         
           </MDBox>
         ),
         paid: <MDTypography variant="caption">{totalPaid}</MDTypography>,
