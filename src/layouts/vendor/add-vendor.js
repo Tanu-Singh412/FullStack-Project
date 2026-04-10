@@ -150,7 +150,6 @@ function AddVendor() {
         <Grid container justifyContent="center">
           <Grid item xs={12} md={10} lg={8}>
             <Card sx={{ p: 3, backgroundColor: "#fff" }}>
-
               <MDTypography variant="h5" mb={2}>
                 Add Vendor
               </MDTypography>
@@ -158,7 +157,6 @@ function AddVendor() {
               <Divider sx={{ mb: 3 }} />
 
               <Grid container spacing={2}>
-
                 {/* BASIC INFO */}
                 <Grid item xs={12} md={6}>
                   <TextField
@@ -223,11 +221,10 @@ function AddVendor() {
                 {/* MATERIAL SECTION */}
                 <Grid item xs={12}>
                   <MDBox display="flex" justifyContent="space-between">
-                    <MDTypography variant="h6">
-                      Materials Supplied
-                    </MDTypography>
+                    <MDTypography variant="h6">Materials Supplied</MDTypography>
 
-                    <Button sx="color: #fff"
+                    <Button
+                      sx="color: #fff"
                       variant="contained"
                       startIcon={<AddIcon />}
                       onClick={addMaterial}
@@ -239,15 +236,12 @@ function AddVendor() {
 
                 {form.materials.map((mat, index) => (
                   <Grid container spacing={2} key={index} sx={{ mt: 1 }}>
-
                     <Grid item xs={6}>
                       <TextField
                         fullWidth
                         label="Material Name"
                         value={mat.materialName}
-                        onChange={(e) =>
-                          updateMaterial(index, "materialName", e.target.value)
-                        }
+                        onChange={(e) => updateMaterial(index, "materialName", e.target.value)}
                       />
                     </Grid>
 
@@ -257,27 +251,22 @@ function AddVendor() {
                         label="Rate"
                         type="number"
                         value={mat.rate}
-                        onChange={(e) =>
-                          updateMaterial(index, "rate", e.target.value)
-                        }
+                        onChange={(e) => updateMaterial(index, "rate", e.target.value)}
                       />
                     </Grid>
 
                     <Grid item xs={2}>
-                      <IconButton
-                        onClick={() => removeMaterial(index)}
-                        sx={{ color: "red" }}
-                      >
+                      <IconButton onClick={() => removeMaterial(index)} sx={{ color: "red" }}>
                         <DeleteIcon />
                       </IconButton>
                     </Grid>
-
                   </Grid>
                 ))}
 
                 {/* SAVE */}
                 <Grid item xs={12}>
-                  <Button sx={{ color: "#fff" }}
+                  <Button
+                    sx={{ color: "#fff" }}
                     fullWidth
                     variant="contained"
                     size="large"
@@ -286,7 +275,6 @@ function AddVendor() {
                     Save Vendor
                   </Button>
                 </Grid>
-
               </Grid>
             </Card>
           </Grid>

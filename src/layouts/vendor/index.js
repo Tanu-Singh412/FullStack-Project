@@ -26,7 +26,6 @@ function Vendors() {
         <Grid container spacing={6}>
           <Grid item xs={12}>
             <Card>
-
               {/* HEADER */}
               <MDBox
                 mx={2}
@@ -59,7 +58,8 @@ function Vendors() {
                       backgroundColor: "rgba(255,255,255,0.2)",
                     },
                   }}
-onClick={() => navigate("/add-vendor")}                >
+                  onClick={() => navigate("/add-vendor")}
+                >
                   + Add Vendor
                 </MDBox>
               </MDBox>
@@ -77,7 +77,6 @@ onClick={() => navigate("/add-vendor")}                >
 
               {/* DIALOG */}
               {dialog}
-
             </Card>
           </Grid>
         </Grid>

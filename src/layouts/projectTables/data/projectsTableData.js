@@ -31,41 +31,37 @@ export default function useProjectData() {
   const [selectedImage, setSelectedImage] = useState(null);
   const [paymentProject, setPaymentProject] = useState(null);
   const [paymentType, setPaymentType] = useState("add");
-const [paymentAmount, setPaymentAmount] = useState("");
+  const [paymentAmount, setPaymentAmount] = useState("");
   const [imageIndex, setImageIndex] = useState(0);
   const [selectedDescription, setSelectedDescription] = useState(null);
   const [deleteId, setDeleteId] = useState(null);
-const openPaymentDialog = (project, type) => {
-  setPaymentProject(project);
-  setPaymentType(type);
-  setPaymentAmount("");
-};
-const handleAddPayment = async () => {
-  if (!paymentAmount || !paymentProject) return;
+  const openPaymentDialog = (project, type) => {
+    setPaymentProject(project);
+    setPaymentType(type);
+    setPaymentAmount("");
+  };
+  const handleAddPayment = async () => {
+    if (!paymentAmount || !paymentProject) return;
 
-  const amount =
-    paymentType === "subtract"
-      ? -Math.abs(paymentAmount)
-      : Math.abs(paymentAmount);
+    const amount = paymentType === "subtract" ? -Math.abs(paymentAmount) : Math.abs(paymentAmount);
 
-  await fetch(
-    `https://fullstack-project-1-n510.onrender.com/api/projects/${paymentProject._id}/payment`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ amount }),
-    }
-  );
+    await fetch(
+      `https://fullstack-project-1-n510.onrender.com/api/projects/${paymentProject._id}/payment`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ amount }),
+      }
+    );
 
-  setPaymentProject(null);
-  setPaymentAmount("");
-  loadData();
-};
+    setPaymentProject(null);
+    setPaymentAmount("");
+    loadData();
+  };
 
-
-const columns = [
+  const columns = [
     { Header: "S.No.", accessor: "serial" },
     { Header: "Image", accessor: "image" },
     { Header: "Project", accessor: "project" },
@@ -89,7 +85,9 @@ const columns = [
 
   // Delete project
   const deleteProject = async (id) => {
-    await fetch(`https://fullstack-project-1-n510.onrender.com/api/projects/${id}`, { method: "DELETE" });
+    await fetch(`https://fullstack-project-1-n510.onrender.com/api/projects/${id}`, {
+      method: "DELETE",
+    });
     loadData();
   };
 
@@ -140,12 +138,9 @@ const columns = [
   // Function to format project data into table rows
   const formatRows = (data) => {
     return data.map((p, i) => {
-const totalPaid = (p.payments || []).reduce(
-  (sum, pay) => sum + Number(pay.amount),
-  0
-);
+      const totalPaid = (p.payments || []).reduce((sum, pay) => sum + Number(pay.amount), 0);
 
-const balance = Number(p.totalAmount || 0) - totalPaid;
+      const balance = Number(p.totalAmount || 0) - totalPaid;
       const date = new Date(p.createdAt).toLocaleString();
       const currentStatus = p.status || "Pending";
 
@@ -162,49 +157,50 @@ const balance = Number(p.totalAmount || 0) - totalPaid;
         link.click();
       };
       return {
-             dwg: p.dwgFile && p.dwgFile.url ? (
-  <button
-    onClick={() => downloadDWG(p.dwgFile)}
-    style={{
-      padding: "5px 10px",
-      background: "#1976d2",
-      color: "#fff",
-      border: "none",
-      borderRadius: "5px",
-      cursor: "pointer",
-    }}
-  >
-    Download
-  </button>
-) : (
-  <span style={{ fontSize: 12 }}>No File</span>
-),
+        dwg:
+          p.dwgFile && p.dwgFile.url ? (
+            <button
+              onClick={() => downloadDWG(p.dwgFile)}
+              style={{
+                padding: "5px 10px",
+                background: "#1976d2",
+                color: "#fff",
+                border: "none",
+                borderRadius: "5px",
+                cursor: "pointer",
+              }}
+            >
+              Download
+            </button>
+          ) : (
+            <span style={{ fontSize: 12 }}>No File</span>
+          ),
 
         serial: <MDTypography variant="caption">{i + 1}</MDTypography>,
         image: <img src={p.images?.[0] || "https://via.placeholder.com/60"} width="60" />,
         project: <MDTypography variant="caption">{p.projectName}</MDTypography>,
         clientId: <MDTypography variant="caption">{p.clientId || "-"}</MDTypography>,
-description: (
-  <MDTypography
-    variant="caption"
-    sx={{
-      cursor: "pointer",
-      maxWidth: 150,
-      display: "inline-block",
-      whiteSpace: "nowrap",
-      overflow: "hidden",
-      textOverflow: "ellipsis",
-    }}
-    onClick={() => setSelectedDescription(p.description)}
-  >
-    {p.description || "-"}
-  </MDTypography>
-),
+        description: (
+          <MDTypography
+            variant="caption"
+            sx={{
+              cursor: "pointer",
+              maxWidth: 150,
+              display: "inline-block",
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+            }}
+            onClick={() => setSelectedDescription(p.description)}
+          >
+            {p.description || "-"}
+          </MDTypography>
+        ),
 
-client: <MDTypography variant="caption">{p.clientName}</MDTypography>,
+        client: <MDTypography variant="caption">{p.clientName}</MDTypography>,
         total: <MDTypography variant="caption">{p.totalAmount}</MDTypography>,
-paid: <MDTypography variant="caption">{totalPaid}</MDTypography>,
-balance: <MDTypography variant="caption">{balance}</MDTypography>,
+        paid: <MDTypography variant="caption">{totalPaid}</MDTypography>,
+        balance: <MDTypography variant="caption">{balance}</MDTypography>,
         date: <MDTypography variant="caption">{date}</MDTypography>,
         status: (
           <Select
@@ -236,23 +232,19 @@ balance: <MDTypography variant="caption">{balance}</MDTypography>,
 
         actions: (
           <MDBox display="flex">
-  {/* ➕ Add */}
-  <IconButton
-    color="success"
-    size="small"
-    onClick={() => openPaymentDialog(p, "add")}
-  >
-    +
-  </IconButton>
+            {/* ➕ Add */}
+            <IconButton color="success" size="small" onClick={() => openPaymentDialog(p, "add")}>
+              +
+            </IconButton>
 
-  {/* ➖ Subtract */}
-  <IconButton
-    color="warning"
-    size="small"
-    onClick={() => openPaymentDialog(p, "subtract")}
-  >
-    -
-  </IconButton>
+            {/* ➖ Subtract */}
+            <IconButton
+              color="warning"
+              size="small"
+              onClick={() => openPaymentDialog(p, "subtract")}
+            >
+              -
+            </IconButton>
             <IconButton color="primary" size="small" onClick={() => handleView(p)}>
               <VisibilityIcon />
             </IconButton>
@@ -650,148 +642,144 @@ balance: <MDTypography variant="caption">{balance}</MDTypography>,
   );
 
   const paymentDialog = (
-  <Dialog open={!!paymentProject} onClose={() => setPaymentProject(null)}>
-<DialogTitle>
-  {paymentType === "add" ? "Add Payment" : "Deduct Payment"}
-</DialogTitle>
-    <DialogContent>
-      <input
-        type="number"
-        placeholder="Enter amount"
-        value={paymentAmount}
-        onChange={(e) => setPaymentAmount(e.target.value)}
-        style={{
-          width: "100%",
-          padding: "10px",
-          marginTop: "10px",
-          marginBottom: "10px",
-        }}
-      />
+    <Dialog open={!!paymentProject} onClose={() => setPaymentProject(null)}>
+      <DialogTitle>{paymentType === "add" ? "Add Payment" : "Deduct Payment"}</DialogTitle>
+      <DialogContent>
+        <input
+          type="number"
+          placeholder="Enter amount"
+          value={paymentAmount}
+          onChange={(e) => setPaymentAmount(e.target.value)}
+          style={{
+            width: "100%",
+            padding: "10px",
+            marginTop: "10px",
+            marginBottom: "10px",
+          }}
+        />
 
-      <button onClick={handleAddPayment}>Save</button>
-    </DialogContent>
-  </Dialog>
-);
-const descriptionDialog = (
-  <Dialog
-    open={!!selectedDescription}
-    onClose={() => setSelectedDescription(null)}
-    fullWidth
-    maxWidth="sm"
-  >
-    <DialogTitle
-      sx={{
-        textAlign: "center",
-        bgcolor: "#1976d2",
-        color: "#fff",
-        fontSize: "16px",
-        fontWeight: "bold",
+        <button onClick={handleAddPayment}>Save</button>
+      </DialogContent>
+    </Dialog>
+  );
+  const descriptionDialog = (
+    <Dialog
+      open={!!selectedDescription}
+      onClose={() => setSelectedDescription(null)}
+      fullWidth
+      maxWidth="sm"
+    >
+      <DialogTitle
+        sx={{
+          textAlign: "center",
+          bgcolor: "#1976d2",
+          color: "#fff",
+          fontSize: "16px",
+          fontWeight: "bold",
+        }}
+      >
+        Description
+      </DialogTitle>
+
+      <DialogContent sx={{ mt: 2 }}>
+        <MDBox textAlign="left">
+          <MDTypography
+            variant="body2"
+            sx={{
+              fontSize: "14px",
+              lineHeight: 1.6,
+              whiteSpace: "pre-line",
+            }}
+          >
+            {selectedDescription || "-"}
+          </MDTypography>
+        </MDBox>
+      </DialogContent>
+    </Dialog>
+  );
+
+  const deleteDialog = (
+    <Dialog
+      open={!!deleteId}
+      onClose={() => setDeleteId(null)}
+      maxWidth="xs"
+      fullWidth
+      PaperProps={{
+        sx: {
+          borderRadius: "16px",
+          p: 1,
+        },
       }}
     >
-      Description
-    </DialogTitle>
+      {/* HEADER */}
+      <DialogTitle
+        sx={{
+          textAlign: "center",
+          fontWeight: "bold",
+          fontSize: "18px",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          gap: 1,
+        }}
+      >
+        <WarningAmberIcon sx={{ color: "#f44336", fontSize: 40 }} />
+        Confirm Delete
+      </DialogTitle>
 
-    <DialogContent sx={{ mt: 2 }}>
-      <MDBox textAlign="left">
-        <MDTypography
-          variant="body2"
+      {/* CONTENT */}
+      <DialogContent sx={{ textAlign: "center", fontSize: "14px", color: "#555" }}>
+        Are you sure you want to delete this project?
+        <br />
+        <b style={{ color: "#f44336" }}>This action cannot be undone.</b>
+      </DialogContent>
+
+      {/* ACTIONS */}
+      <DialogActions
+        sx={{
+          justifyContent: "center",
+          pb: 2,
+          gap: 1,
+        }}
+      >
+        {/* CANCEL */}
+        <Button
+          onClick={() => setDeleteId(null)}
           sx={{
-            fontSize: "14px",
-            lineHeight: 1.6,
-            whiteSpace: "pre-line",
+            borderRadius: "8px",
+            textTransform: "none",
+            px: 3,
+            border: "1px solid black",
+            color: "#000",
           }}
         >
-          {selectedDescription || "-"}
-        </MDTypography>
-      </MDBox>
-    </DialogContent>
-  </Dialog>
-);
+          Cancel
+        </Button>
 
-
-
-const deleteDialog = (
-  <Dialog
-    open={!!deleteId}
-    onClose={() => setDeleteId(null)}
-    maxWidth="xs"
-    fullWidth
-    PaperProps={{
-      sx: {
-        borderRadius: "16px",
-        p: 1,
-      },
-    }}
-  >
-    {/* HEADER */}
-    <DialogTitle
-      sx={{
-        textAlign: "center",
-        fontWeight: "bold",
-        fontSize: "18px",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        gap: 1,
-      }}
-    >
-      <WarningAmberIcon sx={{ color: "#f44336", fontSize: 40 }} />
-      Confirm Delete
-    </DialogTitle>
-
-    {/* CONTENT */}
-    <DialogContent sx={{ textAlign: "center", fontSize: "14px", color: "#555" }}>
-      Are you sure you want to delete this project?
-      <br />
-      <b style={{ color: "#f44336" }}>This action cannot be undone.</b>
-    </DialogContent>
-
-    {/* ACTIONS */}
-    <DialogActions
-      sx={{
-        justifyContent: "center",
-        pb: 2,
-        gap: 1,
-      }}
-    >
-      {/* CANCEL */}
-      <Button
-        onClick={() => setDeleteId(null)}
-        sx={{
-          borderRadius: "8px",
-          textTransform: "none",
-          px: 3,
-          border: "1px solid black",
-          color: "#000",
-        }}
-      >
-        Cancel
-      </Button>
-
-      {/* DELETE */}
-      <Button
-        variant="contained"
-        color="error"
-        onClick={async () => {
-          await deleteProject(deleteId);
-          setDeleteId(null);
-        }}
-        sx={{
-          borderRadius: "8px",
-          textTransform: "none",
-          px: 3,
-          background: "#f44336",
-          color: "#fff",
-          "&:hover": {
-            background: "#d32f2f"
-          }
-        }}
-      >
-        Delete
-      </Button>
-    </DialogActions>
-  </Dialog>
-);
+        {/* DELETE */}
+        <Button
+          variant="contained"
+          color="error"
+          onClick={async () => {
+            await deleteProject(deleteId);
+            setDeleteId(null);
+          }}
+          sx={{
+            borderRadius: "8px",
+            textTransform: "none",
+            px: 3,
+            background: "#f44336",
+            color: "#fff",
+            "&:hover": {
+              background: "#d32f2f",
+            },
+          }}
+        >
+          Delete
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
   return {
     columns,
     rows,
@@ -801,11 +789,9 @@ const deleteDialog = (
         {projectDetailsDialog}
         {imageLightbox}
         {paymentDialog}
-            {descriptionDialog}
-            {deleteDialog}
-
+        {descriptionDialog}
+        {deleteDialog}
       </>
     ),
-    
   };
 }

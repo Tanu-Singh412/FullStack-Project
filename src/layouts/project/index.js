@@ -137,23 +137,23 @@ function AddProject() {
     });
 
     // images
-  // ✅ Send existing image URLs
-const existingImages = images
-  .filter((img) => !img.file) // old images
-  .map((img) => img.url);
+    // ✅ Send existing image URLs
+    const existingImages = images
+      .filter((img) => !img.file) // old images
+      .map((img) => img.url);
 
-formData.append("existingImages", JSON.stringify(existingImages));
+    formData.append("existingImages", JSON.stringify(existingImages));
 
-// ✅ Send new files
-images.forEach((img) => {
-  if (img.file) {
-    formData.append("images", img.file);
-  }
-});
+    // ✅ Send new files
+    images.forEach((img) => {
+      if (img.file) {
+        formData.append("images", img.file);
+      }
+    });
 
     if (dwgFile) {
-  formData.append("dwgFile", dwgFile);
-}
+      formData.append("dwgFile", dwgFile);
+    }
     if (editData?._id) {
       await fetch("https://fullstack-project-1-n510.onrender.com/api/projects/" + editData._id, {
         method: "PUT",
@@ -289,29 +289,28 @@ images.forEach((img) => {
                   {/* Upload */}
 
                   <Grid item xs={12}>
-                    <Button variant="contained" component="label" sx={{color: "#fff"}}>
+                    <Button variant="contained" component="label" sx={{ color: "#fff" }}>
                       Upload Images
                       <input hidden multiple type="file" onChange={handleImageUpload} />
                     </Button>
                   </Grid>
-<Grid item xs={12}>
-
-                  <div style={styles.uploadWrapper}>
-                    <label style={styles.uploadLabel}>
-                      📐 Upload DWG
-                      <input
-                        type="file"
-                        accept=".dwg,.dxf"
-                        style={styles.hiddenInput}
-                       onChange={(e) => {
-  const file = e.target.files[0];
-  if (file) {
-    setDwgFile(file); // ✅ store actual file
-  }
-}}
-                      />
-                    </label>
-                  </div>
+                  <Grid item xs={12}>
+                    <div style={styles.uploadWrapper}>
+                      <label style={styles.uploadLabel}>
+                        📐 Upload DWG
+                        <input
+                          type="file"
+                          accept=".dwg,.dxf"
+                          style={styles.hiddenInput}
+                          onChange={(e) => {
+                            const file = e.target.files[0];
+                            if (file) {
+                              setDwgFile(file); // ✅ store actual file
+                            }
+                          }}
+                        />
+                      </label>
+                    </div>
                   </Grid>
                   {/* Preview */}
 

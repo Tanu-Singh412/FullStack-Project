@@ -22,14 +22,13 @@ import DialogActions from "@mui/material/DialogActions";
 import Button from "@mui/material/Button";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 
-
 export default function useVendorTableData() {
   const navigate = useNavigate();
 
   const [vendors, setVendors] = useState([]);
   const [rows, setRows] = useState([]);
   const [selectedVendor, setSelectedVendor] = useState(null);
-const [deleteId, setDeleteId] = useState(null);
+  const [deleteId, setDeleteId] = useState(null);
   // =====================
   // LOAD DATA
   // =====================
@@ -58,9 +57,7 @@ const [deleteId, setDeleteId] = useState(null);
   // =====================
   const handleStatusChange = async (id, value) => {
     try {
-      setVendors((prev) =>
-        prev.map((v) => (v._id === id ? { ...v, status: value } : v))
-      );
+      setVendors((prev) => prev.map((v) => (v._id === id ? { ...v, status: value } : v)));
 
       await fetch(`https://fullstack-project-1-n510.onrender.com/api/vendors/${id}`, {
         method: "PUT",
@@ -100,11 +97,7 @@ const [deleteId, setDeleteId] = useState(null);
   // =====================
   const formatRows = (data) =>
     data.map((v, i) => ({
-      serial: (
-        <MDTypography fontSize="12px">
-          {i + 1}
-        </MDTypography>
-      ),
+      serial: <MDTypography fontSize="12px">{i + 1}</MDTypography>,
 
       expand: (
         <IconButton
@@ -122,32 +115,41 @@ const [deleteId, setDeleteId] = useState(null);
         </MDTypography>
       ),
 
-      company: <MDTypography fontSize="13px" fontWeight="bold">{v.company || "-"}</MDTypography>,
-      phone: <MDTypography fontSize="13px" fontWeight="bold">{v.phone || "-"}</MDTypography>,
-      gst: <MDTypography fontSize="13px" fontWeight="bold">{v.gst || "-"}</MDTypography>,
+      company: (
+        <MDTypography fontSize="13px" fontWeight="bold">
+          {v.company || "-"}
+        </MDTypography>
+      ),
+      phone: (
+        <MDTypography fontSize="13px" fontWeight="bold">
+          {v.phone || "-"}
+        </MDTypography>
+      ),
+      gst: (
+        <MDTypography fontSize="13px" fontWeight="bold">
+          {v.gst || "-"}
+        </MDTypography>
+      ),
 
-     date: (
-  <MDTypography fontSize="12px">
-    {v.createdAt
-      ? new Date(v.createdAt).toLocaleString()
-      : "-"}
-  </MDTypography>
-),
+      date: (
+        <MDTypography fontSize="12px">
+          {v.createdAt ? new Date(v.createdAt).toLocaleString() : "-"}
+        </MDTypography>
+      ),
 
       status: (
         <Select
           size="small"
           value={v.status || "Active"}
-          onChange={(e) =>
-            handleStatusChange(v._id, e.target.value)
-          }
+          onChange={(e) => handleStatusChange(v._id, e.target.value)}
           sx={{
             bgcolor: v.status === "Active" ? "#4caf50" : "#f44336",
             color: "#fff",
             "& .MuiSelect-icon": { color: "#fff" },
             "& fieldset": { border: "none" },
-             "& .MuiSelect-select": { color: "#fff" },
-                "& .MuiSvgIcon-root": { color: "#fff" }, p:1      
+            "& .MuiSelect-select": { color: "#fff" },
+            "& .MuiSvgIcon-root": { color: "#fff" },
+            p: 1,
           }}
         >
           <MenuItem value="Active">Active</MenuItem>
@@ -157,17 +159,11 @@ const [deleteId, setDeleteId] = useState(null);
 
       actions: (
         <MDBox display="flex" gap={1}>
-          <IconButton
-            onClick={() => editVendor(v)}
-            sx={{ color: "#1976d2" }}
-          >
+          <IconButton onClick={() => editVendor(v)} sx={{ color: "#1976d2" }}>
             <EditIcon />
           </IconButton>
 
-          <IconButton
-            onClick={() => setDeleteId(v._id)}
-            sx={{ color: "#f44336" }}
-          >
+          <IconButton onClick={() => setDeleteId(v._id)} sx={{ color: "#f44336" }}>
             <DeleteIcon />
           </IconButton>
         </MDBox>
@@ -205,143 +201,152 @@ const [deleteId, setDeleteId] = useState(null);
 
     dialog: (
       <>
-      <Dialog
-        open={!!selectedVendor}
-        onClose={() => setSelectedVendor(null)}
-        fullWidth
-        maxWidth="sm"
-      >
-        <DialogTitle sx={{ bgcolor: "#1976d2", color: "#fff", textAlign: "center", fontWeight: "bold" }}>
-          Vendor Details
-        </DialogTitle>
+        <Dialog
+          open={!!selectedVendor}
+          onClose={() => setSelectedVendor(null)}
+          fullWidth
+          maxWidth="sm"
+        >
+          <DialogTitle
+            sx={{ bgcolor: "#1976d2", color: "#fff", textAlign: "center", fontWeight: "bold" }}
+          >
+            Vendor Details
+          </DialogTitle>
 
-        <DialogContent>
-          {selectedVendor && (
-            <MDBox>
+          <DialogContent>
+            {selectedVendor && (
+              <MDBox>
                 {/* Avatar */}
-              <Avatar
-                sx={{
-                  bgcolor: "#1976d2",
-                  width: 60,
-                  height: 60,
-                  margin: "0 auto",
-                  mb: 2,
-                  mt: 2,
-                }}
-              >
-                {selectedVendor.vendorName?.charAt(0)}
-              </Avatar>
+                <Avatar
+                  sx={{
+                    bgcolor: "#1976d2",
+                    width: 60,
+                    height: 60,
+                    margin: "0 auto",
+                    mb: 2,
+                    mt: 2,
+                  }}
+                >
+                  {selectedVendor.vendorName?.charAt(0)}
+                </Avatar>
 
-              <MDTypography variant="h6" sx={{ textAlign: "center", mb: 2, mt: 2 }}>
-                {selectedVendor.vendorName}
-              </MDTypography>
+                <MDTypography variant="h6" sx={{ textAlign: "center", mb: 2, mt: 2 }}>
+                  {selectedVendor.vendorName}
+                </MDTypography>
 
-              <Divider sx={{ my: 2 }} />
+                <Divider sx={{ my: 2 }} />
 
-              <p><b>Company:</b> {selectedVendor.company || "-"}</p>
-              <p><b>Phone:</b> {selectedVendor.phone || "-"}</p>
-              <p><b>Email:</b> {selectedVendor.email || "-"}</p>
-              <p><b>Address:</b> {selectedVendor.address || "-"}</p>
+                <p>
+                  <b>Company:</b> {selectedVendor.company || "-"}
+                </p>
+                <p>
+                  <b>Phone:</b> {selectedVendor.phone || "-"}
+                </p>
+                <p>
+                  <b>Email:</b> {selectedVendor.email || "-"}
+                </p>
+                <p>
+                  <b>Address:</b> {selectedVendor.address || "-"}
+                </p>
 
-              <Divider sx={{ my: 2 }} />
+                <Divider sx={{ my: 2 }} />
 
-              <b>Materials:</b>
+                <b>Materials:</b>
 
-              {selectedVendor.materials?.length > 0 ? (
-                selectedVendor.materials.map((m, i) => (
-                  <p key={i}>
-                    • {m.materialName || "-"} — ₹{m.rate || 0}
-                  </p>
-                ))
-              ) : (
-                <p>No materials</p>
-              )}
-            </MDBox>
-          )}
-        </DialogContent>
-      </Dialog>
-  
-  <Dialog
-    open={!!deleteId}
-    onClose={() => setDeleteId(null)}
-    maxWidth="xs"
-    fullWidth
-    PaperProps={{
-      sx: {
-        borderRadius: "16px",
-        p: 1,
-      },
-    }}
-  >
-    {/* HEADER */}
-    <DialogTitle
-      sx={{
-        textAlign: "center",
-        fontWeight: "bold",
-        fontSize: "18px",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        gap: 1,
-      }}
-    >
-      <WarningAmberIcon sx={{ color: "#f44336", fontSize: 40 }} />
-      Confirm Delete
-    </DialogTitle>
+                {selectedVendor.materials?.length > 0 ? (
+                  selectedVendor.materials.map((m, i) => (
+                    <p key={i}>
+                      • {m.materialName || "-"} — ₹{m.rate || 0}
+                    </p>
+                  ))
+                ) : (
+                  <p>No materials</p>
+                )}
+              </MDBox>
+            )}
+          </DialogContent>
+        </Dialog>
 
-    {/* CONTENT */}
-    <DialogContent sx={{ textAlign: "center", fontSize: "14px", color: "#555" }}>
-      Are you sure you want to delete this vendor?
-      <br />
-      <b style={{ color: "#f44336" }}>This action cannot be undone.</b>
-    </DialogContent>
+        <Dialog
+          open={!!deleteId}
+          onClose={() => setDeleteId(null)}
+          maxWidth="xs"
+          fullWidth
+          PaperProps={{
+            sx: {
+              borderRadius: "16px",
+              p: 1,
+            },
+          }}
+        >
+          {/* HEADER */}
+          <DialogTitle
+            sx={{
+              textAlign: "center",
+              fontWeight: "bold",
+              fontSize: "18px",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: 1,
+            }}
+          >
+            <WarningAmberIcon sx={{ color: "#f44336", fontSize: 40 }} />
+            Confirm Delete
+          </DialogTitle>
 
-    {/* ACTIONS */}
-    <DialogActions
-      sx={{
-        justifyContent: "center",
-        pb: 2,
-        gap: 1,
-      }}
-    >
-      {/* CANCEL */}
-      <Button
-        onClick={() => setDeleteId(null)}
-        sx={{
-          borderRadius: "8px",
-          textTransform: "none",
-          px: 3,
-          border: "1px solid black",
-          color: "#000",
-        }}
-      >
-        Cancel
-      </Button>
+          {/* CONTENT */}
+          <DialogContent sx={{ textAlign: "center", fontSize: "14px", color: "#555" }}>
+            Are you sure you want to delete this vendor?
+            <br />
+            <b style={{ color: "#f44336" }}>This action cannot be undone.</b>
+          </DialogContent>
 
-      {/* DELETE */}
-      <Button
-        variant="contained"
-        color="error"
-        onClick={async () => {
-          await deleteVendor(deleteId);
-          setDeleteId(null);
-        }}
-        sx={{
-          borderRadius: "8px",
-          textTransform: "none",
-          px: 3,
-          background: "#f44336",
-          color: "#fff",
-          "&:hover": {
-            background: "#d32f2f",
-          },
-        }}
-      >
-        Delete
-      </Button>
-    </DialogActions>
-  </Dialog>
+          {/* ACTIONS */}
+          <DialogActions
+            sx={{
+              justifyContent: "center",
+              pb: 2,
+              gap: 1,
+            }}
+          >
+            {/* CANCEL */}
+            <Button
+              onClick={() => setDeleteId(null)}
+              sx={{
+                borderRadius: "8px",
+                textTransform: "none",
+                px: 3,
+                border: "1px solid black",
+                color: "#000",
+              }}
+            >
+              Cancel
+            </Button>
 
+            {/* DELETE */}
+            <Button
+              variant="contained"
+              color="error"
+              onClick={async () => {
+                await deleteVendor(deleteId);
+                setDeleteId(null);
+              }}
+              sx={{
+                borderRadius: "8px",
+                textTransform: "none",
+                px: 3,
+                background: "#f44336",
+                color: "#fff",
+                "&:hover": {
+                  background: "#d32f2f",
+                },
+              }}
+            >
+              Delete
+            </Button>
+          </DialogActions>
+        </Dialog>
       </>
     ),
   };

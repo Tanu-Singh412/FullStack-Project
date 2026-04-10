@@ -52,7 +52,6 @@ export default function useRecentClients(limit = 5) {
         return {
           name: <MDTypography variant="caption">{c.name}</MDTypography>,
 
-
           clientId: <MDTypography variant="caption">{c.clientId}</MDTypography>,
 
           email: <MDTypography variant="caption">{c.email}</MDTypography>,

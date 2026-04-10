@@ -54,7 +54,7 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
   const { miniSidenav, transparentSidenav, whiteSidenav, darkMode, sidenavColor } = controller;
   const location = useLocation();
   const collapseName = location.pathname.replace("/", "");
-const navigate = useNavigate();
+  const navigate = useNavigate();
 
   let textColor = "white";
 
@@ -182,19 +182,19 @@ const navigate = useNavigate();
         }
       />
       <List>{renderRoutes}</List>
-    <MDBox p={2} mt="auto">
-  <MDButton
-    variant="gradient"
-    color="error"
-    fullWidth
-    onClick={() => {
-      logout();
-      navigate("/authentication/sign-in"); // redirect to login page
-    }}
-  >
-    Logout
-  </MDButton>
-</MDBox>
+      <MDBox p={2} mt="auto">
+        <MDButton
+          variant="gradient"
+          color="error"
+          fullWidth
+          onClick={() => {
+            logout();
+            navigate("/authentication/sign-in"); // redirect to login page
+          }}
+        >
+          Logout
+        </MDButton>
+      </MDBox>
     </SidenavRoot>
   );
 }

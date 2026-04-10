@@ -26,7 +26,7 @@ export default function clientTableData() {
   const [rows, setRows] = useState([]);
   const [clients, setClients] = useState([]);
   const [selectedClient, setSelectedClient] = useState(null);
-const [deleteId, setDeleteId] = useState(null);
+  const [deleteId, setDeleteId] = useState(null);
   const columns = [
     { Header: "S.No.", accessor: "serial" },
     { Header: "", accessor: "expand" },
@@ -213,157 +213,156 @@ const [deleteId, setDeleteId] = useState(null);
   // =====================
   // RETURN
   // =====================
-return {
-  columns,
-  rows,
+  return {
+    columns,
+    rows,
 
-  dialog: (
-    <>
-      {/* 👇 EXISTING VIEW DIALOG */}
-      <Dialog
-        open={!!selectedClient}
-        onClose={() => setSelectedClient(null)}
-        maxWidth="sm"
-        fullWidth
-      >
-        <DialogTitle
-          sx={{
-            textAlign: "center",
-            fontWeight: "bold",
-            bgcolor: "#1976d2",
-            color: "#fff",
-            marginBottom: 2,
+    dialog: (
+      <>
+        {/* 👇 EXISTING VIEW DIALOG */}
+        <Dialog
+          open={!!selectedClient}
+          onClose={() => setSelectedClient(null)}
+          maxWidth="sm"
+          fullWidth
+        >
+          <DialogTitle
+            sx={{
+              textAlign: "center",
+              fontWeight: "bold",
+              bgcolor: "#1976d2",
+              color: "#fff",
+              marginBottom: 2,
+            }}
+          >
+            Client Details
+          </DialogTitle>
+
+          <DialogContent sx={{ p: 3 }}>
+            {selectedClient && (
+              <MDBox textAlign="center">
+                <Avatar
+                  sx={{
+                    bgcolor: "#1976d2",
+                    width: 60,
+                    height: 60,
+                    margin: "0 auto",
+                    mb: 2,
+                  }}
+                >
+                  {selectedClient.name?.charAt(0)}
+                </Avatar>
+
+                <MDTypography variant="h6" mb={1}>
+                  {selectedClient.name}
+                </MDTypography>
+
+                <Divider sx={{ mb: 2 }} />
+
+                <MDBox textAlign="left">
+                  <p>
+                    <b>Email:</b> {selectedClient.email || "-"}
+                  </p>
+                  <p>
+                    <b>Phone:</b> {selectedClient.phone || "-"}
+                  </p>
+                  <p>
+                    <b>Address:</b> {selectedClient.address || "-"}
+                  </p>
+                </MDBox>
+              </MDBox>
+            )}
+          </DialogContent>
+        </Dialog>
+
+        {/* 👇 NEW DELETE CONFIRM DIALOG */}
+
+        <Dialog
+          open={!!deleteId}
+          onClose={() => setDeleteId(null)}
+          maxWidth="xs"
+          fullWidth
+          PaperProps={{
+            sx: {
+              borderRadius: "16px",
+              p: 1,
+            },
           }}
         >
-          Client Details
-        </DialogTitle>
+          {/* HEADER */}
+          <DialogTitle
+            sx={{
+              textAlign: "center",
+              fontWeight: "bold",
+              fontSize: "18px",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: 1,
+            }}
+          >
+            <WarningAmberIcon sx={{ color: "#f44336", fontSize: 40 }} />
+            Confirm Delete
+          </DialogTitle>
 
-        <DialogContent sx={{ p: 3 }}>
-          {selectedClient && (
-            <MDBox textAlign="center">
-              <Avatar
-                sx={{
-                  bgcolor: "#1976d2",
-                  width: 60,
-                  height: 60,
-                  margin: "0 auto",
-                  mb: 2,
-                }}
-              >
-                {selectedClient.name?.charAt(0)}
-              </Avatar>
+          {/* CONTENT */}
+          <DialogContent
+            sx={{
+              textAlign: "center",
+              fontSize: "14px",
+              color: "#555",
+            }}
+          >
+            Do you really want to delete this client?
+            <br />
+            <b style={{ color: "#f44336" }}>This action cannot be undone.</b>
+          </DialogContent>
 
-              <MDTypography variant="h6" mb={1}>
-                {selectedClient.name}
-              </MDTypography>
+          {/* ACTIONS */}
+          <DialogActions
+            sx={{
+              justifyContent: "center",
+              pb: 2,
+              gap: 1,
+            }}
+          >
+            {/* CANCEL */}
+            <Button
+              onClick={() => setDeleteId(null)}
+              sx={{
+                borderRadius: "8px",
+                textTransform: "none",
+                px: 3,
+                border: "1px solid #000",
+                color: "#000",
+              }}
+            >
+              Cancel
+            </Button>
 
-              <Divider sx={{ mb: 2 }} />
-
-              <MDBox textAlign="left">
-                <p><b>Email:</b> {selectedClient.email || "-"}</p>
-                <p><b>Phone:</b> {selectedClient.phone || "-"}</p>
-                <p><b>Address:</b> {selectedClient.address || "-"}</p>
-              </MDBox>
-            </MDBox>
-          )}
-        </DialogContent>
-      </Dialog>
-
-      {/* 👇 NEW DELETE CONFIRM DIALOG */}
-
-
-  <Dialog
-    open={!!deleteId}
-    onClose={() => setDeleteId(null)}
-    maxWidth="xs"
-    fullWidth
-    PaperProps={{
-      sx: {
-        borderRadius: "16px",
-        p: 1,
-      },
-    }}
-  >
-    {/* HEADER */}
-    <DialogTitle
-      sx={{
-        textAlign: "center",
-        fontWeight: "bold",
-        fontSize: "18px",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        gap: 1,
-      }}
-    >
-      <WarningAmberIcon sx={{ color: "#f44336", fontSize: 40 }} />
-      Confirm Delete
-    </DialogTitle>
-
-    {/* CONTENT */}
-    <DialogContent
-      sx={{
-        textAlign: "center",
-        fontSize: "14px",
-        color: "#555",
-      }}
-    >
-      Do you really want to delete this client?
-      <br />
-      <b style={{ color: "#f44336" }}>
-        This action cannot be undone.
-      </b>
-    </DialogContent>
-
-    {/* ACTIONS */}
-    <DialogActions
-      sx={{
-        justifyContent: "center",
-        pb: 2,
-        gap: 1,
-      }}
-    >
-      {/* CANCEL */}
-      <Button
-        onClick={() => setDeleteId(null)}
-        sx={{
-          borderRadius: "8px",
-          textTransform: "none",
-          px: 3,
-          border: "1px solid #000",
-          color: "#000",
-        }}
-      >
-        Cancel
-      </Button>
-
-      {/* DELETE */}
-      <Button
-        variant="contained"
-        onClick={async () => {
-          await deleteClient(deleteId);
-          setDeleteId(null);
-        }}
-        sx={{
-          borderRadius: "8px",
-          textTransform: "none",
-          px: 3,
-          background: "#f44336",
-          color: "#fff",
-          "&:hover": {
-            background: "#d32f2f",
-          },
-        }}
-      >
-        Delete
-      </Button>
-    </DialogActions>
-  </Dialog>
-
-
-
-    </>
-  ),
-};
-
+            {/* DELETE */}
+            <Button
+              variant="contained"
+              onClick={async () => {
+                await deleteClient(deleteId);
+                setDeleteId(null);
+              }}
+              sx={{
+                borderRadius: "8px",
+                textTransform: "none",
+                px: 3,
+                background: "#f44336",
+                color: "#fff",
+                "&:hover": {
+                  background: "#d32f2f",
+                },
+              }}
+            >
+              Delete
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </>
+    ),
+  };
 }
