@@ -266,7 +266,7 @@ export default function InvoicePage() {
   };
 
   const filteredInvoices = savedInvoices.filter((inv) => {
-    if (!inv.createdAt) return true;
+    if (!inv.createdAt) return filter === "all";
 
     const invDate = new Date(inv.createdAt);
     const now = new Date();
@@ -279,7 +279,7 @@ export default function InvoicePage() {
       return invDate.getFullYear() === now.getFullYear();
     }
 
-    return true; // all
+    return true;
   });
 
   const deleteDialog = (
@@ -518,7 +518,7 @@ export default function InvoicePage() {
             Yearly
           </button>
         </div>
-        {savedInvoices.length === 0 ? (
+        {filteredInvoices.length === 0 ? (
           <p style={{ fontSize: 14 }}>No invoices yet</p>
         ) : (
           filteredInvoices.map((inv) => (
