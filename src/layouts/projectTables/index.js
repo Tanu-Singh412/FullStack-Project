@@ -28,33 +28,42 @@ function Tables() {
               <MDBox
                 mx={2}
                 mt={-3}
-                py={3}
-                px={2}
+                py={2.5}
+                px={3}
                 bgColor="info"
                 variant="gradient"
                 borderRadius="lg"
                 coloredShadow="info"
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
               >
-                <MDTypography variant="h6" color="white">
+                {/* LEFT SIDE - TITLE */}
+                <MDTypography variant="h6" color="white" fontWeight="bold">
                   Project Management
                 </MDTypography>
-                <MDBox
+
+                {/* RIGHT SIDE - BUTTON */}
+                <Button
+                  variant="contained"
+                  startIcon={<AddIcon />}
+                  onClick={() => navigate("/projects")} // FIXED route
                   sx={{
-                    cursor: "pointer",
-                    border: "1px solid white",
-                    px: 2,
+                    borderRadius: "10px",
+                    textTransform: "none",
+                    fontWeight: "600",
+                    px: 2.5,
                     py: 1,
-                    borderRadius: "8px",
-                    color: "#fff",
-                    fontSize: "14px",
+                    background: "#fff",
+                    color: "#1976d2",
+                    boxShadow: "0 4px 14px rgba(0,0,0,0.15)",
                     "&:hover": {
-                      backgroundColor: "rgba(255,255,255,0.2)",
+                      background: "#f1f5f9",
                     },
                   }}
-                  onClick={() => navigate("/project")}
                 >
-                  + Add Project
-                </MDBox>
+                  Add Project
+                </Button>
               </MDBox>
 
               <MDBox pt={3}>

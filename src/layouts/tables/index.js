@@ -11,8 +11,13 @@ import DataTable from "examples/Tables/DataTable";
 
 import useClientTableData from "layouts/tables/data/clientTableData";
 
+import { useNavigate } from "react-router-dom";
+import Button from "@mui/material/Button";
+import AddIcon from "@mui/icons-material/Add";
+
 function Tables() {
   const { columns, rows, dialog } = useClientTableData();
+  const navigate = useNavigate();
 
   return (
     <DashboardLayout>
@@ -22,38 +27,49 @@ function Tables() {
         <Grid container spacing={6}>
           <Grid item xs={12}>
             <Card>
+              {/* ✅ HEADER */}
               <MDBox
                 mx={2}
                 mt={-3}
-                py={3}
-                px={2}
+                py={2.5}
+                px={3}
                 bgColor="info"
                 variant="gradient"
                 borderRadius="lg"
                 coloredShadow="info"
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
               >
-                <MDTypography variant="h6" color="white">
+                {/* LEFT */}
+                <MDTypography variant="h6" color="white" fontWeight="bold">
                   Client Management
                 </MDTypography>
-                <MDBox
+
+                {/* RIGHT BUTTON */}
+                <Button
+                  variant="contained"
+                  startIcon={<AddIcon />}
+                  onClick={() => navigate("/add-clients")} // ✅ FIXED route
                   sx={{
-                    cursor: "pointer",
-                    border: "1px solid white",
-                    px: 2,
+                    borderRadius: "10px",
+                    textTransform: "none",
+                    fontWeight: "600",
+                    px: 2.5,
                     py: 1,
-                    borderRadius: "8px",
-                    color: "#fff",
-                    fontSize: "14px",
+                    background: "#fff",
+                    color: "#1976d2",
+                    boxShadow: "0 4px 14px rgba(0,0,0,0.15)",
                     "&:hover": {
-                      backgroundColor: "rgba(255,255,255,0.2)",
+                      background: "#f1f5f9",
                     },
                   }}
-                  onClick={() => navigate("/add-client")}
                 >
-                  + Add Client
-                </MDBox>
+                  Add Client
+                </Button>
               </MDBox>
 
+              {/* TABLE */}
               <MDBox pt={3}>
                 <DataTable
                   table={{ columns, rows }}
@@ -63,6 +79,7 @@ function Tables() {
                   noEndBorder
                 />
               </MDBox>
+
               {dialog}
             </Card>
           </Grid>
