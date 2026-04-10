@@ -34,7 +34,7 @@ export default function useRecentClients(limit = 5) {
 
   useEffect(() => {
     const fetchData = async () => {
-      const res = await fetch("http://localhost:5000/api/clients");
+      const res = await fetch("https://fullstack-project-1-n510.onrender.com/api/clients");
 
       const data = await res.json();
 
