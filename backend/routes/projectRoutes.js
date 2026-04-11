@@ -1,5 +1,7 @@
-const router =
-  require("express").Router();
+const router = require("express").Router();
+const Project = require("../models/Project"); // ✅ FIXED
+
+const upload = require("../middleware/upload");
 
 const {
   addProject,
@@ -33,6 +35,8 @@ router.put(
 );
 router.post("/:id/payment", addPayment);
 
+
+
 router.post(
   "/:id/drawing",
   upload.array("images", 50),
@@ -40,22 +44,30 @@ router.post(
     try {
       const { drawingType } = req.body;
 
-      // ✅ SAFETY CHECK
+      if (!drawingType) {
+        return res.status(400).json({ message: "drawingType required" });
+      }
+
       if (!req.files || req.files.length === 0) {
         return res.status(400).json({ message: "No images uploaded" });
       }
 
-      // ✅ FILE PATH FIX
       const images = req.files.map(
         (file) =>
           `https://fullstack-project-1-n510.onrender.com/uploads/${file.filename}`
       );
 
-      // ✅ FIELD SELECT
       const field =
-        drawingType === "civil" ? "civilImages" : "interiorImages";
+        drawingType === "civil"
+          ? "civilImages"
+          : drawingType === "interior"
+          ? "interiorImages"
+          : null;
 
-      // ✅ UPDATE DB
+      if (!field) {
+        return res.status(400).json({ message: "Invalid drawing type" });
+      }
+
       const project = await Project.findByIdAndUpdate(
         req.params.id,
         {
@@ -72,8 +84,11 @@ router.post(
 
       res.json(project);
     } catch (err) {
-      console.error("Upload Error:", err);
-      res.status(500).json({ message: "Server error" });
+      console.error("🔥 DRAWING ERROR:", err);
+      res.status(500).json({
+        message: "Server error",
+        error: err.message,
+      });
     }
   }
 );
