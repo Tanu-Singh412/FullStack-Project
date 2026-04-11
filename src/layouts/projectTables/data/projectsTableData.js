@@ -272,7 +272,6 @@ export default function useProjectData() {
                   : currentStatus === "Completed"
                   ? "#9c27b0"
                   : "#4da9ce", // Running
-              color: "#fff",
               "& .MuiSelect-select": { color: "#fff" },
               "& .MuiSvgIcon-root": { color: "#fff" },
             }}
