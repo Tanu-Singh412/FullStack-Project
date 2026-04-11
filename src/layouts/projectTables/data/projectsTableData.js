@@ -198,9 +198,7 @@ export default function useProjectData() {
               px: 2,
               background: "#1976d2",
               color: "#fff",
-              "&:hover": {
-                background: "#1976d2",
-              },
+            
             }}
           >
             View Drawings
