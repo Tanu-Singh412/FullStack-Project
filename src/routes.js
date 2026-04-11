@@ -7,7 +7,6 @@ import Billing from "layouts/billing";
 import Vendor from "layouts/vendor";
 import AddVendor from "layouts/vendor/add-vendor";
 import SignIn from "layouts/authentication/sign-in";
-import ProjectDetails from "layouts/projectTables/data/ProjectDetails";
 
 import Icon from "@mui/material/Icon";
 
@@ -88,13 +87,7 @@ const routes = [
       route: "/add-vendor",
       component: <AddVendor />,
     },
-  {
-    type: "route", // 👈 IMPORTANT (not collapse
-    name: "Project Details",
-    key: "project-details",
-    route: "/project-details",
-    component: <ProjectDetails />,
-  }
+  
 ];
 
 export default routes;
