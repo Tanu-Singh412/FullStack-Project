@@ -264,7 +264,11 @@ export default function useProjectData() {
       <DialogTitle>Upload Drawings</DialogTitle>
 
       <DialogContent>
-        <Button variant="contained" component="label" sx={{ ...buttonStyle, background: "#1976d2" }}>
+        <Button
+          variant="contained"
+          component="label"
+          sx={{ ...buttonStyle, background: "#1976d2" }}
+        >
           Select Images
           <input
             hidden
@@ -315,7 +319,7 @@ export default function useProjectData() {
 
         <Button
           variant="contained"
-          sx={{ ...buttonStyle, background: "#f44336" }}
+          sx={{ ...buttonStyle, background: "#f44336", color: "#fff" }}
           onClick={async () => {
             await deleteProject(deleteId);
             setDeleteId(null);
