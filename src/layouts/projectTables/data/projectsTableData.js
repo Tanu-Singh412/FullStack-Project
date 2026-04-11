@@ -270,7 +270,7 @@ export default function useProjectData() {
                   : currentStatus === "Assigned"
                   ? "#ff9800"
                   : currentStatus === "Completed"
-                  ? "#9c27b0"
+                  ? "#4da9ce"
                   : "#4da9ce", // Running
               color: "#fff",
               "& .MuiSelect-select": { color: "#fff" },
