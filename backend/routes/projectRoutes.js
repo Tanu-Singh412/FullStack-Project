@@ -32,4 +32,36 @@ router.put(
   updateProject
 );
 router.post("/:id/payment", addPayment);
+
+router.post(
+  "/:id/drawing",
+  upload.array("images", 50),
+  async (req, res) => {
+    try {
+      const { drawingType } = req.body;
+
+      const images = req.files.map(
+        (f) =>
+          "https://fullstack-project-1-n510.onrender.com/uploads/" + f.filename
+      );
+
+      const updateField =
+        drawingType === "civil" ? "civilImages" : "interiorImages";
+
+      const project = await Project.findByIdAndUpdate(
+        req.params.id,
+        {
+          $push: {
+            [updateField]: { $each: images },
+          },
+        },
+        { new: true }
+      );
+
+      res.json(project);
+    } catch (err) {
+      res.status(500).json(err);
+    }
+  }
+);
 module.exports = router;
