@@ -187,10 +187,10 @@ export default function useProjectData() {
             variant="contained"
             size="small"
             onClick={() => {
-    if (!p) return;
-    setDrawingProject(p);   // ✅ correct
-    setDrawingDialog(true);
-  }}
+              if (!p) return;
+              setDrawingProject(p); // ✅ correct
+              setDrawingDialog(true);
+            }}
             sx={{
               textTransform: "none",
               fontSize: "12px",
@@ -198,7 +198,9 @@ export default function useProjectData() {
               px: 2,
               background: "#1976d2",
               color: "#fff",
-            
+              "&:hover": {
+                background: "#1976d2",
+              },
             }}
           >
             View Drawings
@@ -996,98 +998,97 @@ export default function useProjectData() {
       </DialogContent>
     </Dialog>
   );
-const uploadDialogUI = (
-  <Dialog open={uploadDialog} onClose={() => setUploadDialog(false)} maxWidth="sm" fullWidth>
-    <DialogTitle>Add {tab} Drawings</DialogTitle>
+  const uploadDialogUI = (
+    <Dialog open={uploadDialog} onClose={() => setUploadDialog(false)} maxWidth="sm" fullWidth>
+      <DialogTitle>Add {tab} Drawings</DialogTitle>
 
-    <DialogContent>
-      {/* Upload Button */}
-      <Button variant="contained" component="label">
-        Select Images
-        <input
-          hidden
-          multiple
-          type="file"
-          onChange={(e) => {
-            const files = Array.from(e.target.files || []);
-            const imgs = files.map((f) => ({
-              file: f,
-              url: URL.createObjectURL(f),
-            }));
-            setDrawingImages(imgs);
+      <DialogContent>
+        {/* Upload Button */}
+        <Button variant="contained" component="label">
+          Select Images
+          <input
+            hidden
+            multiple
+            type="file"
+            onChange={(e) => {
+              const files = Array.from(e.target.files || []);
+              const imgs = files.map((f) => ({
+                file: f,
+                url: URL.createObjectURL(f),
+              }));
+              setDrawingImages(imgs);
+            }}
+          />
+        </Button>
+
+        {/* Preview */}
+        <Grid container spacing={2} mt={2}>
+          {(drawingProject?.[tab + "Images"] || []).map((img, i) => (
+            <Grid item xs={6} key={i}>
+              <img
+                src={img}
+                style={{
+                  width: "100%",
+                  borderRadius: "8px",
+                }}
+              />
+            </Grid>
+          ))}
+        </Grid>
+      </DialogContent>
+
+      <DialogActions>
+        <Button onClick={() => setUploadDialog(false)}>Cancel</Button>
+
+        <Button
+          variant="contained"
+          onClick={async () => {
+            // ✅ SAFETY CHECK
+            if (!drawingProject?._id) {
+              console.error("No project selected");
+              return;
+            }
+
+            if (!drawingImages.length) {
+              console.error("No images selected");
+              return;
+            }
+
+            try {
+              const formData = new FormData();
+
+              // ✅ IMPORTANT FIX
+              drawingImages.forEach((img) => {
+                formData.append("images", img.file);
+              });
+
+              formData.append("drawingType", tab);
+
+              const res = await fetch(
+                `https://fullstack-project-1-n510.onrender.com/api/projects/${drawingProject._id}/drawing`,
+                {
+                  method: "POST",
+                  body: formData,
+                }
+              );
+
+              if (!res.ok) throw new Error("Upload failed");
+
+              setDrawingImages([]);
+              setUploadDialog(false);
+              loadData();
+            } catch (err) {
+              console.error("Upload error:", err);
+            }
           }}
-        />
-      </Button>
+        >
+          Upload
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
 
-      {/* Preview */}
-      <Grid container spacing={2} mt={2}>
-       {(drawingProject?.[tab + "Images"] || []).map((img, i) => (
-  <Grid item xs={6} key={i}>
-    <img
-      src={img}
-      style={{
-        width: "100%",
-        borderRadius: "8px",
-      }}
-    />
-  </Grid>
-))}
-      </Grid>
-    </DialogContent>
-
-    <DialogActions>
-      <Button onClick={() => setUploadDialog(false)}>Cancel</Button>
-
-      <Button
-        variant="contained"
-        onClick={async () => {
-          // ✅ SAFETY CHECK
-          if (!drawingProject?._id) {
-            console.error("No project selected");
-            return;
-          }
-
-          if (!drawingImages.length) {
-            console.error("No images selected");
-            return;
-          }
-
-          try {
-            const formData = new FormData();
-
-            // ✅ IMPORTANT FIX
-            drawingImages.forEach((img) => {
-              formData.append("images", img.file);
-            });
-
-            formData.append("drawingType", tab);
-
-            const res = await fetch(
-              `https://fullstack-project-1-n510.onrender.com/api/projects/${drawingProject._id}/drawing`,
-              {
-                method: "POST",
-                body: formData,
-              }
-            );
-
-            if (!res.ok) throw new Error("Upload failed");
-
-            setDrawingImages([]);
-            setUploadDialog(false);
-            loadData();
-          } catch (err) {
-            console.error("Upload error:", err);
-          }
-        }}
-      >
-        Upload
-      </Button>
-    </DialogActions>
-  </Dialog>
-);  
-
-
-return {
+  return {
     columns,
     rows,
     dialog: (
