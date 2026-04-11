@@ -1,7 +1,6 @@
 const router = require("express").Router();
 const Project = require("../models/Project"); // ✅ FIXED
 
-const upload = require("../middleware/upload");
 
 const {
   addProject,
