@@ -182,23 +182,28 @@ export default function useProjectData() {
 
         serial: <MDTypography variant="caption">{i + 1}</MDTypography>,
         image: (
-          <Button
-            variant="contained"
-            size="small"
-            onClick={() => {
-              setSelectedProject(p);
-              setDrawingDialog(true);
-            }}
-            sx={{
-              textTransform: "none",
-              fontSize: "12px",
-              background: "#1e293b",
-              "&:hover": { background: "#0f172a" },
-            }}
-          >
-            Drawings
-          </Button>
-        ),
+<Button
+  variant="contained"
+  size="small"
+  onClick={() => {
+    setSelectedProject(p);
+    setDrawingDialog(true);
+  }}
+  sx={{
+    textTransform: "none",
+    fontSize: "12px",
+    borderRadius: "20px",
+    px: 2,
+    background: "linear-gradient(135deg,#6366f1,#3b82f6)",
+    "&:hover": {
+      background: "linear-gradient(135deg,#4f46e5,#2563eb)",
+    },
+  }}
+>
+  View Drawings
+</Button>
+
+),
         project: <MDTypography variant="caption">{p.projectName}</MDTypography>,
         clientId: <MDTypography variant="caption">{p.clientId || "-"}</MDTypography>,
         description: (
@@ -941,91 +946,141 @@ export default function useProjectData() {
     </Dialog>
   );
 
-  const drawingDialogUI = (
-    <Dialog open={drawingDialog} onClose={() => setDrawingDialog(false)} fullWidth maxWidth="sm">
-      <DialogTitle>Select Drawing Type</DialogTitle>
+const [tab, setTab] = useState("civil");
 
-      <DialogContent>
-        {/* CATEGORY SELECT */}
-        <Select
-          fullWidth
-          value={drawingType}
-          onChange={(e) => setDrawingType(e.target.value)}
-          displayEmpty
-        >
-          <MenuItem value="" disabled>
-            Select Category
-          </MenuItem>
-          <MenuItem value="civil">Civil</MenuItem>
-          <MenuItem value="interior">Interior</MenuItem>
-        </Select>
+const drawingDialogUI = (
+  <Dialog
+    open={drawingDialog}
+    onClose={() => setDrawingDialog(false)}
+    fullWidth
+    maxWidth="md"
+    PaperProps={{
+      sx: {
+        borderRadius: "20px",
+        overflow: "hidden",
+      },
+    }}
+  >
+    {/* HEADER */}
+    <DialogTitle
+      sx={{
+        background: "linear-gradient(135deg,#0f172a,#1e293b)",
+        color: "#fff",
+        textAlign: "center",
+        fontWeight: "bold",
+      }}
+    >
+      Project Drawings
+    </DialogTitle>
 
-        {/* UPLOAD */}
-        {drawingType && (
-          <MDBox mt={2}>
-            <Button variant="contained" component="label">
-              Upload {drawingType} Images
-              <input
-                hidden
-                multiple
-                type="file"
-                onChange={(e) => {
-                  const files = Array.from(e.target.files);
-                  const imgs = files.map((f) => ({
-                    file: f,
-                    url: URL.createObjectURL(f),
-                  }));
-                  setDrawingImages(imgs);
+    <DialogContent sx={{ mt: 2 }}>
+      {/* 🔘 TABS */}
+      <MDBox display="flex" justifyContent="center" gap={2} mb={2}>
+        {["civil", "interior"].map((t) => (
+          <Button
+            key={t}
+            variant={tab === t ? "contained" : "outlined"}
+            onClick={() => setTab(t)}
+            sx={{
+              borderRadius: "20px",
+              textTransform: "capitalize",
+              px: 3,
+            }}
+          >
+            {t}
+          </Button>
+        ))}
+      </MDBox>
+
+      {/* 🖼️ EXISTING IMAGES */}
+      <Grid container spacing={2}>
+        {(selectedProject?.[tab + "Images"] || []).map((img, i) => (
+          <Grid item xs={6} md={3} key={i}>
+            <MDBox
+              sx={{
+                borderRadius: "12px",
+                overflow: "hidden",
+                boxShadow: "0 6px 15px rgba(0,0,0,0.1)",
+              }}
+            >
+              <img
+                src={img}
+                style={{
+                  width: "100%",
+                  height: "120px",
+                  objectFit: "cover",
                 }}
               />
-            </Button>
-          </MDBox>
-        )}
+            </MDBox>
+          </Grid>
+        ))}
+      </Grid>
 
-        {/* PREVIEW */}
-        <Grid container spacing={2} mt={1}>
-          {drawingImages.map((img, i) => (
-            <Grid item key={i}>
-              <img src={img.url} width="100" />
-            </Grid>
-          ))}
-        </Grid>
-      </DialogContent>
-
-      <DialogActions>
-        <Button onClick={() => setDrawingDialog(false)}>Cancel</Button>
-
-        <Button
-          variant="contained"
-          onClick={async () => {
-            const formData = new FormData();
-
-            drawingImages.forEach((img) => {
-              formData.append("images", img.file);
-            });
-
-            formData.append("drawingType", drawingType);
-
-            await fetch(
-              `https://fullstack-project-1-n510.onrender.com/api/projects/${selectedProject._id}/drawing`,
-              {
-                method: "POST",
-                body: formData,
-              }
-            );
-
-            setDrawingDialog(false);
-            setDrawingImages([]);
-            setDrawingType("");
-            loadData();
-          }}
-        >
-          Save
+      {/* 📤 UPLOAD */}
+      <MDBox mt={3}>
+        <Button variant="contained" component="label">
+          Upload {tab} Drawings
+          <input
+            hidden
+            multiple
+            type="file"
+            onChange={(e) => {
+              const files = Array.from(e.target.files);
+              const imgs = files.map((f) => ({
+                file: f,
+                url: URL.createObjectURL(f),
+              }));
+              setDrawingImages(imgs);
+            }}
+          />
         </Button>
-      </DialogActions>
-    </Dialog>
-  );
-  return {
+      </MDBox>
+
+      {/* 👀 PREVIEW NEW */}
+      <Grid container spacing={2} mt={1}>
+        {drawingImages.map((img, i) => (
+          <Grid item key={i}>
+            <img src={img.url} width="100" />
+          </Grid>
+        ))}
+      </Grid>
+    </DialogContent>
+
+    {/* ACTION */}
+    <DialogActions sx={{ justifyContent: "center", pb: 2 }}>
+      <Button onClick={() => setDrawingDialog(false)}>Cancel</Button>
+
+      <Button
+        variant="contained"
+        onClick={async () => {
+          const formData = new FormData();
+
+          drawingImages.forEach((img) => {
+            formData.append("images", img.file);
+          });
+
+          formData.append("drawingType", tab);
+
+          await fetch(
+            `https://fullstack-project-1-n510.onrender.com/api/projects/${selectedProject._id}/drawing`,
+            {
+              method: "POST",
+              body: formData,
+            }
+          );
+
+          setDrawingImages([]);
+          setDrawingDialog(false);
+          loadData();
+        }}
+      >
+        Save
+      </Button>
+    </DialogActions>
+  </Dialog>
+);
+
+return {
     columns,
     rows,
     dialog: (
