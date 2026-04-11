@@ -44,6 +44,15 @@ export default function useProjectData() {
     setPaymentType(type);
     setPaymentAmount("");
   };
+    const getImages = () => {
+    if (!selectedProject) return [];
+
+    return (
+      selectedProject[tab + "Images"] || 
+      selectedProject.images || 
+      []
+    );
+  };
   const handleAddPayment = async () => {
     if (!paymentAmount || !paymentProject) return;
 
@@ -578,109 +587,107 @@ export default function useProjectData() {
     </Dialog>
   );
 
-  const imageLightbox = (
-    <Dialog
-      open={!!selectedImage}
-      onClose={() => setSelectedImage(null)}
-      maxWidth={false}
-      PaperProps={{
-        sx: {
-          background: "rgba(0,0,0,0.9)",
-          backdropFilter: "blur(10px)",
-        },
-      }}
-    >
-      {selectedImage && (
+const imageLightbox = (
+  <Dialog
+    open={!!selectedImage}
+    onClose={() => setSelectedImage(null)}
+    maxWidth={false}
+    PaperProps={{
+      sx: {
+        background: "rgba(0,0,0,0.9)",
+        backdropFilter: "blur(10px)",
+      },
+    }}
+  >
+    {selectedImage && (
+      <MDBox
+        sx={{
+          width: "70vw",
+          height: "100vh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          position: "relative",
+        }}
+      >
+        {/* Close */}
         <MDBox
+          onClick={() => setSelectedImage(null)}
           sx={{
-            width: "70vw",
-            height: "100vh",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            position: "relative",
+            position: "absolute",
+            top: 20,
+            right: 20,
+            color: "#fff",
+            cursor: "pointer",
           }}
         >
-          {/* ❌ CLOSE */}
-          <MDBox
-            onClick={() => setSelectedImage(null)}
-            sx={{
-              position: "absolute",
-              top: 20,
-              right: 20,
-              color: "#fff",
-              fontSize: 18,
-              cursor: "pointer",
-              background: "rgba(255,255,255,0.1)",
-              px: 2,
-              py: 1,
-              borderRadius: "10px",
-            }}
-          >
-            Close
-          </MDBox>
-
-          {/* ⬅️ PREV */}
-          <MDBox
-            onClick={handlePrev}
-            sx={{
-              position: "absolute",
-              left: 20,
-              color: "#fff",
-              fontSize: 30,
-              cursor: "pointer",
-              userSelect: "none",
-            }}
-          >
-            ‹
-          </MDBox>
-
-          {/* ➡️ NEXT */}
-          <MDBox
-            onClick={handleNext}
-            sx={{
-              position: "absolute",
-              right: 20,
-              color: "#fff",
-              fontSize: 30,
-              cursor: "pointer",
-              userSelect: "none",
-            }}
-          >
-            ›
-          </MDBox>
-
-          {/* COUNTER */}
-          <MDTypography
-            sx={{
-              position: "absolute",
-              bottom: 30,
-              color: "#fff",
-              fontSize: "13px",
-              background: "rgba(255,255,255,0.1)",
-              px: 2,
-              py: 1,
-              borderRadius: "20px",
-            }}
-          >
-            {imageIndex + 1} / {selectedProject?.images?.length}
-          </MDTypography>
-
-          {/* IMAGE */}
-          <img
-            src={selectedImage}
-            style={{
-              maxWidth: "90%",
-              maxHeight: "85%",
-              borderRadius: "14px",
-              boxShadow: "0 30px 80px rgba(0,0,0,0.6)",
-              transition: "0.3s",
-            }}
-          />
+          Close
         </MDBox>
-      )}
-    </Dialog>
-  );
+
+        {/* Prev */}
+        <MDBox
+          onClick={() => {
+            const imgs = getImages();
+            const prev = (imageIndex - 1 + imgs.length) % imgs.length;
+            setImageIndex(prev);
+            setSelectedImage(imgs[prev]);
+          }}
+          sx={{
+            position: "absolute",
+            left: 20,
+            color: "#fff",
+            fontSize: 30,
+            cursor: "pointer",
+          }}
+        >
+          ‹
+        </MDBox>
+
+        {/* Next */}
+        <MDBox
+          onClick={() => {
+            const imgs = getImages();
+            const next = (imageIndex + 1) % imgs.length;
+            setImageIndex(next);
+            setSelectedImage(imgs[next]);
+          }}
+          sx={{
+            position: "absolute",
+            right: 20,
+            color: "#fff",
+            fontSize: 30,
+            cursor: "pointer",
+          }}
+        >
+          ›
+        </MDBox>
+
+        {/* Counter */}
+        <MDTypography
+          sx={{
+            position: "absolute",
+            bottom: 30,
+            color: "#fff",
+          }}
+        >
+          {imageIndex + 1} / {getImages().length}
+        </MDTypography>
+
+        {/* Image */}
+        <img
+          src={selectedImage}
+          style={{
+            maxWidth: "90%",
+            maxHeight: "85%",
+            borderRadius: "10px",
+          }}
+        />
+      </MDBox>
+    )}
+  </Dialog>
+);
+
+
 
   const paymentDialog = (
     <Dialog open={!!paymentProject} onClose={() => setPaymentProject(null)} maxWidth="sm" fullWidth>
@@ -950,145 +957,138 @@ export default function useProjectData() {
 
   const [tab, setTab] = useState("civil");
 
-  const drawingDialogUI = (
-    <Dialog open={drawingDialog} onClose={() => setDrawingDialog(false)} maxWidth="sm" fullWidth>
-      <DialogTitle>Project Drawings</DialogTitle>
+const drawingDialogUI = (
+  <Dialog open={drawingDialog} onClose={() => setDrawingDialog(false)} maxWidth="sm" fullWidth>
+    <DialogTitle>Project Drawings</DialogTitle>
 
-      <DialogContent>
-        {/* Tabs */}
-        <MDBox display="flex" justifyContent="center" gap={2} mb={3}>
-          <Button
-            variant={tab === "civil" ? "contained" : "outlined"}
-            onClick={() => setTab("civil")}
-          >
-            Civil
-          </Button>
-
-          <Button
-            variant={tab === "interior" ? "contained" : "outlined"}
-            onClick={() => setTab("interior")}
-          >
-            Interior
-          </Button>
-        </MDBox>
-
-        {/* View Images */}
-        <Grid container spacing={2}>
-          {(drawingProject?.[tab + "Images"] || []).map((img, i) => (
-            <Grid item xs={6} key={i}>
-              <img
-                src={img}
-                style={{
-                  width: "100%",
-                  height: "120px",
-                  objectFit: "cover",
-                  borderRadius: "10px",
-                }}
-              />
-            </Grid>
-          ))}
-        </Grid>
-
-        {/* ➕ ADD BUTTON */}
-        <MDBox textAlign="center" mt={3}>
-          <Button variant="contained" onClick={() => setUploadDialog(true)}>
-            + Add {tab} Drawings
-          </Button>
-        </MDBox>
-      </DialogContent>
-    </Dialog>
-  );
-  const uploadDialogUI = (
-    <Dialog open={uploadDialog} onClose={() => setUploadDialog(false)} maxWidth="sm" fullWidth>
-      <DialogTitle>Add {tab} Drawings</DialogTitle>
-
-      <DialogContent>
-        {/* Upload Button */}
-        <Button variant="contained" component="label">
-          Select Images
-          <input
-            hidden
-            multiple
-            type="file"
-            onChange={(e) => {
-              const files = Array.from(e.target.files || []);
-              const imgs = files.map((f) => ({
-                file: f,
-                url: URL.createObjectURL(f),
-              }));
-              setDrawingImages(imgs);
-            }}
-          />
+    <DialogContent>
+      {/* Tabs */}
+      <MDBox display="flex" justifyContent="center" gap={2} mb={3}>
+        <Button
+          variant={tab === "civil" ? "contained" : "outlined"}
+          onClick={() => setTab("civil")}
+        >
+          Civil
         </Button>
-
-        {/* Preview */}
-        <Grid container spacing={2} mt={2}>
-          {(drawingProject?.[tab + "Images"] || []).map((img, i) => (
-            <Grid item xs={6} key={i}>
-              <img
-                src={img}
-                style={{
-                  width: "100%",
-                  borderRadius: "8px",
-                }}
-              />
-            </Grid>
-          ))}
-        </Grid>
-      </DialogContent>
-
-      <DialogActions>
-        <Button onClick={() => setUploadDialog(false)}>Cancel</Button>
 
         <Button
-          variant="contained"
-          onClick={async () => {
-            // ✅ SAFETY CHECK
-            if (!drawingProject?._id) {
-              console.error("No project selected");
-              return;
-            }
-
-            if (!drawingImages.length) {
-              console.error("No images selected");
-              return;
-            }
-
-            try {
-              const formData = new FormData();
-
-              // ✅ IMPORTANT FIX
-              drawingImages.forEach((img) => {
-                formData.append("images", img.file);
-              });
-
-              formData.append("drawingType", tab);
-
-              const res = await fetch(
-                `https://fullstack-project-1-n510.onrender.com/api/projects/${drawingProject._id}/drawing`,
-                {
-                  method: "POST",
-                  body: formData,
-                }
-              );
-
-              if (!res.ok) throw new Error("Upload failed");
-
-              setDrawingImages([]);
-              setUploadDialog(false);
-              loadData();
-            } catch (err) {
-              console.error("Upload error:", err);
-            }
-          }}
+          variant={tab === "interior" ? "contained" : "outlined"}
+          onClick={() => setTab("interior")}
         >
-          Upload
+          Interior
         </Button>
-      </DialogActions>
-    </Dialog>
-  );
+      </MDBox>
 
-  return {
+      {/* Images */}
+      <Grid container spacing={2}>
+        {(drawingProject?.[tab + "Images"] || []).map((img, i) => (
+          <Grid item xs={6} key={i}>
+            <img
+              src={img}
+              onClick={() => {
+                setSelectedProject(drawingProject); // ✅ IMPORTANT
+                setSelectedImage(img);
+                setImageIndex(i);
+              }}
+              style={{
+                width: "100%",
+                height: "120px",
+                objectFit: "cover",
+                borderRadius: "10px",
+                cursor: "pointer",
+              }}
+            />
+          </Grid>
+        ))}
+      </Grid>
+
+      {/* Add Button */}
+      <MDBox textAlign="center" mt={3}>
+        <Button variant="contained" onClick={() => setUploadDialog(true)}>
+          + Add {tab} Drawings
+        </Button>
+      </MDBox>
+    </DialogContent>
+  </Dialog>
+);
+
+const uploadDialogUI = (
+  <Dialog open={uploadDialog} onClose={() => setUploadDialog(false)} maxWidth="sm" fullWidth>
+    <DialogTitle>Add {tab} Drawings</DialogTitle>
+
+    <DialogContent>
+      {/* Upload */}
+      <Button variant="contained" component="label">
+        Select Images
+        <input
+          hidden
+          multiple
+          type="file"
+          onChange={(e) => {
+            const files = Array.from(e.target.files || []);
+            const imgs = files.map((f) => ({
+              file: f,
+              url: URL.createObjectURL(f),
+            }));
+            setDrawingImages(imgs);
+          }}
+        />
+      </Button>
+
+      {/* Preview */}
+      <Grid container spacing={2} mt={2}>
+        {drawingImages.map((img, i) => (
+          <Grid item key={i}>
+            <img src={img.url} width="80" />
+          </Grid>
+        ))}
+      </Grid>
+    </DialogContent>
+
+    <DialogActions>
+      <Button onClick={() => setUploadDialog(false)}>Cancel</Button>
+
+      <Button
+        variant="contained"
+        onClick={async () => {
+          if (!drawingProject?._id) return console.error("No project");
+          if (!drawingImages.length) return console.error("No images");
+
+          try {
+            const formData = new FormData();
+
+            drawingImages.forEach((img) => {
+              formData.append("images", img.file);
+            });
+
+            formData.append("drawingType", tab);
+
+            const res = await fetch(
+              `https://fullstack-project-1-n510.onrender.com/api/projects/${drawingProject._id}/drawing`,
+              {
+                method: "POST",
+                body: formData,
+              }
+            );
+
+            if (!res.ok) throw new Error("Upload failed");
+
+            setDrawingImages([]);
+            setUploadDialog(false);
+            loadData();
+          } catch (err) {
+            console.error("Upload error:", err);
+          }
+        }}
+      >
+        Upload
+      </Button>
+    </DialogActions>
+  </Dialog>
+);
+
+
+return {
     columns,
     rows,
     dialog: (
