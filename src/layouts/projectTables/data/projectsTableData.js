@@ -195,6 +195,7 @@ export default function useProjectData() {
     borderRadius: "20px",
     px: 2,
     background: "linear-gradient(135deg,#6366f1,#3b82f6)",
+    color: "#fff",
     "&:hover": {
       background: "linear-gradient(135deg,#4f46e5,#2563eb)",
     },
