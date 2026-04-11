@@ -45,14 +45,14 @@ router.post(
           "https://fullstack-project-1-n510.onrender.com/uploads/" + f.filename
       );
 
-      const updateField =
+      const field =
         drawingType === "civil" ? "civilImages" : "interiorImages";
 
       const project = await Project.findByIdAndUpdate(
         req.params.id,
         {
           $push: {
-            [updateField]: { $each: images },
+            [field]: { $each: images },
           },
         },
         { new: true }
@@ -63,5 +63,6 @@ router.post(
       res.status(500).json(err);
     }
   }
-);
-module.exports = router;
+);module.exports = router;
+
+
