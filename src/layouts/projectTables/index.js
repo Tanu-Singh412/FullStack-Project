@@ -56,7 +56,7 @@ function Tables() {
                     px: 2.5,
                     py: 1,
                     background: "#fff",
-                    color: "#1976d2",
+                    color: "#1e88e5",
                     boxShadow: "0 4px 14px rgba(0,0,0,0.15)",
                     "&:hover": {
                       background: "#f1f5f9",
