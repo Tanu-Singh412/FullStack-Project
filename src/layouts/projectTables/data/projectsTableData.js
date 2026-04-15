@@ -767,7 +767,6 @@ export default function useProjectData() {
                     px: 3,
                     background: "#1976d2",
                     color: "#fff",
-                    "&:hover": { background: "#1565c0" },
                   }}
                 >
                   Add
