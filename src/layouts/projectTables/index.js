@@ -62,7 +62,7 @@ function Tables() {
                     },
                   }}
                 >
-                  Add Project
+                  New Project
                 </Button>
               </MDBox>
 
