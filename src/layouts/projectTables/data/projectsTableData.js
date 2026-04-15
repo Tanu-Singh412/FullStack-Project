@@ -45,16 +45,13 @@ export default function useProjectData() {
 
     const amount = paymentType === "subtract" ? -Math.abs(paymentAmount) : Math.abs(paymentAmount);
 
-    await fetch(
-      `http://localhost:5000/api/projects/${paymentProject._id}/payment`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ amount }),
-      }
-    );
+    await fetch(`http://localhost:5000/api/projects/${paymentProject._id}/payment`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ amount }),
+    });
 
     setPaymentProject(null);
     setPaymentAmount("");

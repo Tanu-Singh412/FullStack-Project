@@ -80,14 +80,13 @@ const routes = [
     route: "/vendor",
     component: <Vendor />,
   },
-    {
-      type: "route", // 👈 IMPORTANT (not collapse)
-      name: "Add Vendor",
-      key: "add-vendor",
-      route: "/add-vendor",
-      component: <AddVendor />,
-    },
-  
+  {
+    type: "route", // 👈 IMPORTANT (not collapse)
+    name: "Add Vendor",
+    key: "add-vendor",
+    route: "/add-vendor",
+    component: <AddVendor />,
+  },
 ];
 
 export default routes;
