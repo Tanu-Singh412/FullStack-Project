@@ -42,7 +42,7 @@ function Tables() {
                 alignItems="center"
               >
                 {/* LEFT */}
-                <MDTypography variant="h6" color="white" fontWeight="bold">
+                <MDTypography variant="h6" color="white">
                   Client Management
                 </MDTypography>
 
