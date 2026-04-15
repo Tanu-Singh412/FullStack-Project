@@ -4,9 +4,14 @@ import { useState } from "react";
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 
+import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
+import DashboardNavbar from "examples/Navbars/DashboardNavbar";
+import Footer from "examples/Footer";
+
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
 
 function ProjectDetails() {
   const { state } = useLocation();
@@ -24,60 +29,161 @@ function ProjectDetails() {
   const balance = total - paid;
 
   return (
-    <MDBox p={3}>
-      <MDTypography variant="h4">{state.projectName}</MDTypography>
+    <DashboardLayout>
+      <DashboardNavbar />
 
-      <Box sx={{ borderBottom: 1, borderColor: "divider", mt: 2 }}>
-        <Tabs value={tab} onChange={handleChange}>
-          <Tab label="Overview" />
-          <Tab label="Drawings" />
-          <Tab label="Accounts" />
-        </Tabs>
-      </Box>
-
-      {/* OVERVIEW */}
-      {tab === 0 && (
-        <MDBox mt={2}>
-          <MDTypography>{state.description}</MDTypography>
+      <MDBox p={3}>
+        {/* HEADER */}
+        <MDBox mb={3}>
+          <MDTypography variant="h4" fontWeight="bold">
+            {state.projectName}
+          </MDTypography>
+          <MDTypography color="text">
+            Client: <b>{state.clientName}</b>
+          </MDTypography>
         </MDBox>
-      )}
 
-      {/* DRAWINGS */}
-      {tab === 1 && (
-        <MDBox mt={2}>
-          {!drawingType && (
-            <MDBox display="flex" gap={2}>
-              <MDBox onClick={() => setDrawingType("civil")}>Civil</MDBox>
-              <MDBox onClick={() => setDrawingType("interior")}>Interior</MDBox>
+        {/* TABS */}
+        <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+          <Tabs value={tab} onChange={handleChange}>
+            <Tab label="Overview" />
+            <Tab label="Drawings" />
+            <Tab label="Accounts" />
+          </Tabs>
+        </Box>
+
+        {/* ---------------- OVERVIEW ---------------- */}
+        {tab === 0 && (
+          <MDBox mt={3}>
+            <MDBox
+              p={3}
+              borderRadius="lg"
+              bgColor="white"
+              shadow="md"
+            >
+              <MDTypography variant="h6">Description</MDTypography>
+              <MDTypography mt={1}>
+                {state.description || "No description"}
+              </MDTypography>
             </MDBox>
-          )}
+          </MDBox>
+        )}
 
-          {drawingType && (
-            <>
-              <button onClick={() => setDrawingType(null)}>Back</button>
+        {/* ---------------- DRAWINGS ---------------- */}
+        {tab === 1 && (
+          <MDBox mt={3}>
+            {/* SELECT TYPE */}
+            {!drawingType && (
+              <Grid container spacing={2}>
+                <Grid item xs={12} md={6}>
+                  <MDBox
+                    onClick={() => setDrawingType("civil")}
+                    p={4}
+                    borderRadius="lg"
+                    textAlign="center"
+                    sx={{
+                      cursor: "pointer",
+                      background: "#e3f2fd",
+                      fontWeight: "bold",
+                      "&:hover": { transform: "scale(1.03)" },
+                    }}
+                  >
+                    Civil Drawings
+                  </MDBox>
+                </Grid>
 
-              <MDBox display="flex" flexWrap="wrap" gap={2}>
-                {(drawingType === "civil"
-                  ? state.civilImages
-                  : state.interiorImages
-                )?.map((img, i) => (
-                  <img key={i} src={img} width="200" />
-                ))}
-              </MDBox>
-            </>
-          )}
-        </MDBox>
-      )}
+                <Grid item xs={12} md={6}>
+                  <MDBox
+                    onClick={() => setDrawingType("interior")}
+                    p={4}
+                    borderRadius="lg"
+                    textAlign="center"
+                    sx={{
+                      cursor: "pointer",
+                      background: "#fce4ec",
+                      fontWeight: "bold",
+                      "&:hover": { transform: "scale(1.03)" },
+                    }}
+                  >
+                    Interior Drawings
+                  </MDBox>
+                </Grid>
+              </Grid>
+            )}
 
-      {/* ACCOUNTS */}
-      {tab === 2 && (
-        <MDBox mt={2}>
-          <MDTypography>Total: ₹ {total}</MDTypography>
-          <MDTypography>Paid: ₹ {paid}</MDTypography>
-          <MDTypography>Balance: ₹ {balance}</MDTypography>
-        </MDBox>
-      )}
-    </MDBox>
+            {/* SHOW IMAGES */}
+            {drawingType && (
+              <>
+                {/* BACK */}
+                <MDBox mb={2}>
+                  <button onClick={() => setDrawingType(null)}>⬅ Back</button>
+                </MDBox>
+
+                <Grid container spacing={2}>
+                  {(drawingType === "civil"
+                    ? state.civilImages || []
+                    : state.interiorImages || []
+                  ).length === 0 && (
+                    <MDTypography>No Images Found</MDTypography>
+                  )}
+
+                  {(drawingType === "civil"
+                    ? state.civilImages || []
+                    : state.interiorImages || []
+                  ).map((img, i) => (
+                    <Grid item xs={12} sm={6} md={3} key={i}>
+                      <MDBox
+                        sx={{
+                          borderRadius: "12px",
+                          overflow: "hidden",
+                          boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+                        }}
+                      >
+                        <img
+                          src={img}
+                          style={{
+                            width: "100%",
+                            height: "200px",
+                            objectFit: "cover",
+                          }}
+                        />
+                      </MDBox>
+                    </Grid>
+                  ))}
+                </Grid>
+              </>
+            )}
+          </MDBox>
+        )}
+
+        {/* ---------------- ACCOUNTS ---------------- */}
+        {tab === 2 && (
+          <MDBox mt={3}>
+            <Grid container spacing={2}>
+              <Grid item xs={12} md={4}>
+                <MDBox p={3} bgColor="info" color="white" borderRadius="lg">
+                  Total: ₹ {total}
+                </MDBox>
+              </Grid>
+
+              <Grid item xs={12} md={4}>
+                <MDBox p={3} bgColor="success" color="white" borderRadius="lg">
+                  Paid: ₹ {paid}
+                </MDBox>
+              </Grid>
+
+              <Grid item xs={12} md={4}>
+                <MDBox p={3} bgColor="error" color="white" borderRadius="lg">
+                  Balance: ₹ {balance}
+                </MDBox>
+              </Grid>
+            </Grid>
+          </MDBox>
+        )}
+      </MDBox>
+
+      <Footer />
+    </DashboardLayout>
   );
 }
 
