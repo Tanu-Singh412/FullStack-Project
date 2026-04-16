@@ -7,6 +7,7 @@ const clientRoutes = require("./routes/clientRoutes");
 const projectRoutes = require("./routes/projectRoutes");
 const vendorRoutes = require("./routes/vendorRoutes");
 
+
 const app = express();
 
 // Connect DB
@@ -17,7 +18,6 @@ app.use(cors({
   origin: "https://fullstack-frontend-4-ym5y.onrender.com",
   credentials: true,
 }));
-
 app.use(express.json());
 
 // Static
@@ -33,9 +33,7 @@ app.get("/", (req, res) => {
   res.send("API running...");
 });
 
-// ✅ IMPORTANT FIX
-const PORT = 5000;
-
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+// Server
+app.listen(5000, () => {
+  console.log("Server running on Port 5000");
 });
