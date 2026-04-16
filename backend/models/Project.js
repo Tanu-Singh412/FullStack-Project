@@ -32,6 +32,8 @@ dwgFile: {
 clientId: {
   type: String,
 },
+civilImages: [String],
+interiorImages: [String],
   },
   
   {

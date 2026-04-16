@@ -60,7 +60,7 @@ if (req.files && req.files.dwgFile) {
     res.json(saved);
 
   } catch (err) {
-    console.error("ADD PROJECT ERROR:", err);
+    console.error("", err);
     res.status(500).json(err);
   }
 };
