@@ -45,48 +45,28 @@ router.put(
 router.post("/:id/payment", addPayment);
 
 // ✅ UPLOAD DRAWINGS
-router.post("/:id/drawing", upload.array("images", 50), async (req, res) => {
-  try {
-    const { drawingType } = req.body;
+router.post(
+  "/",
+  upload.array("images", 10),
+  drawingController.addDrawing
+);
 
-    if (!req.files || req.files.length === 0) {
-      return res.status(400).json({ message: "No files uploaded" });
-    }
+// ================= GET ALL DRAWINGS OF PROJECT =================
+router.get("/project/:projectId", drawingController.getDrawings);
 
-    const images = req.files.map(
-      (file) =>
-        `https://fullstack-project-1-n510.onrender.com/uploads/${file.filename}`
-    );
+// ================= UPDATE DRAWING (add more images) =================
+router.put(
+  "/:drawingId",
+  upload.array("images", 10),
+  drawingController.updateDrawing
+);
 
-    const field =
-      drawingType === "civil"
-        ? "civilImages"
-        : drawingType === "interior"
-        ? "interiorImages"
-        : null;
+// ================= DELETE DRAWING =================
+router.delete("/:drawingId", drawingController.deleteDrawing);
 
-    if (!field) {
-      return res.status(400).json({ message: "Invalid type" });
-    }
+// ================= DELETE SINGLE IMAGE =================
+router.put("/:drawingId/image", drawingController.deleteDrawingImage);
 
-    const project = await Project.findByIdAndUpdate(
-      req.params.id,
-      {
-        $push: { [field]: { $each: images } },
-      },
-      { new: true }
-    );
-
-    if (!project) {
-      return res.status(404).json({ message: "Project not found" });
-    }
-
-    res.json(project);
-  } catch (err) {
-    console.error("DRAWING ERROR:", err);
-    res.status(500).json({ message: "Server error" });
-  }
-});
 // ✅ CORRECT
 router.post("/:projectId/scope", addScope);
 router.get("/:projectId/scope", getScope);

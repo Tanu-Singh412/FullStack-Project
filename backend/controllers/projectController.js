@@ -290,3 +290,58 @@ exports.deleteScope = async (req, res) => {
     res.status(500).json({ msg: "Error deleting scope" });
   }
 };
+
+exports.addDrawing = async (req, res) => {
+  try {
+    const { projectId, type } = req.body;
+
+    const images = req.files.map(
+      (f) =>
+        "https://fullstack-project-1-n510.onrender.com/uploads/" + f.filename
+    );
+
+    let drawing = await Drawing.findOne({ projectId, type });
+
+    if (!drawing) {
+      drawing = new Drawing({
+        projectId,
+        type,
+        images,
+      });
+    } else {
+      drawing.images.push(...images);
+    }
+
+    await drawing.save();
+
+    res.json(drawing);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+};
+exports.getDrawings = async (req, res) => {
+  try {
+    const data = await Drawing.find({
+      projectId: req.params.projectId,
+    });
+
+    res.json(data);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+};
+exports.deleteDrawingImage = async (req, res) => {
+  try {
+    const { drawingId, imageUrl } = req.body;
+
+    const drawing = await Drawing.findById(drawingId);
+
+    drawing.images = drawing.images.filter((img) => img !== imageUrl);
+
+    await drawing.save();
+
+    res.json(drawing);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+};
