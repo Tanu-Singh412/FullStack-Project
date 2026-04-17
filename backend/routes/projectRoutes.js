@@ -7,6 +7,8 @@ const {
   deleteProject,
   updateProject,
   addPayment,
+  addScope,
+  getScope,
 } = require("../controllers/projectController");
 
 const upload = require("../middleware/upload");
@@ -83,6 +85,7 @@ router.post("/:id/drawing", upload.array("images", 50), async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 });
+router.post("/projects/:id/scope", addScope);
+router.get("/projects/:id/scope", getScope);
 
-  
 module.exports = router;

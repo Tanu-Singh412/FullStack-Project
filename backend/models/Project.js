@@ -1,5 +1,34 @@
 const mongoose = require("mongoose");
 
+const scopeSchema = new mongoose.Schema({
+  projectType: String,
+  workType: String,
+  area: Number,
+  floors: Number,
+
+  conceptDesign: Boolean,
+  drawings2D: Boolean,
+  elevation3D: Boolean,
+  workingDrawings: Boolean,
+
+  interiorLayout: Boolean,
+  civil: Boolean,
+  electrical: Boolean,
+  plumbing: Boolean,
+  interiorExecution: Boolean,
+  supervision: Boolean,
+
+  revisions: Number,
+  timeline: Number,
+
+  costPerSqft: Number,
+  lumpSum: Number,
+
+  materialIncluded: Boolean,
+  notes: String,
+}, { timestamps: true });
+
+
 const projectSchema = new mongoose.Schema(
   {
     projectName: String,
@@ -35,6 +64,8 @@ clientId: {
 },
 civilImages: [String],
 interiorImages: [String],
+
+scope: [scopeSchema], 
   },
   
   {

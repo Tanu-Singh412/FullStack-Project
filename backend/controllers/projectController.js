@@ -192,3 +192,29 @@ exports.addPayment = async (req, res) => {
     res.status(500).json(err);
   }
 };
+
+// ADD SCOPE
+exports.addScope = async (req, res) => {
+  try {
+    const project = await Project.findById(req.params.id);
+
+    project.scope.push(req.body);
+
+    await project.save();
+
+    res.json(project.scope);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// GET SCOPE
+exports.getScope = async (req, res) => {
+  try {
+    const project = await Project.findById(req.params.id);
+
+    res.json(project.scope || []);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
