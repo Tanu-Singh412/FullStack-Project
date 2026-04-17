@@ -11,6 +11,12 @@ const {
   getScope,
   updateScope,
   deleteScope,
+  addDrawing,
+  getDrawings,
+  updateDrawing,
+  deleteDrawing,
+  deleteDrawingImage,
+
 } = require("../controllers/projectController");
 
 const upload = require("../middleware/upload");
@@ -36,7 +42,7 @@ router.put(
   "/:id",
   upload.fields([
     { name: "images", maxCount: 100 },
-    { name: "", maxCount: 1 },
+    { name: "dwgFile", maxCount: 1 },
   ]),
   updateProject
 );
@@ -48,24 +54,24 @@ router.post("/:id/payment", addPayment);
 router.post(
   "/",
   upload.array("images", 10),
-  projectController.addDrawing
+  addDrawing
 );
 
 // ================= GET ALL DRAWINGS OF PROJECT =================
-router.get("/project/:projectId", projectController.getDrawings);
+router.get("/project/:projectId", getDrawings);
 
 // ================= UPDATE DRAWING (add more images) =================
 router.put(
   "/:drawingId",
   upload.array("images", 10),
-  projectController.updateDrawing
+  updateDrawing
 );
 
 // ================= DELETE DRAWING =================
-router.delete("/:drawingId", projectController.deleteDrawing);
+router.delete("/:drawingId", deleteDrawing);
 
 // ================= DELETE SINGLE IMAGE =================
-router.put("/:drawingId/image", projectController.deleteDrawingImage);
+router.put("/:drawingId/image", deleteDrawingImage);
 
 // ✅ CORRECT
 router.post("/:projectId/scope", addScope);
