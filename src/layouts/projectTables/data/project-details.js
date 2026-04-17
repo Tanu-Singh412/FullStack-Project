@@ -93,10 +93,7 @@ const fetchProject = async () => {
     });
   }
 };
-  useEffect(() => {
-    fetchProject();
-  }, []);
-
+ 
   if (!project) return <div>No Data</div>;
 
 
@@ -192,8 +189,30 @@ const handleAddPayment = async () => {
   fontSize: "14px",
 };
 
+// ================= FETCH PROJECT =================
+const fetchProject = async () => {
+  if (!state?._id) return;
+
+  try {
+    const res = await fetch(`${Base_API}/projects`);
+    const data = await res.json();
+
+    const current = data.find((p) => p._id === state._id);
+
+    if (current) {
+      setProject({
+        ...current,
+        totalAmount: Number(current.totalAmount || 0),
+      });
+    }
+  } catch (err) {
+    console.log("Project fetch error:", err);
+  }
+};
+
+// ================= FETCH SCOPE =================
 const fetchScope = async () => {
-  if (!project?._id) return; // ✅ safety
+  if (!project?._id) return;
 
   try {
     const res = await fetch(`${Base_API}/projects/${project._id}/scope`);
@@ -204,20 +223,21 @@ const fetchScope = async () => {
   }
 };
 
-// Fetch project
+// ================= USE EFFECTS =================
+
+// ✅ Fetch project (ONLY ON LOAD / state change)
 useEffect(() => {
   if (state?._id) {
     fetchProject();
   }
 }, [state]);
 
-// Fetch scope AFTER project loads
+// ✅ Fetch scope AFTER project loads
 useEffect(() => {
   if (project?._id) {
     fetchScope();
   }
-}, [project]);
-
+}, [project?._id]);
 
 const handleAddScope = async () => {
   await fetch(`${Base_API}/projects/${project._id}/scope`, {
