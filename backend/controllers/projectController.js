@@ -295,15 +295,16 @@ exports.deleteScope = async (req, res) => {
 // ================= ADD / UPLOAD DRAWING =================
 exports.addDrawing = async (req, res) => {
   try {
-    const { projectId, type } = req.body;
+    const { projectId } = req.params;   // ✅ FIX
+    const { type } = req.body;
 
-    if (!req.files || !req.files.length) {
-      return res.status(400).json({ msg: "No files uploaded" });
+    if (!projectId || !type) {
+      return res.status(400).json({ msg: "projectId & type required" });
     }
 
     const images = req.files.map(
       (f) =>
-        "https://fullstack-project-1-n510.onrender.com/uploads/" + f.filename
+        `https://fullstack-project-1-n510.onrender.com/uploads/${f.filename}`
     );
 
     let drawing = await Drawing.findOne({ projectId, type });
@@ -322,7 +323,6 @@ exports.addDrawing = async (req, res) => {
 
     res.json(drawing);
   } catch (err) {
-    console.log(err);
     res.status(500).json(err);
   }
 };
