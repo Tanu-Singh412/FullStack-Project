@@ -45,7 +45,7 @@ export default function useProjectData() {
 
     const amount = paymentType === "subtract" ? -Math.abs(paymentAmount) : Math.abs(paymentAmount);
 
-    await fetch(`http://localhost:5000/api/projects/${paymentProject._id}/payment`, {
+    await fetch(`https://fullstack-project-1-n510.onrender.com/api/projects/${paymentProject._id}/payment`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -83,7 +83,7 @@ export default function useProjectData() {
 
   // Delete project
   const deleteProject = async (id) => {
-    await fetch(`http://localhost:5000/api/projects/${id}`, {
+    await fetch(`https://fullstack-project-1-n510.onrender.com/api/projects/${id}`, {
       method: "DELETE",
     });
     loadData();
@@ -93,7 +93,7 @@ export default function useProjectData() {
   const handleStatusChange = async (id, value) => {
     setProjects((prev) => prev.map((p) => (p._id === id ? { ...p, status: value } : p)));
 
-    await fetch(`http://localhost:5000/api/projects/${id}`, {
+    await fetch(`https://fullstack-project-1-n510.onrender.com/api/projects/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ status: value }),
@@ -102,7 +102,7 @@ export default function useProjectData() {
 
   // Load projects from backend
   const loadData = async () => {
-    const res = await fetch("http://localhost:5000/api/projects");
+    const res = await fetch("https://fullstack-project-1-n510.onrender.com/api/projects");
     const data = await res.json();
     setProjects(data);
   };
