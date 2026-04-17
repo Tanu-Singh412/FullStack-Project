@@ -102,21 +102,6 @@ const [drawings, setDrawings] = useState([]);
     const data = await res.json();
     setScopeList(data || []);
   };
-
-  // ================= USE EFFECTS =================
-  useEffect(() => {
-    fetchProject();
-  }, []);
-
-  useEffect(() => {
-    if (project?._id) {
-      fetchScope();
-    }
-  }, [project?._id]);
-
-  // ✅ AFTER hooks
-  if (!project?._id) return <div>Loading...</div>;
-
   // ================= UPLOAD =================
 const fetchDrawings = async () => {
   if (!project?._id) return;
@@ -148,6 +133,24 @@ await fetch(`${Base_API}/projects/drawing`, {
   await fetchDrawings();   // ✅ IMPORTANT
   setOpenUpload(false);
 };
+
+  // ================= USE EFFECTS =================
+  useEffect(() => {
+ // ALL hooks first
+useEffect(() => {
+  fetchProject();
+}, []);
+
+useEffect(() => {
+  if (project?._id) {
+    fetchScope();
+    fetchDrawings();
+  }
+}, [project?._id]);
+
+// THEN conditional return
+if (!project?._id) return <div>Loading...</div>;
+
   // ================= PAYMENT =================
   const handleAddPayment = async () => {
     if (!paymentData.amount) return;
