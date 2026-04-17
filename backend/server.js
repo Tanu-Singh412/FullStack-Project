@@ -25,7 +25,7 @@ app.use("/uploads", express.static("uploads"));
 
 // Routes
 app.use("/api/clients", clientRoutes);
-app.use("/api/projects", projectRoutes);
+app.use("/api/projects", projectRoutes); 
 app.use("/api/vendors", vendorRoutes);
 
 // Test route

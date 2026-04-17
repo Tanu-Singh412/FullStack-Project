@@ -170,7 +170,7 @@ exports.updateProject = async (req, res) => {
 };
 exports.addPayment = async (req, res) => {
   try {
-    const { amount } = req.body;
+    const { amount, date, note } = req.body;
 
     const project = await Project.findById(req.params.id);
 
@@ -180,14 +180,14 @@ exports.addPayment = async (req, res) => {
 
     project.payments.push({
       amount: Number(amount),
-      date: new Date(),
+      date: date || new Date().toISOString().split("T")[0],
+      note,
     });
 
     await project.save();
 
     res.json(project);
   } catch (err) {
-    console.log(err);
     res.status(500).json(err);
   }
 };

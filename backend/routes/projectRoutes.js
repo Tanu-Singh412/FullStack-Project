@@ -1,6 +1,5 @@
 const router = require("express").Router();
-const Project = require("../models/Project"); // ✅ FIXED
-
+const Project = require("../models/Project");
 
 const {
   addProject,
@@ -8,11 +7,11 @@ const {
   deleteProject,
   updateProject,
   addPayment,
-} = require(
-  "../controllers/projectController"
-);
+} = require("../controllers/projectController");
+
 const upload = require("../middleware/upload");
 
+// CREATE PROJECT
 router.post(
   "/",
   upload.fields([
@@ -21,9 +20,14 @@ router.post(
   ]),
   addProject
 );
+
+// GET ALL
 router.get("/", getProjects);
 
+// DELETE
 router.delete("/:id", deleteProject);
+
+// UPDATE
 router.put(
   "/:id",
   upload.fields([
@@ -32,24 +36,17 @@ router.put(
   ]),
   updateProject
 );
+
+// ✅ ADD PAYMENT
 router.post("/:id/payment", addPayment);
 
-
-
+// ✅ UPLOAD DRAWINGS
 router.post(
   "/:id/drawing",
   upload.array("images", 50),
   async (req, res) => {
     try {
       const { drawingType } = req.body;
-
-      if (!drawingType) {
-        return res.status(400).json({ message: "drawingType required" });
-      }
-
-      if (!req.files || req.files.length === 0) {
-        return res.status(400).json({ message: "No images uploaded" });
-      }
 
       const images = req.files.map(
         (file) =>
@@ -64,35 +61,22 @@ router.post(
           : null;
 
       if (!field) {
-        return res.status(400).json({ message: "Invalid drawing type" });
+        return res.status(400).json({ message: "Invalid type" });
       }
 
       const project = await Project.findByIdAndUpdate(
         req.params.id,
         {
-          $push: {
-            [field]: { $each: images },
-          },
+          $push: { [field]: { $each: images } },
         },
         { new: true }
       );
 
-      if (!project) {
-        return res.status(404).json({ message: "Project not found" });
-      }
-
       res.json(project);
     } catch (err) {
-      console.error("🔥 DRAWING ERROR:", err);
-      res.status(500).json({
-        message: "Server error",
-        error: err.message,
-      });
+      res.status(500).json(err);
     }
   }
 );
 
-
 module.exports = router;
-
-
