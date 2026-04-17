@@ -494,5 +494,5 @@ src={`${img}?t=${Date.now()}`}
     </DashboardLayout>
   );
 }
-
+console.log("PROJECT:", project);
 export default ProjectDetails;
