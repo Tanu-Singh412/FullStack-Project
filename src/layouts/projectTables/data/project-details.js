@@ -23,7 +23,7 @@ const Base_API = "https://fullstack-project-1-n510.onrender.com/api";
 function ProjectDetails() {
   const { state } = useLocation();
 
-  const [project, setProject] = useState(state);
+  const [project, setProject] = useState(null);
   const [tab, setTab] = useState(0);
 
   const [drawingType, setDrawingType] = useState(null);
@@ -44,22 +44,25 @@ function ProjectDetails() {
   const [imageIndex, setImageIndex] = useState(0);
 
   // ================= FETCH =================
-  const fetchProject = async () => {
-    if (!state?._id) return;
 
-    const res = await fetch(`${Base_API}/projects`);
-    const data = await res.json();
-    const current = data.find((p) => p._id === state._id);
-    setProject(current);
-  };
 
-  useEffect(() => {
-    fetchProject();
-  }, []);
+const fetchProject = async () => {
+  if (!state?._id) return;
+
+  const res = await fetch(`${Base_API}/projects`);
+  const data = await res.json();
+
+  const current = data.find((p) => p._id === state._id);
+  setProject(current);
+};
+
+useEffect(() => {
+  fetchProject();
+}, []);
 
   if (!project) return <div>No Data</div>;
 
-const total = Number(project.totalAmount || 0);
+const total = Number(project?.totalAmount ?? 0);
           const paid = (project?.payments || []).reduce(
             (sum, p) => sum + Number(p.amount),
             0
@@ -494,5 +497,4 @@ src={`${img}?t=${Date.now()}`}
     </DashboardLayout>
   );
 }
-console.log("PROJECT:", project);
 export default ProjectDetails;
