@@ -6,13 +6,14 @@ const projectSchema = new mongoose.Schema(
     clientName: String,
     description: String,
     totalAmount: Number,
- payments: [
+payments: [
   {
     amount: Number,
     date: {
       type: Date,
       default: Date.now,
     },
+    note: String, // ✅ ADD THIS
   },
 ],
 

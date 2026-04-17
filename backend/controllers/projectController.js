@@ -182,7 +182,7 @@ exports.addPayment = async (req, res) => {
     project.payments.push({
       amount: Number(amount),
       date: date || new Date().toISOString().split("T")[0],
-      note,
+      note: note || "",
     });
 
     await project.save();
