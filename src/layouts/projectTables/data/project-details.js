@@ -153,6 +153,15 @@ const handleAddPayment = async () => {
     setImageIndex(i);
     setSelectedImage(images[i]);
   };
+  const inputStyle = {
+  flex: 1,
+  minWidth: "140px",
+  padding: "10px",
+  borderRadius: "8px",
+  border: "1px solid #ccc",
+  outline: "none",
+  fontSize: "14px",
+};
 
   return (
     <DashboardLayout>
