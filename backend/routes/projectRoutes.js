@@ -36,7 +36,7 @@ router.put(
   "/:id",
   upload.fields([
     { name: "images", maxCount: 100 },
-    { name: "dwgFile", maxCount: 1 },
+    { name: "", maxCount: 1 },
   ]),
   updateProject
 );
