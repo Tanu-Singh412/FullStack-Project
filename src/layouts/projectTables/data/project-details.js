@@ -129,11 +129,10 @@ const handleAddPayment = async () => {
   };
 
   // ================= LIGHTBOX =================
- if (drawingType === "civil") {
-  project.civilImages.push(...newImages);
-} else {
-  project.interiorImages.push(...newImages);
-}
+ const images =
+  drawingType === "civil"
+    ? project?.civilImages || []
+    : project?.interiorImages || [];
 
   const openImage = (img, index) => {
     setSelectedImage(img);
