@@ -59,9 +59,9 @@ function ProjectDetails() {
 
   if (!project) return <div>No Data</div>;
 
-            const total = Number(paymentProject?.totalAmount || 0);
+           const total = Number(project?.totalAmount || 0);
 
-          const paid = (paymentProject?.payments || []).reduce(
+          const paid = (project?.payments || []).reduce(
             (sum, p) => sum + Number(p.amount),
             0
           );
@@ -268,117 +268,137 @@ src={`${img}?t=${Date.now()}`}
 
         {/* ACCOUNTS */}
 {tab === 2 && (
-              <MDBox display="flex" gap={2} mb={2}>
-                {/* TOTAL */}
-                <MDBox
-                  sx={{
-                    flex: 1,
-                    p: 2,
-                    borderRadius: "10px",
-                    background: "#e3f2fd",
-                    textAlign: "center",
-                  }}
-                >
-                  <MDTypography variant="caption">Total</MDTypography>
-                  <MDTypography fontWeight="bold">₹ {total}</MDTypography>
-                </MDBox>
+  <MDBox mt={3}>
 
-                {/* PAID */}
-                <MDBox
-                  sx={{
-                    flex: 1,
-                    p: 2,
-                    borderRadius: "10px",
-                    background: "#e8f5e9",
-                    textAlign: "center",
-                  }}
-                >
-                  <MDTypography variant="caption">Paid</MDTypography>
-                  <MDTypography fontWeight="bold" color="success">
-                    ₹ {paid}
-                  </MDTypography>
-                </MDBox>
+    {/* ✅ SUMMARY (LIKE YOUR FIRST CODE) */}
+    <MDBox display="flex" gap={2} mb={2}>
+      
+      {/* TOTAL */}
+      <MDBox
+        sx={{
+          flex: 1,
+          p: 2,
+          borderRadius: "10px",
+          background: "#e3f2fd",
+          textAlign: "center",
+        }}
+      >
+        <MDTypography variant="caption">Total</MDTypography>
+        <MDTypography fontWeight="bold">
+          ₹ {Number(project?.totalAmount || 0)}
+        </MDTypography>
+      </MDBox>
 
-                {/* BALANCE */}
-                <MDBox
-                  sx={{
-                    flex: 1,
-                    p: 2,
-                    borderRadius: "10px",
-                    background: "#ffebee",
-                    textAlign: "center",
-                  }}
-                >
-                  <MDTypography variant="caption">Balance</MDTypography>
-                  <MDTypography fontWeight="bold" color="error">
-                    ₹ {balance}
-                  </MDTypography>
-                </MDBox>
-              </MDBox>
-              {/* ➕ ADD PAYMENT */}
-              <MDBox mt={3} display="flex" gap={1}>
-                <input
-                  type="number"
-                  placeholder="Enter amount"
-                  value={paymentAmount}
-                  onChange={(e) => setPaymentAmount(e.target.value)}
-                  style={{
-                    flex: 1,
-                    padding: "10px",
-                    borderRadius: "8px",
-                    border: "1px solid #ccc",
-                  }}
-                />
+      {/* PAID */}
+      <MDBox
+        sx={{
+          flex: 1,
+          p: 2,
+          borderRadius: "10px",
+          background: "#e8f5e9",
+          textAlign: "center",
+        }}
+      >
+        <MDTypography variant="caption">Paid</MDTypography>
+        <MDTypography fontWeight="bold" color="success">
+          ₹ {(project?.payments || []).reduce(
+            (sum, p) => sum + Number(p?.amount || 0),
+            0
+          )}
+        </MDTypography>
+      </MDBox>
 
-                <Button
-                  variant="contained"
-                  onClick={() => {
-                    setPaymentType("add");
-                    handleAddPayment();
-                  }}
-                  sx={{
-                    borderRadius: "8px",
-                    textTransform: "none",
-                    px: 3,
-                    background: "#1976d2",
-                    color: "#fff",
-                  }}
-                >
-                  Add
-                </Button>
-              </MDBox>
-              {/* ✅ PAYMENT TABLE */}
-              <table style={{ width: "100%", borderCollapse: "collapse" }}>
-                <thead>
-                  <tr style={{ background: "#f1f5f9" }}>
-                    <th style={{ padding: "8px", textAlign: "left" }}>Date</th>
-                    <th style={{ padding: "8px", textAlign: "right" }}>Amount</th>
-                  </tr>
-                </thead>
-
-                <tbody>
-                  {(paymentProject?.payments || []).map((pay, i) => (
-                    <tr key={i}>
-                      <td style={{ padding: "8px" }}>
-                        {new Date(pay.date || pay.createdAt).toLocaleString()}
-                      </td>
-                      <td
-                        style={{
-                          padding: "8px",
-                          textAlign: "right",
-                          color: "green",
-                          fontWeight: "600",
-                        }}
-                      >
-                        ₹ {pay.amount}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-       
+      {/* BALANCE */}
+      <MDBox
+        sx={{
+          flex: 1,
+          p: 2,
+          borderRadius: "10px",
+          background: "#ffebee",
+          textAlign: "center",
+        }}
+      >
+        <MDTypography variant="caption">Balance</MDTypography>
+        <MDTypography fontWeight="bold" color="error">
+          ₹ {Number(project?.totalAmount || 0) -
+            (project?.payments || []).reduce(
+              (sum, p) => sum + Number(p?.amount || 0),
+              0
             )}
-          </MDBox>
+        </MDTypography>
+      </MDBox>
+    </MDBox>
+
+    {/* ➕ ADD PAYMENT (LIKE YOUR FIRST UI) */}
+    <MDBox mt={3} display="flex" gap={1}>
+      <input
+        type="number"
+        placeholder="Enter amount"
+        value={paymentData.amount}
+        onChange={(e) =>
+          setPaymentData({
+            ...paymentData,
+            amount: e.target.value,
+          })
+        }
+        style={{
+          flex: 1,
+          padding: "10px",
+          borderRadius: "8px",
+          border: "1px solid #ccc",
+        }}
+      />
+
+      <Button
+        variant="contained"
+        onClick={handleAddPayment}
+        sx={{
+          borderRadius: "8px",
+          textTransform: "none",
+          px: 3,
+          background: "#1976d2",
+          color: "#fff",
+        }}
+      >
+        {loading ? <CircularProgress size={20} /> : "Add"}
+      </Button>
+    </MDBox>
+
+    {/* ✅ PAYMENT TABLE */}
+    <Card sx={{ mt: 3, p: 2, borderRadius: "12px" }}>
+      <table style={{ width: "100%", borderCollapse: "collapse" }}>
+        <thead>
+          <tr style={{ background: "#f1f5f9" }}>
+            <th style={{ padding: "8px", textAlign: "left" }}>Date</th>
+            <th style={{ padding: "8px", textAlign: "right" }}>Amount</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {(project?.payments || []).map((pay, i) => (
+            <tr key={i}>
+              <td style={{ padding: "8px" }}>
+                {new Date(pay.date || pay.createdAt).toLocaleString()}
+              </td>
+
+              <td
+                style={{
+                  padding: "8px",
+                  textAlign: "right",
+                  color: "green",
+                  fontWeight: "600",
+                }}
+              >
+                ₹ {pay.amount}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </Card>
+  </MDBox>
+)}
+      </MDBox>
 
       {/* LIGHTBOX */}
       {selectedImage && (
