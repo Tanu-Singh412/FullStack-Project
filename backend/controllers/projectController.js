@@ -196,7 +196,7 @@ exports.addPayment = async (req, res) => {
 // ADD SCOPE
 exports.addScope = async (req, res) => {
   try {
-    const project = await Project.findById(req.params.id);
+    const project = await Project.findById(req.params.projectId); // ✅ FIX
 
     if (!project) {
       return res.status(404).json({ msg: "Project not found" });
