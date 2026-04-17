@@ -48,7 +48,7 @@ router.post("/:id/payment", addPayment);
 router.post(
   "/",
   upload.array("images", 10),
-  drawingController.addDrawing
+  projectController.addDrawing
 );
 
 // ================= GET ALL DRAWINGS OF PROJECT =================
