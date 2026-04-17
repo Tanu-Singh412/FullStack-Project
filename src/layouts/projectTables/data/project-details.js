@@ -202,7 +202,7 @@ useEffect(() => {
   if (project?._id) {
     fetchScope();
   }
-}, [project]);
+}, [project?._id]);
 const handleAddScope = async () => {
   await fetch(`${Base_API}/projects/${project._id}/scope`, {
     method: "POST",
@@ -263,7 +263,7 @@ const handleAddScope = async () => {
 </Card>
 
         {/* TABS */}
-        <Tabs value={tab} onChange={(e, v) => setTab(v)}>
+        <Tabs value={tab} onChange={(e, v) => setTab(v)} style={{background:"#1976d2", color:"#fff"}}>
           <Tab label="Overview" />
           <Tab label="Drawings" />
           <Tab label="Accounts" />
