@@ -86,7 +86,8 @@ router.post("/:id/drawing", upload.array("images", 50), async (req, res) => {
   }
 });
 // ✅ CORRECT
-router.post("/:id/scope", addScope);
-router.get("/:id/scope", getScope);
-
+router.post("/:projectId/scope", addScope);
+router.get("/:projectId/scope", getScope);
+router.put("/:projectId/scope/:scopeId", updateScope);
+router.delete("/:projectId/scope/:scopeId", deleteScope);
 module.exports = router;

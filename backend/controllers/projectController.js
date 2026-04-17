@@ -223,12 +223,70 @@ exports.addScope = async (req, res) => {
 };
 
 // GET SCOPE
+// GET /projects/:projectId/scope
 exports.getScope = async (req, res) => {
   try {
-    const project = await Project.findById(req.params.id);
+    const project = await Project.findById(req.params.projectId);
+
+    if (!project) return res.status(404).json({ msg: "Not found" });
 
     res.json(project.scope || []);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ msg: "Error fetching scope" });
+  }
+};
+
+
+
+
+// PUT /projects/:projectId/scope/:scopeId
+exports.updateScope = async (req, res) => {
+  try {
+    const { projectId, scopeId } = req.params;
+
+    const project = await Project.findById(projectId);
+    if (!project) return res.status(404).json({ msg: "Project not found" });
+
+    const scope = project.scope.id(scopeId);
+    if (!scope) return res.status(404).json({ msg: "Scope not found" });
+
+    const updatedData = {
+      ...req.body,
+      area: Number(req.body.area || 0),
+      floors: Number(req.body.floors || 0),
+      revisions: Number(req.body.revisions || 0),
+      timeline: Number(req.body.timeline || 0),
+      costPerSqft: Number(req.body.costPerSqft || 0),
+      lumpSum: Number(req.body.lumpSum || 0),
+    };
+
+    Object.keys(updatedData).forEach((key) => {
+      scope[key] = updatedData[key];
+    });
+
+    await project.save();
+
+    res.json({ msg: "Scope updated", scope });
+  } catch (err) {
+    res.status(500).json({ msg: "Error updating scope" });
+  }
+};
+exports.deleteScope = async (req, res) => {
+  try {
+    const { projectId, scopeId } = req.params;
+
+    const project = await Project.findById(projectId);
+    if (!project) return res.status(404).json({ msg: "Project not found" });
+
+    const scope = project.scope.id(scopeId);
+    if (!scope) return res.status(404).json({ msg: "Scope not found" });
+
+    scope.deleteOne(); // 🔥 remove subdocument
+
+    await project.save();
+
+    res.json({ msg: "Scope deleted" });
+  } catch (err) {
+    res.status(500).json({ msg: "Error deleting scope" });
   }
 };
