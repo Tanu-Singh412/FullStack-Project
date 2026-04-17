@@ -9,6 +9,8 @@ const {
   addPayment,
   addScope,
   getScope,
+  updateScope,
+  deleteScope,
 } = require("../controllers/projectController");
 
 const upload = require("../middleware/upload");
