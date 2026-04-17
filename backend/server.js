@@ -21,7 +21,7 @@ app.use(cors({
 app.use(express.json());
 
 // Static
-app.use("/uploads", express.static("uploads"));// Routes
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use("/api/clients", clientRoutes);
 app.use("/api/projects", projectRoutes); 
 app.use("/api/vendors", vendorRoutes);
