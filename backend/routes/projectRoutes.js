@@ -50,17 +50,17 @@ router.put(
 // ✅ ADD PAYMENT
 router.post("/:id/payment", addPayment);
 
-// ✅ UPLOAD DRAWINGS
+// ================= ADD DRAWING =================
 router.post(
-  "/",
+  "/:projectId/drawing",
   upload.array("images", 10),
   addDrawing
 );
 
-// ================= GET ALL DRAWINGS OF PROJECT =================
-router.get("/project/:projectId", getDrawings);
+// ================= GET DRAWINGS =================
+router.get("/:projectId/drawing", getDrawings);
 
-// ================= UPDATE DRAWING (add more images) =================
+// ================= UPDATE DRAWING =================
 router.put(
   "/:drawingId",
   upload.array("images", 10),

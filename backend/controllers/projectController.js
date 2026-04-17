@@ -291,9 +291,15 @@ exports.deleteScope = async (req, res) => {
   }
 };
 
+
+// ================= ADD / UPLOAD DRAWING =================
 exports.addDrawing = async (req, res) => {
   try {
     const { projectId, type } = req.body;
+
+    if (!req.files || !req.files.length) {
+      return res.status(400).json({ msg: "No files uploaded" });
+    }
 
     const images = req.files.map(
       (f) =>
@@ -316,9 +322,12 @@ exports.addDrawing = async (req, res) => {
 
     res.json(drawing);
   } catch (err) {
+    console.log(err);
     res.status(500).json(err);
   }
 };
+
+// ================= GET ALL DRAWINGS =================
 exports.getDrawings = async (req, res) => {
   try {
     const data = await Drawing.find({
@@ -330,11 +339,55 @@ exports.getDrawings = async (req, res) => {
     res.status(500).json(err);
   }
 };
-exports.deleteDrawingImage = async (req, res) => {
+
+// ================= UPDATE (ADD MORE IMAGES) =================
+exports.updateDrawing = async (req, res) => {
   try {
-    const { drawingId, imageUrl } = req.body;
+    const { drawingId } = req.params;
 
     const drawing = await Drawing.findById(drawingId);
+    if (!drawing) {
+      return res.status(404).json({ msg: "Drawing not found" });
+    }
+
+    const newImages = (req.files || []).map(
+      (f) =>
+        "https://fullstack-project-1-n510.onrender.com/uploads/" + f.filename
+    );
+
+    drawing.images.push(...newImages);
+
+    await drawing.save();
+
+    res.json(drawing);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+};
+
+// ================= DELETE DRAWING =================
+exports.deleteDrawing = async (req, res) => {
+  try {
+    const { drawingId } = req.params;
+
+    await Drawing.findByIdAndDelete(drawingId);
+
+    res.json({ msg: "Drawing deleted" });
+  } catch (err) {
+    res.status(500).json(err);
+  }
+};
+
+// ================= DELETE SINGLE IMAGE =================
+exports.deleteDrawingImage = async (req, res) => {
+  try {
+    const { drawingId } = req.params;
+    const { imageUrl } = req.body;
+
+    const drawing = await Drawing.findById(drawingId);
+    if (!drawing) {
+      return res.status(404).json({ msg: "Drawing not found" });
+    }
 
     drawing.images = drawing.images.filter((img) => img !== imageUrl);
 
