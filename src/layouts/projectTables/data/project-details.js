@@ -18,7 +18,7 @@ import {
   CircularProgress,
 } from "@mui/material";
 
-const API = "https://fullstack-project-1-n510.onrender.com/api";
+const API = "http://localhost:5000/api";
 
 function ProjectDetails() {
   const { state } = useLocation();
