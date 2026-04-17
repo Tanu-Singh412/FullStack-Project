@@ -59,12 +59,14 @@ function ProjectDetails() {
 
   if (!project) return <div>No Data</div>;
 
-const total = Number(project?.totalAmount ?? 0);
-  const paid = (project.payments || []).reduce(
-    (s, p) => s + Number(p.amount),
-    0
-  );
-  const balance = total - paid;
+           const total = Number(project?.totalAmount || 0);
+
+          const paid = (project?.payments || []).reduce(
+            (sum, p) => sum + Number(p.amount),
+            0
+          );
+
+          const balance = total - paid;
 
   // ================= UPLOAD =================
   const handleUpload = async () => {
@@ -127,10 +129,11 @@ const handleAddPayment = async () => {
   };
 
   // ================= LIGHTBOX =================
-  const images =
-    drawingType === "civil"
-      ? project.civilImages
-      : project.interiorImages;
+ if (drawingType === "civil") {
+  project.civilImages.push(...newImages);
+} else {
+  project.interiorImages.push(...newImages);
+}
 
   const openImage = (img, index) => {
     setSelectedImage(img);
@@ -220,17 +223,20 @@ const handleAddPayment = async () => {
                     <Grid item xs={12} sm={6} md={3} key={i}>
                       <Card sx={{ position: "relative", p: 1 }}>
                         <img
-                          src={img}
-                          alt=""
-                          style={{
-                            width: "100%",
-                            height: 180,
-                            objectFit: "cover",
-                            borderRadius: 6,
-                            cursor: "pointer",
-                          }}
-                          onClick={() => openImage(img, i)}
-                        />
+src={`${img}?t=${Date.now()}`}
+  alt=""
+  onError={(e) => {
+    e.target.src = "https://via.placeholder.com/300x200?text=No+Image";
+  }}
+  style={{
+    width: "100%",
+    height: 180,
+    objectFit: "cover",
+    borderRadius: 6,
+    cursor: "pointer",
+  }}
+  onClick={() => openImage(img, i)}
+/>
 
                         <Button
                           size="small"
@@ -363,7 +369,7 @@ const handleAddPayment = async () => {
 
         <Button
           variant="contained"
-          sx={{ mt: 2, borderRadius: "8px" }}
+          sx={{ mt: 2, borderRadius: "8px", color: "#fff", background: "#1976d2" }}
           onClick={handleAddPayment}
         >
           {loading ? <CircularProgress size={20} /> : "Save Payment"}
