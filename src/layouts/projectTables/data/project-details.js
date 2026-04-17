@@ -342,12 +342,35 @@ function ProjectDetails() {
         </Card>
 
         {/* TABS */}
-        <Tabs value={tab} onChange={(e, v) => setTab(v)}>
-          <Tab label="Overview" />
-          <Tab label="Drawings" />
-          <Tab label="Accounts" />
-          <Tab label="Scope of Work" />
-        </Tabs>
+<Tabs
+  value={tab}
+  onChange={(e, v) => setTab(v)}
+  sx={{
+    "& .MuiTab-root": {
+      textTransform: "none",
+      fontWeight: 500,
+      color: "#555",
+      borderRadius: "8px",
+      mx: 0.5,
+      minHeight: "40px",
+    },
+
+    "& .Mui-selected": {
+      backgroundColor: "#1976d2",
+      color: "#fff !important",
+    },
+
+    "& .MuiTabs-indicator": {
+      display: "none", // ❌ hide bottom line
+    },
+  }}
+>
+  <Tab label="Overview" />
+  <Tab label="Drawings" />
+  <Tab label="Accounts" />
+  <Tab label="Scope of Work" />
+</Tabs>
+
 
         {/* OVERVIEW */}
         {tab === 0 && (
