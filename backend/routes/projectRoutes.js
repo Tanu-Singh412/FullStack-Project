@@ -50,28 +50,36 @@ router.put(
 // ✅ ADD PAYMENT
 router.post("/:id/payment", addPayment);
 
-// ================= ADD DRAWING =================
+// ================= DRAWINGS =================
+
+// ADD / UPLOAD DRAWING (create or add images by type)
 router.post(
   "/:projectId/drawing",
   upload.array("images", 10),
   addDrawing
 );
 
-// ================= GET DRAWINGS =================
+// GET ALL DRAWINGS OF PROJECT
 router.get("/:projectId/drawing", getDrawings);
 
-// ================= UPDATE DRAWING =================
+// ADD MORE IMAGES TO EXISTING DRAWING (by drawingId)
 router.put(
-  "/:drawingId",
+  "/:projectId/drawing/:drawingId",
   upload.array("images", 10),
   updateDrawing
 );
 
-// ================= DELETE DRAWING =================
-router.delete("/:drawingId", deleteDrawing);
+// DELETE ENTIRE DRAWING
+router.delete(
+  "/:projectId/drawing/:drawingId",
+  deleteDrawing
+);
 
-// ================= DELETE SINGLE IMAGE =================
-router.put("/:drawingId/image", deleteDrawingImage);
+// DELETE SINGLE IMAGE FROM DRAWING
+router.put(
+  "/:projectId/drawing/:drawingId/image",
+  deleteDrawingImage
+);
 
 // ✅ CORRECT
 router.post("/:projectId/scope", addScope);
