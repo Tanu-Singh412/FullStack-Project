@@ -43,17 +43,18 @@ if (req.files && req.files.dwgFile) {
     // =========================
     // CREATE PROJECT
     // =========================
-    const project = new Project({
-      ...req.body,
-      images,
-      dwgFile,
-      projectId, // ✅ added
-      clientId: req.body.clientId,
-       // ✅ convert advanceAmount → first payment
+  const project = new Project({
+  ...req.body,
+  totalAmount: Number(req.body.totalAmount || 0),
+  images,
+  dwgFile,
+  projectId,
+  clientId: req.body.clientId,
+
   payments: req.body.advanceAmount
     ? [{ amount: Number(req.body.advanceAmount) }]
     : [],
-    });
+});
 
     const saved = await project.save();
 

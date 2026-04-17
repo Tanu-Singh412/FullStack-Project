@@ -41,42 +41,48 @@ router.put(
 router.post("/:id/payment", addPayment);
 
 // ✅ UPLOAD DRAWINGS
-router.post(
-  "/:id/drawing",
-  upload.array("images", 50),
-  async (req, res) => {
-    try {
-      const { drawingType } = req.body;
+router.post("/:id/drawing", upload.array("images", 50), async (req, res) => {
+  try {
+    const { drawingType } = req.body;
 
-      const images = req.files.map(
-        (file) =>
-          `https://fullstack-project-1-n510.onrender.com/uploads/${file.filename}`
-      );
-
-      const field =
-        drawingType === "civil"
-          ? "civilImages"
-          : drawingType === "interior"
-          ? "interiorImages"
-          : null;
-
-      if (!field) {
-        return res.status(400).json({ message: "Invalid type" });
-      }
-
-      const project = await Project.findByIdAndUpdate(
-        req.params.id,
-        {
-          $push: { [field]: { $each: images } },
-        },
-        { new: true }
-      );
-
-      res.json(project);
-    } catch (err) {
-      res.status(500).json(err);
+    if (!req.files || req.files.length === 0) {
+      return res.status(400).json({ message: "No files uploaded" });
     }
-  }
-);
 
+    const images = req.files.map(
+      (file) =>
+        `https://fullstack-project-1-n510.onrender.com/uploads/${file.filename}`
+    );
+
+    const field =
+      drawingType === "civil"
+        ? "civilImages"
+        : drawingType === "interior"
+        ? "interiorImages"
+        : null;
+
+    if (!field) {
+      return res.status(400).json({ message: "Invalid type" });
+    }
+
+    const project = await Project.findByIdAndUpdate(
+      req.params.id,
+      {
+        $push: { [field]: { $each: images } },
+      },
+      { new: true }
+    );
+
+    if (!project) {
+      return res.status(404).json({ message: "Project not found" });
+    }
+
+    res.json(project);
+  } catch (err) {
+    console.error("DRAWING ERROR:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+  
 module.exports = router;
