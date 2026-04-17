@@ -264,6 +264,7 @@ export default function useProjectData() {
                 fontSize: "11px",
                 px: 1.5,
                 py: 0.5,
+                color: "#fff",
               }}
             >
               Details

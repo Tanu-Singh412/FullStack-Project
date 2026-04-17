@@ -59,7 +59,7 @@ function ProjectDetails() {
 
   if (!project) return <div>No Data</div>;
 
-const total = Number(project.totalAmount || 0);
+const total = Number(project?.totalAmount ?? 0);
   const paid = (project.payments || []).reduce(
     (s, p) => s + Number(p.amount),
     0
@@ -194,7 +194,7 @@ const handleAddPayment = async () => {
 
                       <Button
                         size="small"
-                        sx={{ position: "absolute", top: 10, right: 10 }}
+                        sx={{ position: "absolute", top: 10, right: 10, color: "#fff" }}
                         variant="contained"
                         onClick={() => {
                           setUploadType(type);
@@ -256,14 +256,27 @@ const handleAddPayment = async () => {
   <MDBox mt={3}>
     {/* SUMMARY CARDS */}
     <Grid container spacing={2}>
-      <Grid item xs={12} md={4}>
-        <Card sx={{ p: 3, bgcolor: "#e3f2fd", textAlign: "center" }}>
-          <MDTypography variant="caption">Total</MDTypography>
-          <MDTypography variant="h5" fontWeight="bold">
-            ₹ {total}
-          </MDTypography>
-        </Card>
-      </Grid>
+    <Grid item xs={12} md={4}>
+  <Card
+    sx={{
+      p: 3,
+      bgcolor: "#e3f2fd",
+      textAlign: "center",
+      borderRadius: "12px",
+      boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
+    }}
+  >
+    <MDTypography variant="caption">Total Amount</MDTypography>
+
+    <MDTypography
+      variant="h4"
+      fontWeight="bold"
+      sx={{ mt: 1, color: "#1976d2" }}
+    >
+      ₹ {total.toLocaleString()}
+    </MDTypography>
+  </Card>
+</Grid>
 
       <Grid item xs={12} md={4}>
         <Card sx={{ p: 3, bgcolor: "#e8f5e9", textAlign: "center" }}>
@@ -292,6 +305,7 @@ const handleAddPayment = async () => {
         borderRadius: "10px",
         textTransform: "none",
         px: 3,
+        color: "#fff",
         background: "linear-gradient(135deg,#1976d2,#42a5f5)",
       }}
       onClick={() => setShowPaymentForm(true)}
@@ -439,6 +453,7 @@ const handleAddPayment = async () => {
             position: "fixed",
             inset: 0,
             background: "rgba(0,0,0,0.6)",
+            color: "#fff",
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
