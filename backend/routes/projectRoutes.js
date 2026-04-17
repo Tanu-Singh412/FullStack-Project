@@ -52,20 +52,20 @@ router.post(
 );
 
 // ================= GET ALL DRAWINGS OF PROJECT =================
-router.get("/project/:projectId", drawingController.getDrawings);
+router.get("/project/:projectId", projectController.getDrawings);
 
 // ================= UPDATE DRAWING (add more images) =================
 router.put(
   "/:drawingId",
   upload.array("images", 10),
-  drawingController.updateDrawing
+  projectController.updateDrawing
 );
 
 // ================= DELETE DRAWING =================
-router.delete("/:drawingId", drawingController.deleteDrawing);
+router.delete("/:drawingId", projectController.deleteDrawing);
 
 // ================= DELETE SINGLE IMAGE =================
-router.put("/:drawingId/image", drawingController.deleteDrawingImage);
+router.put("/:drawingId/image", projectController.deleteDrawingImage);
 
 // ✅ CORRECT
 router.post("/:projectId/scope", addScope);
