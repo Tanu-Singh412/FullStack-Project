@@ -85,7 +85,8 @@ router.post("/:id/drawing", upload.array("images", 50), async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 });
-router.post("/projects/:id/scope", addScope);
-router.get("/projects/:id/scope", getScope);
+// ✅ CORRECT
+router.post("/:id/scope", addScope);
+router.get("/:id/scope", getScope);
 
 module.exports = router;

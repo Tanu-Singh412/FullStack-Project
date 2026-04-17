@@ -198,7 +198,21 @@ exports.addScope = async (req, res) => {
   try {
     const project = await Project.findById(req.params.id);
 
-    project.scope.push(req.body);
+    if (!project) {
+      return res.status(404).json({ msg: "Project not found" });
+    }
+
+    const scopeItem = {
+      ...req.body,
+      area: Number(req.body.area || 0),
+      floors: Number(req.body.floors || 0),
+      revisions: Number(req.body.revisions || 0),
+      timeline: Number(req.body.timeline || 0),
+      costPerSqft: Number(req.body.costPerSqft || 0),
+      lumpSum: Number(req.body.lumpSum || 0),
+    };
+
+    project.scope.push(scopeItem);
 
     await project.save();
 
