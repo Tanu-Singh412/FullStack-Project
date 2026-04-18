@@ -79,6 +79,7 @@ function VendorHome() {
                     background: "#fff",
                     color: "#1976d2",
                     fontWeight: "600",
+                    color : "#fff"
                   }}
                 >
                   + Add Category
@@ -95,9 +96,8 @@ function VendorHome() {
                           p: 3,
                           cursor: "pointer",
                           textAlign: "center",
-                          "&:hover": {
-                            transform: "translateY(-5px)",
-                          },
+                          color:"#fff"
+                         
                         }}
                         onClick={() =>
                           navigate(`/vendor/category/${c._id}`)
