@@ -62,6 +62,15 @@ const getVendorsByMaterial = async (req, res) => {
   }
 };
 
+const getVendorById = async (req, res) => {
+  try {
+    const vendor = await Vendor.findById(req.params.id);
+    res.json({ success: true, data: vendor });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
 // ✅ EXPORT CORRECT WAY
 module.exports = {
   createVendor,
@@ -69,4 +78,5 @@ module.exports = {
   updateVendor,
   deleteVendor,
   getVendorsByMaterial,
+  getVendorById,
 };

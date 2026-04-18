@@ -8,13 +8,14 @@ const {
   deleteVendor,
   getVendorsByMaterial,
 } = require("../controllers/vendorController");
+router.get("/by-material", getVendorsByMaterial);
 
+router.get("/:id", getVendorById);
 router.post("/", createVendor);
 router.get("/", getVendors);
 router.put("/:id", updateVendor);
 router.delete("/:id", deleteVendor);
 
 // 🔥 NEW FEATURE
-router.get("/by-material", getVendorsByMaterial);
 
 module.exports = router;
