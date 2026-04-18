@@ -2,7 +2,9 @@ import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-
+import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
+import DashboardNavbar from "examples/Navbars/DashboardNavbar";
+import Footer from "examples/Footer";
 function VendorDetail() {
   const { id } = useParams();
   const [vendor, setVendor] = useState(null);
