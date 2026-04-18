@@ -295,33 +295,31 @@ exports.deleteScope = async (req, res) => {
 // ================= ADD / UPLOAD DRAWING =================
 exports.addDrawing = async (req, res) => {
   try {
-    const { projectId } = req.params;   // ✅ FIX
+    const { projectId } = req.params;
     const { type } = req.body;
-
-    if (!projectId || !type) {
-      return res.status(400).json({ msg: "projectId & type required" });
-    }
 
     const images = req.files.map(
       (f) =>
-        `https://fullstack-project-1-n510.onrender.com/uploads/${f.filename}`
+        "https://fullstack-project-1-n510.onrender.com/uploads/" + f.filename
     );
 
-    let drawing = await Drawing.findOne({ projectId, type });
+    const project = await Project.findById(projectId);
+    if (!project) return res.status(404).json({ msg: "Project not found" });
 
-    if (!drawing) {
-      drawing = new Drawing({
-        projectId,
-        type,
-        images,
-      });
-    } else {
-      drawing.images.push(...images);
+    if (type === "civil") {
+      project.civilImages.push(...images);
     }
 
-    await drawing.save();
+    if (type === "interior") {
+      project.interiorImages.push(...images);
+    }
 
-    res.json(drawing);
+    await project.save();
+
+    res.json({
+      civilImages: project.civilImages,
+      interiorImages: project.interiorImages,
+    });
   } catch (err) {
     res.status(500).json(err);
   }
@@ -330,24 +328,27 @@ exports.addDrawing = async (req, res) => {
 // ================= GET ALL DRAWINGS =================
 exports.getDrawings = async (req, res) => {
   try {
-    const data = await Drawing.find({
-      projectId: req.params.projectId,
-    });
+    const project = await Project.findById(req.params.projectId);
 
-    res.json(data);
+    if (!project) return res.status(404).json({ msg: "Not found" });
+
+    res.json({
+      civil: project.civilImages || [],
+      interior: project.interiorImages || [],
+    });
   } catch (err) {
     res.status(500).json(err);
   }
 };
-
 // ================= UPDATE (ADD MORE IMAGES) =================
 exports.updateDrawing = async (req, res) => {
   try {
-    const { drawingId } = req.params;
+    const { projectId } = req.params;
+    const { type } = req.body; // civil / interior
 
-    const drawing = await Drawing.findById(drawingId);
-    if (!drawing) {
-      return res.status(404).json({ msg: "Drawing not found" });
+    const project = await Project.findById(projectId);
+    if (!project) {
+      return res.status(404).json({ msg: "Project not found" });
     }
 
     const newImages = (req.files || []).map(
@@ -355,11 +356,21 @@ exports.updateDrawing = async (req, res) => {
         "https://fullstack-project-1-n510.onrender.com/uploads/" + f.filename
     );
 
-    drawing.images.push(...newImages);
+    if (type === "civil") {
+      project.civilImages.push(...newImages);
+    }
 
-    await drawing.save();
+    if (type === "interior") {
+      project.interiorImages.push(...newImages);
+    }
 
-    res.json(drawing);
+    await project.save();
+
+    res.json({
+      msg: "Images updated",
+      civilImages: project.civilImages,
+      interiorImages: project.interiorImages,
+    });
   } catch (err) {
     res.status(500).json(err);
   }
@@ -368,32 +379,59 @@ exports.updateDrawing = async (req, res) => {
 // ================= DELETE DRAWING =================
 exports.deleteDrawing = async (req, res) => {
   try {
-    const { drawingId } = req.params;
+    const { projectId } = req.params;
+    const { type } = req.body;
 
-    await Drawing.findByIdAndDelete(drawingId);
+    const project = await Project.findById(projectId);
+    if (!project) {
+      return res.status(404).json({ msg: "Project not found" });
+    }
+
+    if (type === "civil") {
+      project.civilImages = [];
+    }
+
+    if (type === "interior") {
+      project.interiorImages = [];
+    }
+
+    await project.save();
 
     res.json({ msg: "Drawing deleted" });
   } catch (err) {
     res.status(500).json(err);
   }
 };
-
 // ================= DELETE SINGLE IMAGE =================
 exports.deleteDrawingImage = async (req, res) => {
   try {
-    const { drawingId } = req.params;
-    const { imageUrl } = req.body;
+    const { projectId } = req.params;
+    const { type, imageUrl } = req.body;
 
-    const drawing = await Drawing.findById(drawingId);
-    if (!drawing) {
-      return res.status(404).json({ msg: "Drawing not found" });
+    const project = await Project.findById(projectId);
+    if (!project) {
+      return res.status(404).json({ msg: "Project not found" });
     }
 
-    drawing.images = drawing.images.filter((img) => img !== imageUrl);
+    if (type === "civil") {
+      project.civilImages = project.civilImages.filter(
+        (img) => img !== imageUrl
+      );
+    }
 
-    await drawing.save();
+    if (type === "interior") {
+      project.interiorImages = project.interiorImages.filter(
+        (img) => img !== imageUrl
+      );
+    }
 
-    res.json(drawing);
+    await project.save();
+
+    res.json({
+      msg: "Image deleted",
+      civilImages: project.civilImages,
+      interiorImages: project.interiorImages,
+    });
   } catch (err) {
     res.status(500).json(err);
   }
