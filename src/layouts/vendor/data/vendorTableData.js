@@ -1,42 +1,56 @@
-import MDBox from "components/MDBox";
-import MDTypography from "components/MDTypography";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom"; 
-function VendorDetail() {
-  const { id } = useParams();
-  const [vendor, setVendor] = useState(null);
+import { useNavigate } from "react-router-dom";
+
+const Base_API = "https://fullstack-project-1-n510.onrender.com/api";
+
+function useVendorTableData() {
+  const [rows, setRows] = useState([]); // ✅ IMPORTANT
+  const navigate = useNavigate();
 
   useEffect(() => {
-    fetch(`https://fullstack-project-1-n510.onrender.com/api/vendors/${id}`)
+    fetch(`${Base_API}/vendors`)
       .then((res) => res.json())
-      .then((res) => setVendor(res.data))
-      .catch((err) => console.error(err));
-  }, [id]);
+      .then((data) => {
+        console.log("VENDORS API:", data);
 
-  if (!vendor) return <p>Loading...</p>;
+        // ✅ adjust based on your API response
+        const vendors = data.data || data;
 
-  return (
-    <MDBox p={3}>
-      <MDTypography variant="h4">{vendor.vendorName}</MDTypography>
+        const formattedRows = vendors.map((v) => ({
+          vendorName: v.vendorName,
+          phone: v.phone,
+          email: v.email,
+          company: v.company,
 
-      <p>Phone: {vendor.phone}</p>
-      <p>Email: {vendor.email}</p>
-      <p>Company: {vendor.company}</p>
-      <p>GST: {vendor.gst}</p>
+          action: (
+            <button onClick={() => navigate(`/vendor/${v._id}`)}>
+              View
+            </button>
+          ),
+        }));
 
-      <h3>Materials</h3>
+        setRows(formattedRows);
+      })
+      .catch((err) => {
+        console.error("Vendor fetch error:", err);
+        setRows([]); // ✅ fallback
+      });
+  }, []);
 
-      {vendor.materials?.length > 0 ? (
-        vendor.materials.map((m, i) => (
-          <p key={i}>
-            {m.materialName} - ₹{m.rate}
-          </p>
-        ))
-      ) : (
-        <p>No materials</p>
-      )}
-    </MDBox>
-  );
+  // ✅ TABLE COLUMNS
+  const columns = [
+    { Header: "Vendor Name", accessor: "vendorName" },
+    { Header: "Phone", accessor: "phone" },
+    { Header: "Email", accessor: "email" },
+    { Header: "Company", accessor: "company" },
+    { Header: "Action", accessor: "action" },
+  ];
+
+  return {
+    columns,
+    rows,
+    dialog: null, // optional
+  };
 }
 
-export default VendorDetail;
+export default useVendorTableData;

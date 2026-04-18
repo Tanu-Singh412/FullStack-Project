@@ -15,7 +15,12 @@ import DataTable from "examples/Tables/DataTable";
 function Vendors() {
   const navigate = useNavigate();
 
-  
+  const tableData = useVendorTableData();
+
+  if (!tableData) return <p>Loading...</p>;
+
+  const { columns, rows, dialog } = tableData;
+
   return (
     <DashboardLayout>
       <DashboardNavbar />
