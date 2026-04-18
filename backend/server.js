@@ -6,8 +6,7 @@ const path = require("path");
 const clientRoutes = require("./routes/clientRoutes");
 const projectRoutes = require("./routes/projectRoutes");
 const vendorRoutes = require("./routes/vendorRoutes");
-
-
+const categoryRoutes = require("./routes/categoryRoutes")
 const app = express();
 
 // Connect DB
@@ -25,6 +24,8 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use("/api/clients", clientRoutes);
 app.use("/api/projects", projectRoutes); 
 app.use("/api/vendors", vendorRoutes);
+app.use("/api/vendor-categories", categoryRoutes);
+
 
 // Test route
 app.get("/", (req, res) => {

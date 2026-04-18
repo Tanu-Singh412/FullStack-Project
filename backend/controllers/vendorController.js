@@ -1,100 +1,67 @@
-const Vendor = require("../models/vendor"); 
+const Vendor = require("../models/Vendor");
 
-const createVendor = async (req, res) => {
+// ADD vendor
+exports.addVendor = async (req, res) => {
   try {
-    if (!req.body.materialCategory) {
-      return res.status(400).json({ error: "Material category required" });
+    const vendor = new Vendor(req.body);
+    await vendor.save();
+    res.json(vendor);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// GET vendors (with category filter)
+exports.getVendors = async (req, res) => {
+  try {
+    const { category } = req.query;
+
+    let filter = {};
+    if (category) filter.category = category;
+
+    const data = await Vendor.find(filter);
+    res.json({ data });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// GET single vendor
+exports.getVendorById = async (req, res) => {
+  try {
+    const data = await Vendor.findById(req.params.id);
+
+    if (!data) {
+      return res.status(404).json({ message: "Vendor not found" });
     }
 
-    const vendor = await Vendor.create(req.body);
-    res.json({ success: true, data: vendor });
+    res.json({ data });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
 
-// GET ALL
-const getVendors = async (req, res) => {
+// UPDATE vendor
+exports.updateVendor = async (req, res) => {
   try {
-    const vendors = await Vendor.find();
-    res.json({ success: true, data: vendors });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-};
-
-// UPDATE
-const updateVendor = async (req, res) => {
-  try {
-    const vendor = await Vendor.findByIdAndUpdate(
+    const updated = await Vendor.findByIdAndUpdate(
       req.params.id,
       req.body,
       { new: true }
     );
 
-    if (!vendor) {
-      return res.status(404).json({ error: "Vendor not found" });
-    }
-
-    res.json({ success: true, data: vendor });
+    res.json(updated);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
 
-// DELETE
-const deleteVendor = async (req, res) => {
+// DELETE vendor
+exports.deleteVendor = async (req, res) => {
   try {
-    const vendor = await Vendor.findByIdAndDelete(req.params.id);
-
-    if (!vendor) {
-      return res.status(404).json({ error: "Vendor not found" });
-    }
-
-    res.json({ success: true, message: "Deleted" });
+    await Vendor.findByIdAndDelete(req.params.id);
+    res.json({ message: "Vendor deleted" });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
-};
-
-// 🔥 GROUP BY MATERIAL
-const getVendorsByMaterial = async (req, res) => {
-  try {
-    const data = await Vendor.aggregate([
-      {
-        $group: {
-          _id: "$materialCategory",
-          vendors: { $push: "$$ROOT" },
-        },
-      },
-    ]);
-
-    res.json({ success: true, data });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-};
-
-const getVendorById = async (req, res) => {
-  try {
-    const vendor = await Vendor.findById(req.params.id);
-
-    if (!vendor) {
-      return res.status(404).json({ error: "Vendor not found" });
-    }
-
-    res.json({ success: true, data: vendor });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-};
-
-// ✅ EXPORT CORRECT WAY
-module.exports = {
-  createVendor,
-  getVendors,
-  updateVendor,
-  deleteVendor,
-  getVendorsByMaterial,
-  getVendorById,
 };

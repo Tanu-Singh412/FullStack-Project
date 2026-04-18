@@ -2,20 +2,16 @@ const express = require("express");
 const router = express.Router();
 
 const {
-  createVendor,
+  addVendor,
   getVendors,
+  getVendorById,
   updateVendor,
   deleteVendor,
-  getVendorsByMaterial,
-  getVendorById,
 } = require("../controllers/vendorController");
 
-// ✅ ORDER IMPORTANT
-router.get("/by-material", getVendorsByMaterial);
-router.get("/:id", getVendorById);
-
+router.post("/", addVendor);
 router.get("/", getVendors);
-router.post("/", createVendor);
+router.get("/:id", getVendorById);
 router.put("/:id", updateVendor);
 router.delete("/:id", deleteVendor);
 
