@@ -1,4 +1,6 @@
-const router = require("express").Router();
+const express = require("express");
+const router = express.Router();
+
 const {
   createVendor,
   getVendors,
@@ -6,7 +8,6 @@ const {
   deleteVendor,
   getVendorsByMaterial,
 } = require("../controllers/vendorController.js");
-
 
 router.post("/", createVendor);
 router.get("/", getVendors);
@@ -16,4 +17,4 @@ router.delete("/:id", deleteVendor);
 // 🔥 NEW FEATURE
 router.get("/by-material", getVendorsByMaterial);
 
-export default router;
+module.exports = router;
