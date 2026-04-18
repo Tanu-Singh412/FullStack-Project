@@ -55,7 +55,7 @@ function VendorList() {
                 {/* RIGHT */}
                 <Button
                   variant="contained"
-                  onClick={() => navigate("/vendor/add")}
+                  onClick={() => navigate(`/add-vendor/${category}`)}
                   sx={{
                     background: "#fff",
                     color: "#1976d2",

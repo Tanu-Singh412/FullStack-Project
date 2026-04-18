@@ -117,13 +117,13 @@ const routes = [
   },
 
   // ✅ ADD VENDOR
-  {
-    type: "route",
-    name: "Add Vendor",
-    key: "add-vendor",
-    route: "/vendor/add",
-    component: <AddVendor />,
-  },
+ {
+  type: "route",
+  name: "Add Vendor",
+  key: "add-vendor",
+  route: "/add-vendor/:categoryId",
+  component: <AddVendor />,
+},
 
 ];
 
