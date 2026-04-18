@@ -7,7 +7,15 @@ const vendorSchema = new mongoose.Schema({
   address: String,
   company: String,
   gst: String,
-  category: String, 
+  status: String,
+  note: String,
+
+  category: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Category",
+    required: true,
+  },
+
   materials: [
     {
       materialName: String,

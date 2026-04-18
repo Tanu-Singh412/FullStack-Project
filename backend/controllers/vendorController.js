@@ -16,10 +16,8 @@ exports.getVendors = async (req, res) => {
   try {
     const { category } = req.query;
 
-    let filter = {};
-    if (category) filter.category = category;
+    const data = await Vendor.find({ category });
 
-    const data = await Vendor.find(filter);
     res.json({ data });
   } catch (err) {
     res.status(500).json({ error: err.message });
