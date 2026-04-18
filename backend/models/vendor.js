@@ -20,13 +20,12 @@ const vendorSchema = new mongoose.Schema(
 
     materials: [materialSchema],
 
-    // 🔥 IMPORTANT: for grouping
     materialCategory: {
-      type: String, // e.g. Steel, Cement, Wood
+      type: String,
       required: true,
     },
   },
   { timestamps: true }
 );
 
-export default mongoose.model("Vendor", vendorSchema);
+module.exports = mongoose.model("Vendor", vendorSchema);

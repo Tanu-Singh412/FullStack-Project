@@ -1,7 +1,7 @@
-const Vendor = requires ("../models/vendor.js");
+const Vendor = require("../models/Vendor"); // ✅ FIXED
 
 // CREATE
-export const createVendor = async (req, res) => {
+const createVendor = async (req, res) => {
   try {
     const vendor = await Vendor.create(req.body);
     res.json({ success: true, data: vendor });
@@ -11,7 +11,7 @@ export const createVendor = async (req, res) => {
 };
 
 // GET ALL
-export const getVendors = async (req, res) => {
+const getVendors = async (req, res) => {
   try {
     const vendors = await Vendor.find();
     res.json({ success: true, data: vendors });
@@ -21,7 +21,7 @@ export const getVendors = async (req, res) => {
 };
 
 // UPDATE
-export const updateVendor = async (req, res) => {
+const updateVendor = async (req, res) => {
   try {
     const vendor = await Vendor.findByIdAndUpdate(
       req.params.id,
@@ -35,7 +35,7 @@ export const updateVendor = async (req, res) => {
 };
 
 // DELETE
-export const deleteVendor = async (req, res) => {
+const deleteVendor = async (req, res) => {
   try {
     await Vendor.findByIdAndDelete(req.params.id);
     res.json({ success: true, message: "Deleted" });
@@ -44,8 +44,8 @@ export const deleteVendor = async (req, res) => {
   }
 };
 
-// 🔥 GROUP BY MATERIAL CATEGORY (IMPORTANT FEATURE)
-export const getVendorsByMaterial = async (req, res) => {
+// 🔥 GROUP BY MATERIAL
+const getVendorsByMaterial = async (req, res) => {
   try {
     const data = await Vendor.aggregate([
       {
@@ -60,4 +60,13 @@ export const getVendorsByMaterial = async (req, res) => {
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
+};
+
+// ✅ EXPORT CORRECT WAY
+module.exports = {
+  createVendor,
+  getVendors,
+  updateVendor,
+  deleteVendor,
+  getVendorsByMaterial,
 };
