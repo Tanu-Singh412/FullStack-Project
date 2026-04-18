@@ -38,11 +38,7 @@ function VendorHome() {
                 <MDTypography variant="h6">{cat.name}</MDTypography>
               </Card>
             </Grid>
-             <Grid item xs={6} md={3} key={i}>
-             <Button onClick={() => navigate("/add-vendor")}>
-  + Add Vendor
-</Button>
-            </Grid>
+            
           ))}
         </Grid>
       </MDBox>
