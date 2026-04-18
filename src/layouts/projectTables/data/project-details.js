@@ -64,7 +64,7 @@ function ProjectDetails() {
   const [openUpload, setOpenUpload] = useState(false);
   const [uploadType, setUploadType] = useState(null);
   const [files, setFiles] = useState([]);
-const [drawings, setDrawings] = useState([]);
+  const [drawings, setDrawings] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const [showPaymentForm, setShowPaymentForm] = useState(false);
@@ -110,7 +110,7 @@ const fetchDrawings = async () => {
     `${Base_API}/projects/${project._id}/drawing`
   );
   const data = await res.json();
-  setDrawings(data);
+  setDrawings(data || []);
 };
 useEffect(() => {
   if (project?._id) fetchDrawings();
@@ -118,23 +118,26 @@ useEffect(() => {
 const handleUpload = async () => {
   if (!files.length) return;
 
- const formData = new FormData();
+  const formData = new FormData();
 
-[...files].forEach((f) => formData.append("images", f));
+  [...files].forEach((f) => {
+    formData.append("images", f);
+  });
 
-formData.append("projectId", project._id);
-formData.append("type", uploadType);
+  formData.append("type", uploadType);
 
-await fetch(`${Base_API}/projects/drawing`, {
-  method: "POST",
-  body: formData,
-});
+  await fetch(
+    `${Base_API}/projects/${project._id}/drawing`,
+    {
+      method: "POST",
+      body: formData,
+    }
+  );
 
-  await fetchDrawings();   // ✅ IMPORTANT
+  await fetchDrawings();
   setOpenUpload(false);
+  setFiles([]);
 };
-
-  // ================= USE EFFECTS =================
 // ================= USE EFFECTS =================
 
 useEffect(() => {
@@ -194,7 +197,7 @@ const handleDeleteImage = async (imgUrl, drawingId) => {
 };
 
   // ================= LIGHTBOX =================
-  const images =
+const images =
   drawings.find((d) => d.type === drawingType)?.images || [];
 
   const openImage = (img, index) => {
@@ -394,86 +397,83 @@ const handleDeleteImage = async (imgUrl, drawingId) => {
         )}
 
         {/* DRAWINGS */}
-        {tab === 1 && (
-          <MDBox mt={3}>
-            {!drawingType ? (
-              <Grid container spacing={3}>
-                {["civil", "interior"].map((type) => (
-                  <Grid item xs={12} md={6} key={type}>
-                    <Card sx={{ p: 3, position: "relative" }}>
-                      <MDTypography variant="h5">
-                        {type === "civil"
-                          ? "Civil Drawings"
-                          : "Interior Drawings"}
-                      </MDTypography>
+{tab === 1 && (
+  <MDBox mt={3}>
+    {!drawingType ? (
+      <Grid container spacing={3}>
+        {["civil", "interior"].map((type) => (
+          <Grid item xs={12} md={6} key={type}>
+            <Card sx={{ p: 3, position: "relative" }}>
+              <MDTypography variant="h5">
+                {type === "civil" ? "Civil Drawings" : "Interior Drawings"}
+              </MDTypography>
 
-                      <Button
-                        size="small"
-                        sx={{
-                          position: "absolute",
-                          top: 10,
-                          right: 10,
-                          color: "#fff",
-                        }}
-                        variant="contained"
-                        onClick={() => {
-                          setUploadType(type);
-                          setOpenUpload(true);
-                        }}
-                      >
-                        Upload
-                      </Button>
+              <Button
+                size="small"
+                sx={{
+                  position: "absolute",
+                  top: 10,
+                  right: 10,
+                }}
+                variant="contained"
+                onClick={() => {
+                  setUploadType(type);
+                  setOpenUpload(true);
+                }}
+              >
+                Upload
+              </Button>
 
-                      <MDBox mt={2} onClick={() => setDrawingType(type)}>
-                        View Images →
-                      </MDBox>
-                    </Card>
-                  </Grid>
-                ))}
+              <MDBox mt={2} onClick={() => setDrawingType(type)}>
+                View Images →
+              </MDBox>
+            </Card>
+          </Grid>
+        ))}
+      </Grid>
+    ) : (
+      <>
+        <Button onClick={() => setDrawingType(null)}>⬅ Back</Button>
+
+        <Grid container spacing={3} mt={1}>
+          {images.map((img, i) => {
+            const drawing = drawings.find(
+              (d) => d.type === drawingType
+            );
+
+            return (
+              <Grid item xs={12} sm={6} md={3} key={i}>
+                <Card sx={{ p: 1 }}>
+                  <img
+                    src={img}
+                    style={{
+                      width: "100%",
+                      height: 180,
+                      objectFit: "cover",
+                      borderRadius: 10,
+                      cursor: "pointer",
+                    }}
+                  />
+
+                  <Button
+                    size="small"
+                    color="error"
+                    fullWidth
+                    onClick={() =>
+                      handleDeleteImage(img, drawing._id)
+                    }
+                  >
+                    Delete
+                  </Button>
+                </Card>
               </Grid>
-            ) : (
-              <>
-                <Button onClick={() => setDrawingType(null)}>⬅ Back</Button>
-
-                <Grid container spacing={3} mt={1}>
-                  {images?.map((img, i) => (
-                    <Grid item xs={12} sm={6} md={3} key={i}>
-                      <Card sx={{ position: "relative", p: 1 }}>
-                        <img
-                          src={img}
-                          alt=""
-                          loading="lazy"
-                          onError={(e) => {
-                            e.target.src =
-                              "https://via.placeholder.com/300x200?text=No+Image";
-                          }}
-                          style={{
-                            width: "100%",
-                            height: 180,
-                            objectFit: "cover",
-                            borderRadius: 10,
-                            cursor: "pointer",
-                            transition: "0.3s",
-                          }}
-                          onClick={() => openImage(img, i)}
-                        />
-                        <Button
-                          size="small"
-                          color="error"
-                          fullWidth
-                          onClick={() => handleDeleteImage(img, drawingType)}
-                        >
-                          Delete
-                        </Button>
-                      </Card>
-                    </Grid>
-                  ))}
-                </Grid>
-              </>
-            )}
-          </MDBox>
-        )}
-
+            );
+          })}
+        </Grid>
+      </>
+    )}
+  </MDBox>
+)}
         {/* ACCOUNTS */}
         {tab === 2 && (
           <MDBox mt={3}>
@@ -929,32 +929,35 @@ const handleDeleteImage = async (imgUrl, drawingId) => {
       )}
 
       {/* UPLOAD MODAL */}
-      {openUpload && (
-        <MDBox
-          sx={{
-            position: "fixed",
-            inset: 0,
-            background: "rgba(0,0,0,0.6)",
-            color: "#fff",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            zIndex: 9999,
-          }}
-        >
-          <Card sx={{ p: 3 }}>
-            <input
-              type="file"
-              multiple
-              onChange={(e) => setFiles(e.target.files)}
-            />
-            <Button onClick={handleUpload}>
-              {loading ? <CircularProgress size={20} /> : "Upload"}
-            </Button>
-          </Card>
-        </MDBox>
-      )}
+{openUpload && (
+  <MDBox
+    sx={{
+      position: "fixed",
+      inset: 0,
+      background: "rgba(0,0,0,0.6)",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      zIndex: 9999,
+    }}
+  >
+    <Card sx={{ p: 3 }}>
+      <input
+        type="file"
+        multiple
+        onChange={(e) => setFiles(e.target.files)}
+      />
 
+      <Button
+        onClick={handleUpload}
+        sx={{ mt: 2 }}
+        variant="contained"
+      >
+        {loading ? "Uploading..." : "Upload"}
+      </Button>
+    </Card>
+  </MDBox>
+)}
       <Footer />
     </DashboardLayout>
   );
