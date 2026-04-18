@@ -298,13 +298,13 @@ exports.addDrawing = async (req, res) => {
     const { projectId } = req.params;
     const { type } = req.body;
 
-    const images = req.files.map(
+    const project = await Project.findById(projectId);
+    if (!project) return res.status(404).json({ msg: "Project not found" });
+
+    const images = (req.files || []).map(
       (f) =>
         "https://fullstack-project-1-n510.onrender.com/uploads/" + f.filename
     );
-
-    const project = await Project.findById(projectId);
-    if (!project) return res.status(404).json({ msg: "Project not found" });
 
     if (type === "civil") {
       project.civilImages.push(...images);
@@ -317,10 +317,11 @@ exports.addDrawing = async (req, res) => {
     await project.save();
 
     res.json({
-      civilImages: project.civilImages,
-      interiorImages: project.interiorImages,
+      msg: "Uploaded",
     });
+
   } catch (err) {
+    console.log(err);
     res.status(500).json(err);
   }
 };
@@ -332,10 +333,17 @@ exports.getDrawings = async (req, res) => {
 
     if (!project) return res.status(404).json({ msg: "Not found" });
 
-    res.json({
-      civil: project.civilImages || [],
-      interior: project.interiorImages || [],
-    });
+    res.json([
+      {
+        type: "civil",
+        images: project.civilImages || [],
+      },
+      {
+        type: "interior",
+        images: project.interiorImages || [],
+      },
+    ]);
+
   } catch (err) {
     res.status(500).json(err);
   }
@@ -344,38 +352,27 @@ exports.getDrawings = async (req, res) => {
 exports.updateDrawing = async (req, res) => {
   try {
     const { projectId } = req.params;
-    const { type } = req.body; // civil / interior
+    const { type } = req.body;
 
     const project = await Project.findById(projectId);
-    if (!project) {
-      return res.status(404).json({ msg: "Project not found" });
-    }
+    if (!project) return res.status(404).json({ msg: "Not found" });
 
     const newImages = (req.files || []).map(
       (f) =>
         "https://fullstack-project-1-n510.onrender.com/uploads/" + f.filename
     );
 
-    if (type === "civil") {
-      project.civilImages.push(...newImages);
-    }
-
-    if (type === "interior") {
-      project.interiorImages.push(...newImages);
-    }
+    if (type === "civil") project.civilImages.push(...newImages);
+    if (type === "interior") project.interiorImages.push(...newImages);
 
     await project.save();
 
-    res.json({
-      msg: "Images updated",
-      civilImages: project.civilImages,
-      interiorImages: project.interiorImages,
-    });
+    res.json({ msg: "Updated" });
+
   } catch (err) {
     res.status(500).json(err);
   }
 };
-
 // ================= DELETE DRAWING =================
 exports.deleteDrawing = async (req, res) => {
   try {
@@ -406,32 +403,23 @@ exports.deleteDrawing = async (req, res) => {
 exports.deleteDrawingImage = async (req, res) => {
   try {
     const { projectId } = req.params;
-    const { type, imageUrl } = req.body;
+    const { imageUrl } = req.body;
 
     const project = await Project.findById(projectId);
-    if (!project) {
-      return res.status(404).json({ msg: "Project not found" });
-    }
+    if (!project) return res.status(404).json({ msg: "Project not found" });
 
-    if (type === "civil") {
-      project.civilImages = project.civilImages.filter(
-        (img) => img !== imageUrl
-      );
-    }
+    project.civilImages = project.civilImages.filter(
+      (img) => img !== imageUrl
+    );
 
-    if (type === "interior") {
-      project.interiorImages = project.interiorImages.filter(
-        (img) => img !== imageUrl
-      );
-    }
+    project.interiorImages = project.interiorImages.filter(
+      (img) => img !== imageUrl
+    );
 
     await project.save();
 
-    res.json({
-      msg: "Image deleted",
-      civilImages: project.civilImages,
-      interiorImages: project.interiorImages,
-    });
+    res.json({ msg: "Deleted" });
+
   } catch (err) {
     res.status(500).json(err);
   }
