@@ -95,7 +95,7 @@ const routes = [
   key: "project-details",
   route: "/project-details",
   component: <ProjectDetails />,
-}
+},
 
 {
   type: "route",
