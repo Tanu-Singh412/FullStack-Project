@@ -1,4 +1,4 @@
-const Vendor = require("../models/Vendor");
+const Vendor = require("../models/vendor");
 
 // ADD vendor
 exports.addVendor = async (req, res) => {
