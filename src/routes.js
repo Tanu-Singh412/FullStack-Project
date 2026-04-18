@@ -86,38 +86,44 @@ const routes = [
   component: <ProjectDetails />,
 },
 
-{
-  type: "collapse",
-  name: "Vendor",
-  key: "vendor",
-  icon: <Icon fontSize="small">store</Icon>,
-  route: "/vendor",
-  component: <VendorHome />, // ✅ MAIN ENTRY
-},
+,
 
-{
-  type: "route",
-  name: "Material Vendor",
-  key: "material-vendor",
-  route: "/material-vendor",
-  component: <MaterialVendor />,
-},
 
-{
-  type: "route",
-  name: "Vendor Detail",
-  key: "vendor-detail",
-  route: "/vendor/:id",
-  component: <VendorDetail />,
-},
+  {
+    type: "collapse",
+    name: "Vendor",
+    key: "vendor",
+    icon: <Icon fontSize="small">store</Icon>,
+    route: "/vendor",
+    component: <VendorHome />, // ✅ Categories Page
+  },
 
-{
-  type: "route",
-  name: "Add Vendor",
-  key: "add-vendor",
-  route: "/add-vendor",
-  component: <AddVendor />,
-},
+  // ✅ CATEGORY → ALL VENDORS
+  {
+    type: "route",
+    name: "Vendor Category",
+    key: "vendor-category",
+    route: "/vendor/category/:categoryId",
+    component: <MaterialVendor />, // reuse component
+  },
+
+  // ✅ SINGLE VENDOR DETAIL
+  {
+    type: "route",
+    name: "Vendor Detail",
+    key: "vendor-detail",
+    route: "/vendor/:id",
+    component: <VendorDetail />,
+  },
+
+  // ✅ ADD VENDOR
+  {
+    type: "route",
+    name: "Add Vendor",
+    key: "add-vendor",
+    route: "/vendor/add",
+    component: <AddVendor />,
+  },
 
 ];
 
