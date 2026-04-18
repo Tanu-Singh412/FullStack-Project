@@ -10,32 +10,23 @@ function MaterialVendor() {
   const [data, setData] = useState([]);
   const navigate = useNavigate();
 
-useEffect(() => {
-  fetch(`https://fullstack-project-1-n510.onrender.com/api/vendors/${id}`)
-    .then((res) => {
-      if (!res.ok) throw new Error("Vendor not found");
-      return res.json();
-    })
-    .then((res) => setVendor(res.data))
-    .catch((err) => {
-      console.error(err);
-      setVendor(null);
-    });
-}, [id]);
+  useEffect(() => {
+    fetch("https://fullstack-project-1-n510.onrender.com/api/vendors/by-material")
+      .then((res) => res.json())
+      .then((res) => setData(res.data))
+      .catch((err) => console.error(err));
+  }, []);
 
   return (
     <MDBox p={3}>
       <Grid container spacing={3}>
         {data.map((group, index) => (
           <Grid item xs={12} md={4} key={index}>
-            <Card sx={{ p: 2, cursor: "pointer" }}>
-              
-              {/* MATERIAL NAME */}
+            <Card sx={{ p: 2 }}>
               <MDTypography variant="h6">
                 {group._id || "Uncategorized"}
               </MDTypography>
 
-              {/* VENDORS LIST */}
               {group.vendors.map((v) => (
                 <MDBox
                   key={v._id}
@@ -46,7 +37,6 @@ useEffect(() => {
                     border: "1px solid #ddd",
                     borderRadius: "6px",
                     cursor: "pointer",
-                    "&:hover": { background: "#f5f5f5" },
                   }}
                 >
                   <MDTypography fontSize="14px">

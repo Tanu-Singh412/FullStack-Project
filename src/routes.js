@@ -4,10 +4,12 @@ import ProjectTables from "layouts/projectTables";
 import Projects from "layouts/project";
 import Add_clients from "layouts/Client/add_client";
 import Billing from "layouts/billing";
-import Vendor from "layouts/vendor";
+import Vendors from "layouts/vendor";
 import AddVendor from "layouts/vendor/add-vendor";
+import VendorDetail from "layouts/vendor/vendor-detail";
 import SignIn from "layouts/authentication/sign-in";
   import ProjectDetails from "layouts/projectTables/data/project-details";
+import MaterialVendor from "layouts/vendor/material-vendor";
 
 import Icon from "@mui/material/Icon";
 
@@ -81,13 +83,7 @@ const routes = [
     route: "/vendor",
     component: <Vendor />,
   },
-  {
-    type: "route", // 👈 IMPORTANT (not collapse)
-    name: "Add Vendor",
-    key: "add-vendor",
-    route: "/add-vendor",
-    component: <AddVendor />,
-  },
+
 
 {
   type: "route",
@@ -98,12 +94,34 @@ const routes = [
 },
 
 {
+  type: "collapse",
+  name: "Vendor",
+  key: "vendor",
+  route: "/vendor",
+  component: <Vendors />,
+},
+{
   type: "route",
   name: "Vendor Detail",
   key: "vendor-detail",
   route: "/vendor/:id",
   component: <VendorDetail />,
-}
+},
+{
+  type: "route",
+  name: "Material Vendor",
+  key: "material-vendor",
+  route: "/material-vendor",
+  component: <MaterialVendor />,
+},
+{
+  type: "route",
+  name: "Add Vendor",
+  key: "add-vendor",
+  route: "/add-vendor",
+  component: <AddVendor />,
+},
+
 ];
 
 export default routes;

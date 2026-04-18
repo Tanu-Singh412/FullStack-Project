@@ -14,13 +14,14 @@ import DataTable from "examples/Tables/DataTable";
 import useVendorTableData from "./data/vendorTableData";
 
 function Vendors() {
-  const navigate = useNavigate(); // ✅ FIX
+  const navigate = useNavigate();
 
-const tableData = useVendorTableData();
+  const tableData = useVendorTableData();
 
-if (!tableData) return <p>Loading...</p>;
+  if (!tableData) return <p>Loading...</p>;
 
-const { columns, rows, dialog } = tableData;
+  const { columns, rows, dialog } = tableData;
+
   return (
     <DashboardLayout>
       <DashboardNavbar />
@@ -47,7 +48,6 @@ const { columns, rows, dialog } = tableData;
                   Vendor Management
                 </MDTypography>
 
-                {/* ✅ FIXED BUTTON */}
                 <MDBox
                   sx={{
                     cursor: "pointer",
@@ -56,10 +56,6 @@ const { columns, rows, dialog } = tableData;
                     py: 1,
                     borderRadius: "8px",
                     color: "#fff",
-                    fontSize: "14px",
-                    "&:hover": {
-                      backgroundColor: "rgba(255,255,255,0.2)",
-                    },
                   }}
                   onClick={() => navigate("/add-vendor")}
                 >
@@ -78,7 +74,6 @@ const { columns, rows, dialog } = tableData;
                 />
               </MDBox>
 
-              {/* DIALOG */}
               {dialog}
             </Card>
           </Grid>
