@@ -60,7 +60,7 @@ export default function useProjectData() {
 
   const columns = [
     { Header: "S.No.", accessor: "serial" },
-    { Header: "Image", accessor: "image" },
+    // { Header: "Image", accessor: "image" },
     { Header: "Project", accessor: "project" },
     { Header: "Client ID", accessor: "clientId" },
     { Header: "Client", accessor: "client" },
