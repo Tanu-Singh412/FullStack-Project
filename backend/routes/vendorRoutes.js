@@ -7,6 +7,7 @@ const {
   updateVendor,
   deleteVendor,
   getVendorsByMaterial,
+  getVendorById,
 } = require("../controllers/vendorController");
 router.get("/by-material", getVendorsByMaterial);
 
