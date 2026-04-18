@@ -51,7 +51,6 @@ router.put(
 router.post("/:id/payment", addPayment);
 
 // ================= DRAWINGS =================
-
 router.post("/:projectId/drawing", upload.array("images", 10), addDrawing);
 
 router.get("/:projectId/drawing", getDrawings);

@@ -292,7 +292,9 @@ exports.deleteScope = async (req, res) => {
 };
 
 
-// ================= ADD / UPLOAD DRAWING =================
+const Project = require("../models/Project");
+
+// ================= ADD DRAWING =================
 exports.addDrawing = async (req, res) => {
   try {
     const { projectId } = req.params;
@@ -303,30 +305,27 @@ exports.addDrawing = async (req, res) => {
 
     const images = (req.files || []).map(
       (f) =>
-        "https://fullstack-project-1-n510.onrender.com/uploads/" + f.filename
+        `${process.env.BASE_URL || "https://fullstack-project-1-n510.onrender.com"}/uploads/${f.filename}`
     );
 
     if (type === "civil") {
-      project.civilImages.push(...images);
+      project.civilImages = [...(project.civilImages || []), ...images];
     }
 
     if (type === "interior") {
-      project.interiorImages.push(...images);
+      project.interiorImages = [...(project.interiorImages || []), ...images];
     }
 
     await project.save();
 
-    res.json({
-      msg: "Uploaded",
-    });
-
+    res.json({ msg: "Uploaded", images });
   } catch (err) {
-    console.log(err);
+    console.log("ADD DRAWING ERROR:", err);
     res.status(500).json(err);
   }
 };
 
-// ================= GET ALL DRAWINGS =================
+// ================= GET DRAWINGS =================
 exports.getDrawings = async (req, res) => {
   try {
     const project = await Project.findById(req.params.projectId);
@@ -343,12 +342,12 @@ exports.getDrawings = async (req, res) => {
         images: project.interiorImages || [],
       },
     ]);
-
   } catch (err) {
     res.status(500).json(err);
   }
 };
-// ================= UPDATE (ADD MORE IMAGES) =================
+
+// ================= UPDATE DRAWINGS =================
 exports.updateDrawing = async (req, res) => {
   try {
     const { projectId } = req.params;
@@ -359,67 +358,65 @@ exports.updateDrawing = async (req, res) => {
 
     const newImages = (req.files || []).map(
       (f) =>
-        "https://fullstack-project-1-n510.onrender.com/uploads/" + f.filename
+        `${process.env.BASE_URL || "https://fullstack-project-1-n510.onrender.com"}/uploads/${f.filename}`
     );
 
-    if (type === "civil") project.civilImages.push(...newImages);
-    if (type === "interior") project.interiorImages.push(...newImages);
+    if (type === "civil") {
+      project.civilImages.push(...newImages);
+    }
+
+    if (type === "interior") {
+      project.interiorImages.push(...newImages);
+    }
 
     await project.save();
 
-    res.json({ msg: "Updated" });
-
+    res.json({ msg: "Updated", newImages });
   } catch (err) {
     res.status(500).json(err);
   }
 };
-// ================= DELETE DRAWING =================
+
+// ================= DELETE ALL DRAWINGS =================
 exports.deleteDrawing = async (req, res) => {
   try {
     const { projectId } = req.params;
     const { type } = req.body;
 
     const project = await Project.findById(projectId);
-    if (!project) {
-      return res.status(404).json({ msg: "Project not found" });
-    }
-
-    if (type === "civil") {
-      project.civilImages = [];
-    }
-
-    if (type === "interior") {
-      project.interiorImages = [];
-    }
-
-    await project.save();
-
-    res.json({ msg: "Drawing deleted" });
-  } catch (err) {
-    res.status(500).json(err);
-  }
-};
-// ================= DELETE SINGLE IMAGE =================
-exports.deleteDrawingImage = async (req, res) => {
-  try {
-    const { projectId } = req.params;
-    const { imageUrl } = req.body;
-
-    const project = await Project.findById(projectId);
     if (!project) return res.status(404).json({ msg: "Project not found" });
 
-    project.civilImages = project.civilImages.filter(
-      (img) => img !== imageUrl
-    );
-
-    project.interiorImages = project.interiorImages.filter(
-      (img) => img !== imageUrl
-    );
+    if (type === "civil") project.civilImages = [];
+    if (type === "interior") project.interiorImages = [];
 
     await project.save();
 
     res.json({ msg: "Deleted" });
+  } catch (err) {
+    res.status(500).json(err);
+  }
+};
 
+// ================= DELETE SINGLE IMAGE =================
+exports.deleteDrawingImage = async (req, res) => {
+  try {
+    const { projectId } = req.params;
+    const { imageUrl, type } = req.body;
+
+    const project = await Project.findById(projectId);
+    if (!project) return res.status(404).json({ msg: "Project not found" });
+
+    if (type === "civil") {
+      project.civilImages = project.civilImages.filter(img => img !== imageUrl);
+    }
+
+    if (type === "interior") {
+      project.interiorImages = project.interiorImages.filter(img => img !== imageUrl);
+    }
+
+    await project.save();
+
+    res.json({ msg: "Deleted" });
   } catch (err) {
     res.status(500).json(err);
   }
