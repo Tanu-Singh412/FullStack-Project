@@ -78,7 +78,6 @@ function ProjectDetails() {
   const [imageIndex, setImageIndex] = useState(0);
 
   // ================= FETCH =================
-  // ================= FETCH =================
   const fetchProject = async () => {
     if (!state?._id) return;
 
@@ -190,41 +189,46 @@ if (!project?._id) return <div>Loading...</div>;
 
   // ================= DELETE IMAGE =================
 const handleDeleteImage = async (imgUrl) => {
-  await fetch(
-    `${Base_API}/projects/${project._id}/drawing/image`,
-    {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ imageUrl: imgUrl }),
-    }
-  );
+  await fetch(`${Base_API}/projects/${project._id}/drawing/image`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ imageUrl: imgUrl }),
+  });
 
   await fetchDrawings();
 };
 
   // ================= LIGHTBOX =================
+  const civilImages =
+  drawings.find((d) => d.type === "civil")?.images || [];
+
+const interiorImages =
+  drawings.find((d) => d.type === "interior")?.images || [];
 const images =
-  drawingType === "civil"
-    ? drawings.civil || []
-    : drawings.interior || [];
+  drawingType === "civil" ? civilImages : interiorImages;
 
-  const openImage = (img, index) => {
-    setSelectedImage(img);
-    setImageIndex(index);
-  };
+const openImage = (img, index) => {
+  setSelectedImage(img);
+  setImageIndex(index);
+};
 
-  const next = () => {
-    const i = (imageIndex + 1) % images.length;
-    setImageIndex(i);
-    setSelectedImage(images[i]);
-  };
+const next = () => {
+  if (!images.length) return;
 
-  const prev = () => {
-    const i = (imageIndex - 1 + images.length) % images.length;
-    setImageIndex(i);
-    setSelectedImage(images[i]);
-  };
-  const inputStyle = {
+  const i = (imageIndex + 1) % images.length;
+  setImageIndex(i);
+  setSelectedImage(images[i]);
+};
+
+const prev = () => {
+  if (!images.length) return;
+
+  const i = (imageIndex - 1 + images.length) % images.length;
+  setImageIndex(i);
+  setSelectedImage(images[i]);
+};
+
+const inputStyle = {
     flex: 1,
     minWidth: "140px",
     padding: "10px",
@@ -233,7 +237,10 @@ const images =
     outline: "none",
     fontSize: "14px",
   };
-
+useEffect(() => {
+  setImageIndex(0);
+  setSelectedImage(null);
+}, [drawingType]);
   const handleAddScope = async () => {
     try {
       setLoading(true);
@@ -418,11 +425,7 @@ const images =
 
               <Button
                 size="small"
-                sx={{
-                  position: "absolute",
-                  top: 10,
-                  right: 10,
-                }}
+                sx={{ position: "absolute", top: 10, right: 10, color: "#fff"}}
                 variant="contained"
                 onClick={() => {
                   setUploadType(type);
@@ -432,7 +435,11 @@ const images =
                 Upload
               </Button>
 
-              <MDBox mt={2} onClick={() => setDrawingType(type)}>
+              <MDBox
+                mt={2}
+                sx={{ cursor: "pointer", color: "#1976d2" }}
+                onClick={() => setDrawingType(type)}
+              >
                 View Images →
               </MDBox>
             </Card>
@@ -444,46 +451,40 @@ const images =
         <Button onClick={() => setDrawingType(null)}>⬅ Back</Button>
 
         <Grid container spacing={3} mt={1}>
-          {images.map((img, i) => {
-            const drawing = drawings.find(
-              (d) => d.type === drawingType
-            );
+          {images.map((img, i) => (
+            <Grid item xs={12} sm={6} md={3} key={i}>
+              <Card sx={{ p: 1 }}>
+                <img
+                  src={img}
+                  onClick={() => openImage(img, i)}
+                  style={{
+                    width: "100%",
+                    height: 180,
+                    objectFit: "cover",
+                    borderRadius: 10,
+                    cursor: "pointer",
+                  }}
+                />
 
-            return (
-              <Grid item xs={12} sm={6} md={3} key={i}>
-                <Card sx={{ p: 1 }}>
-                 <img
-  src={img}
-  onClick={() => openImage(img, i)}
-  style={{
-    width: "100%",
-    height: 180,
-    objectFit: "cover",
-    borderRadius: 10,
-    cursor: "pointer",
-  }}
-/>
-
-                  <Button
-                    size="small"
-                    color="error"
-                    fullWidth
-                    onClick={() =>
-                      handleDeleteImage(img, drawing._id)
-                    }
-                  >
-                    Delete
-                  </Button>
-                </Card>
-              </Grid>
-            );
-          })}
+                <Button
+                  size="small"
+                  color="error"
+                  fullWidth
+                  onClick={() => handleDeleteImage(img)}
+                >
+                  Delete
+                </Button>
+              </Card>
+            </Grid>
+          ))}
         </Grid>
       </>
     )}
   </MDBox>
-)}
-        {/* ACCOUNTS */}
+)}        {/* ACCOUNTS */}
+
+
+
         {tab === 2 && (
           <MDBox mt={3}>
             {/* ================= CALCULATIONS ================= */}
