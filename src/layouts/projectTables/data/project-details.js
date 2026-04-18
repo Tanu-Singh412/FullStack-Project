@@ -106,15 +106,21 @@ function ProjectDetails() {
 const fetchDrawings = async () => {
   if (!project?._id) return;
 
-  const res = await fetch(
-    `${Base_API}/projects/${project._id}/drawing`
-  );
-  const data = await res.json();
-  setDrawings(data || []);
+  try {
+    const res = await fetch(
+      `${Base_API}/projects/${project._id}/drawing`
+    );
+
+    const data = await res.json();
+
+    // IMPORTANT: ensure always array
+    setDrawings(Array.isArray(data) ? data : []);
+  } catch (err) {
+    console.log("Drawing fetch error:", err);
+    setDrawings([]);
+  }
 };
-useEffect(() => {
-  if (project?._id) fetchDrawings();
-}, [project?._id]);
+
 const handleUpload = async () => {
   if (!files.length) return;
 
@@ -183,9 +189,9 @@ if (!project?._id) return <div>Loading...</div>;
   };
 
   // ================= DELETE IMAGE =================
-const handleDeleteImage = async (imgUrl, drawingId) => {
+const handleDeleteImage = async (imgUrl) => {
   await fetch(
-    `${Base_API}/projects/${project._id}/drawing/${drawingId}`,
+    `${Base_API}/projects/${project._id}/drawing/image`,
     {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
@@ -197,8 +203,9 @@ const handleDeleteImage = async (imgUrl, drawingId) => {
 };
 
   // ================= LIGHTBOX =================
-const images =
-  drawings.find((d) => d.type === drawingType)?.images || [];
+const images = Array.isArray(drawings)
+  ? (drawings.find((d) => d.type === drawingType)?.images || [])
+  : [];
 
   const openImage = (img, index) => {
     setSelectedImage(img);
