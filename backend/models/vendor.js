@@ -1,24 +1,32 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
+
+const materialSchema = new mongoose.Schema({
+  materialName: String,
+  rate: Number,
+});
 
 const vendorSchema = new mongoose.Schema(
   {
-    vendorName: { type: String, required: true },
+    vendorName: String,
     phone: String,
     email: String,
     address: String,
     company: String,
     gst: String,
-    status: { type: String, default: "Active" },
-    note: String,
+    status: {
+      type: String,
+      default: "Active",
+    },
 
-    materials: [
-      {
-        materialName: String, // ✅ FIXED
-        rate: Number,
-      },
-    ],
+    materials: [materialSchema],
+
+    // 🔥 IMPORTANT: for grouping
+    materialCategory: {
+      type: String, // e.g. Steel, Cement, Wood
+      required: true,
+    },
   },
   { timestamps: true }
 );
 
-module.exports = mongoose.model("Vendor", vendorSchema);
+export default mongoose.model("Vendor", vendorSchema);

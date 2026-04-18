@@ -1,24 +1,20 @@
-const express = require("express");
-
-const {
+import express from "express";
+import {
   createVendor,
   getVendors,
-  getVendorById,
   updateVendor,
   deleteVendor,
   getVendorsByMaterial,
-} = require("../controllers/vendorController");
+} from "../controllers/vendorController.js";
 
 const router = express.Router();
 
-// 🔥 IMPORTANT: keep this BEFORE /:id
-router.get("/by-material/:materialId", getVendorsByMaterial);
-
-// CRUD
-router.get("/", getVendors);
-router.get("/:id", getVendorById);
 router.post("/", createVendor);
+router.get("/", getVendors);
 router.put("/:id", updateVendor);
 router.delete("/:id", deleteVendor);
 
-module.exports = router;
+// 🔥 NEW FEATURE
+router.get("/by-material", getVendorsByMaterial);
+
+export default router;
