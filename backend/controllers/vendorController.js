@@ -1,4 +1,4 @@
-const Vendor = require("../models/Vendor"); // ✅ FIXED
+const Vendor = require("../models/vendor"); // ✅ FIXED
 
 // CREATE
 const createVendor = async (req, res) => {
