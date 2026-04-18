@@ -18,7 +18,7 @@ function Vendors() {
 
 const tableData = useVendorTableData();
 
-if (!tableData) return null;
+if (!tableData) return <p>Loading...</p>;
 
 const { columns, rows, dialog } = tableData;
   return (

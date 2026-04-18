@@ -96,6 +96,14 @@ const routes = [
   route: "/project-details",
   component: <ProjectDetails />,
 }
+
+{
+  type: "route",
+  name: "Vendor Detail",
+  key: "vendor-detail",
+  route: "/vendor/:id",
+  component: <VendorDetail />,
+}
 ];
 
 export default routes;
