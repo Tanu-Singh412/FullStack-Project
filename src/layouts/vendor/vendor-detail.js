@@ -22,7 +22,6 @@ function VendorDetail() {
 
   if (!vendor) return <p>No vendor found</p>;
 
-  return (
 return (
   <DashboardLayout>
     <DashboardNavbar />
