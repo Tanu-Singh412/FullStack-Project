@@ -9,14 +9,14 @@ const {
   getVendorsByMaterial,
   getVendorById,
 } = require("../controllers/vendorController");
-router.get("/by-material", getVendorsByMaterial); // FIRST
-router.get("/:id", getVendorById);                // AFTER
+
+// ✅ ORDER IMPORTANT
+router.get("/by-material", getVendorsByMaterial);
+router.get("/:id", getVendorById);
 
 router.get("/", getVendors);
 router.post("/", createVendor);
 router.put("/:id", updateVendor);
 router.delete("/:id", deleteVendor);
-
-// 🔥 NEW FEATURE
 
 module.exports = router;

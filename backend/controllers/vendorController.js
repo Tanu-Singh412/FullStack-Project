@@ -1,8 +1,11 @@
 const Vendor = require("../models/Vendor"); 
 
-// CREATE
 const createVendor = async (req, res) => {
   try {
+    if (!req.body.materialCategory) {
+      return res.status(400).json({ error: "Material category required" });
+    }
+
     const vendor = await Vendor.create(req.body);
     res.json({ success: true, data: vendor });
   } catch (err) {
@@ -28,6 +31,11 @@ const updateVendor = async (req, res) => {
       req.body,
       { new: true }
     );
+
+    if (!vendor) {
+      return res.status(404).json({ error: "Vendor not found" });
+    }
+
     res.json({ success: true, data: vendor });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -37,7 +45,12 @@ const updateVendor = async (req, res) => {
 // DELETE
 const deleteVendor = async (req, res) => {
   try {
-    await Vendor.findByIdAndDelete(req.params.id);
+    const vendor = await Vendor.findByIdAndDelete(req.params.id);
+
+    if (!vendor) {
+      return res.status(404).json({ error: "Vendor not found" });
+    }
+
     res.json({ success: true, message: "Deleted" });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -65,6 +78,11 @@ const getVendorsByMaterial = async (req, res) => {
 const getVendorById = async (req, res) => {
   try {
     const vendor = await Vendor.findById(req.params.id);
+
+    if (!vendor) {
+      return res.status(404).json({ error: "Vendor not found" });
+    }
+
     res.json({ success: true, data: vendor });
   } catch (err) {
     res.status(500).json({ error: err.message });
