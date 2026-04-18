@@ -7,7 +7,7 @@ const {
   updateVendor,
   deleteVendor,
   getVendorsByMaterial,
-} = require("../controllers/vendorController.js");
+} = require("../controllers/vendorController");
 
 router.post("/", createVendor);
 router.get("/", getVendors);
