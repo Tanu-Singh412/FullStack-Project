@@ -204,7 +204,9 @@ const handleDeleteImage = async (imgUrl) => {
 
   // ================= LIGHTBOX =================
 const images =
-  drawings.find((d) => d.type === drawingType)?.images || [];
+  drawingType === "civil"
+    ? drawings.civil || []
+    : drawings.interior || [];
 
   const openImage = (img, index) => {
     setSelectedImage(img);
@@ -450,16 +452,17 @@ const images =
             return (
               <Grid item xs={12} sm={6} md={3} key={i}>
                 <Card sx={{ p: 1 }}>
-                  <img
-                    src={img}
-                    style={{
-                      width: "100%",
-                      height: 180,
-                      objectFit: "cover",
-                      borderRadius: 10,
-                      cursor: "pointer",
-                    }}
-                  />
+                 <img
+  src={img}
+  onClick={() => openImage(img, i)}
+  style={{
+    width: "100%",
+    height: 180,
+    objectFit: "cover",
+    borderRadius: 10,
+    cursor: "pointer",
+  }}
+/>
 
                   <Button
                     size="small"
@@ -904,37 +907,59 @@ const images =
       </MDBox>
 
       {/* LIGHTBOX */}
-      {selectedImage && (
-        <MDBox
-          sx={{
-            position: "fixed",
-            inset: 0,
-            background: "rgba(0,0,0,0.85)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            zIndex: 9999,
-          }}
-        >
-          <Button
-            sx={{ position: "absolute", top: 20, right: 20 }}
-            onClick={() => setSelectedImage(null)}
-          >
-            Close
-          </Button>
+{/* LIGHTBOX */}
+{selectedImage && (
+  <MDBox
+    sx={{
+      position: "fixed",
+      inset: 0,
+      background: "rgba(0,0,0,0.85)",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      zIndex: 9999,
+    }}
+  >
+    {/* CLOSE BUTTON */}
+    <Button
+      sx={{ position: "absolute", top: 20, right: 20, color: "#fff" }}
+      onClick={() => setSelectedImage(null)}
+    >
+      Close
+    </Button>
 
-          <Button onClick={prev}>◀</Button>
+    {/* PREV BUTTON */}
+    <Button
+      onClick={prev}
+      disabled={!images.length}
+      sx={{ color: "#fff", fontSize: "20px" }}
+    >
+      ◀
+    </Button>
 
-          <img
-            src={selectedImage}
-            style={{ maxHeight: "80%", maxWidth: "80%" }}
-          />
+    {/* IMAGE */}
+    <img
+      src={selectedImage}
+      alt="preview"
+      style={{
+        maxHeight: "80%",
+        maxWidth: "80%",
+        borderRadius: "10px",
+      }}
+    />
 
-          <Button onClick={next}>▶</Button>
-        </MDBox>
-      )}
+    {/* NEXT BUTTON */}
+    <Button
+      onClick={next}
+      disabled={!images.length}
+      sx={{ color: "#fff", fontSize: "20px" }}
+    >
+      ▶
+    </Button>
+  </MDBox>
+)}
 
-      {/* UPLOAD MODAL */}
+{/* UPLOAD MODAL */}
 {openUpload && (
   <MDBox
     sx={{
@@ -947,23 +972,50 @@ const images =
       zIndex: 9999,
     }}
   >
-    <Card sx={{ p: 3 }}>
+    <Card
+      sx={{
+        p: 3,
+        minWidth: 300,
+        borderRadius: "12px",
+        textAlign: "center",
+      }}
+    >
+      {/* FILE INPUT */}
       <input
         type="file"
         multiple
         onChange={(e) => setFiles(e.target.files)}
+        style={{ marginBottom: "15px" }}
       />
 
+      {/* UPLOAD BUTTON */}
       <Button
         onClick={handleUpload}
-        sx={{ mt: 2 }}
         variant="contained"
+        fullWidth
+        sx={{
+          textTransform: "none",
+          borderRadius: "8px",
+        }}
       >
         {loading ? "Uploading..." : "Upload"}
+      </Button>
+
+      {/* CANCEL BUTTON */}
+      <Button
+        onClick={() => {
+          setOpenUpload(false);
+          setFiles([]);
+        }}
+        fullWidth
+        sx={{ mt: 1, textTransform: "none" }}
+      >
+        Cancel
       </Button>
     </Card>
   </MDBox>
 )}
+
       <Footer />
     </DashboardLayout>
   );
