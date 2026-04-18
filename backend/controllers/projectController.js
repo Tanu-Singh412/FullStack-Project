@@ -292,8 +292,6 @@ exports.deleteScope = async (req, res) => {
 };
 
 
-const Project = require("../models/Project");
-
 // ================= ADD DRAWING =================
 exports.addDrawing = async (req, res) => {
   try {
