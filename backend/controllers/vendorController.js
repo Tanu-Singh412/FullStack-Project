@@ -3,8 +3,16 @@ const Vendor = require("../models/vendor");
 // ================= ADD VENDOR =================
 exports.addVendor = async (req, res) => {
   try {
-    const vendor = new Vendor(req.body);
+    const data = req.body;
+
+    // optional cleanup
+    if (data.category) {
+      data.category = data.category.trim();
+    }
+
+    const vendor = new Vendor(data);
     await vendor.save();
+
     res.json({ data: vendor });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -16,7 +24,14 @@ exports.getVendors = async (req, res) => {
   try {
     const { category } = req.query;
 
-    const filter = category ? { category } : {};
+    let filter = {};
+
+    // ✅ FIX: case-insensitive category match
+    if (category) {
+      filter.category = {
+        $regex: new RegExp(`^${category.trim()}$`, "i"),
+      };
+    }
 
     const data = await Vendor.find(filter);
 
@@ -41,12 +56,18 @@ exports.getVendorById = async (req, res) => {
   }
 };
 
-// ================= UPDATE =================
+// ================= UPDATE VENDOR =================
 exports.updateVendor = async (req, res) => {
   try {
+    const updatedData = req.body;
+
+    if (updatedData.category) {
+      updatedData.category = updatedData.category.trim();
+    }
+
     const updated = await Vendor.findByIdAndUpdate(
       req.params.id,
-      req.body,
+      updatedData,
       { new: true }
     );
 
@@ -56,11 +77,12 @@ exports.updateVendor = async (req, res) => {
   }
 };
 
-// ================= DELETE =================
+// ================= DELETE VENDOR =================
 exports.deleteVendor = async (req, res) => {
   try {
     await Vendor.findByIdAndDelete(req.params.id);
-    res.json({ message: "Vendor deleted" });
+
+    res.json({ message: "Vendor deleted successfully" });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
