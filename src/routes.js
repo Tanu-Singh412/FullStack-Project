@@ -9,7 +9,7 @@ import AddVendor from "layouts/vendor/add-vendor";
 import VendorDetail from "layouts/vendor/vendor-detail";
 import SignIn from "layouts/authentication/sign-in";
 import ProjectDetails from "layouts/projectTables/data/project-details";
-import VendorList from "layouts/vendor/vendor-detail";
+import MaterialVendor from "layouts/vendor/material-vendor";
 
 import Icon from "@mui/material/Icon";
 
@@ -104,7 +104,7 @@ const routes = [
     name: "Vendor Category",
     key: "vendor-category",
     route: "/vendor/category/:categoryId",
-    component: <VendorList  />, // reuse component
+    component: <MaterialVendor />, // reuse component
   },
 
   // ✅ SINGLE VENDOR DETAIL
