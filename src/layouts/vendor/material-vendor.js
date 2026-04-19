@@ -13,12 +13,12 @@ import Footer from "examples/Footer";
 
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
-
+import { useParams } from "react-router-dom";
 function VendorList() {
-  const { category } = useParams();
+  const { categoryId  } = useParams();
   const navigate = useNavigate();
   const [vendors, setVendors] = useState([]);
-const cleanCategory = category?.trim();
+const cleanCategory = categoryId?.trim();
 
 useEffect(() => {
   if (!cleanCategory) return;
@@ -63,8 +63,13 @@ useEffect(() => {
                 {/* RIGHT */}
                 <Button
                   variant="contained"
-                  onClick={() => navigate(`/add-vendor/${category}`)}
-                  sx={{
+onClick={() => {
+  if (!category) {
+    alert("Category missing!");
+    return;
+  }
+  navigate(`/add-vendor/${category}`);
+}}                  sx={{
                     background: "#fff",
                     color: "#1976d2",
                     fontWeight: "600",
