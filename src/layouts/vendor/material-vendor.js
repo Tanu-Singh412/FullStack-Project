@@ -18,15 +18,15 @@ function VendorList() {
   const { category } = useParams();
   const navigate = useNavigate();
   const [vendors, setVendors] = useState([]);
-
+const cleanCategory = category?.trim();
 useEffect(() => {
   fetch(
-    `https://fullstack-project-1-n510.onrender.com/api/vendors?category=${category}`
+    `https://fullstack-project-1-n510.onrender.com/api/vendors?category=${cleanCategory}`
   )
     .then((res) => res.json())
     .then((res) => setVendors(res.data || []))
     .catch((err) => console.log(err));
-}, [category]);
+}, [cleanCategory]);
 
   return (
     <DashboardLayout>

@@ -37,7 +37,7 @@ function VendorHome() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name }),
-      }
+      },
     );
 
     const data = await res.json();
@@ -95,16 +95,11 @@ function VendorHome() {
                           p: 3,
                           cursor: "pointer",
                           textAlign: "center",
-                          color:"#fff"
-                         
+                          color: "#fff",
                         }}
-                        onClick={() =>
-                          navigate(`/vendor/category/${c._id}`)
-                        }
+                        onClick={() => navigate(`/vendor/category/${c.name}`)}
                       >
-                        <MDTypography variant="h6">
-                          {c.name}
-                        </MDTypography>
+                        <MDTypography variant="h6">{c.name}</MDTypography>
                       </Card>
                     </Grid>
                   ))}
@@ -129,8 +124,7 @@ function VendorHome() {
 
           <Button
             fullWidth
-            sx={{ mt: 2 , color: "#fff"}}
-
+            sx={{ mt: 2, color: "#fff" }}
             variant="contained"
             onClick={addCategory}
           >
