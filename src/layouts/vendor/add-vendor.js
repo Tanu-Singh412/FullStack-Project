@@ -119,15 +119,16 @@ function AddVendor() {
       return;
     }
 
-    const cleanedForm = {
-      ...form,
-      materials: form.materials
-        .filter((m) => m.materialName?.trim())
-        .map((m) => ({
-          materialName: m.materialName,
-          rate: Number(m.rate) || 0,
-        })),
-    };
+  const cleanedForm = {
+  ...form,
+  category: form.category.trim(), // ✅ VERY IMPORTANT
+  materials: form.materials
+    .filter((m) => m.materialName?.trim())
+    .map((m) => ({
+      materialName: m.materialName,
+      rate: Number(m.rate) || 0,
+    })),
+};
 
     try {
       await fetch(
