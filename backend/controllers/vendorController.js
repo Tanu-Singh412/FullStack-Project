@@ -26,7 +26,6 @@ exports.getVendors = async (req, res) => {
 
     let filter = {};
 
-    // ✅ FIX: case-insensitive category match
     if (category) {
       filter.category = {
         $regex: new RegExp(`^${category.trim()}$`, "i"),
