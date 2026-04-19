@@ -1,22 +1,24 @@
 const Vendor = require("../models/vendor");
 
-// ADD vendor
+// ================= ADD VENDOR =================
 exports.addVendor = async (req, res) => {
   try {
     const vendor = new Vendor(req.body);
     await vendor.save();
-    res.json(vendor);
+    res.json({ data: vendor });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
 
-// GET vendors (with category filter)
+// ================= GET VENDORS =================
 exports.getVendors = async (req, res) => {
   try {
     const { category } = req.query;
 
-    const data = await Vendor.find({ category });
+    const filter = category ? { category } : {};
+
+    const data = await Vendor.find(filter);
 
     res.json({ data });
   } catch (err) {
@@ -24,7 +26,7 @@ exports.getVendors = async (req, res) => {
   }
 };
 
-// GET single vendor
+// ================= GET SINGLE VENDOR =================
 exports.getVendorById = async (req, res) => {
   try {
     const data = await Vendor.findById(req.params.id);
@@ -39,7 +41,7 @@ exports.getVendorById = async (req, res) => {
   }
 };
 
-// UPDATE vendor
+// ================= UPDATE =================
 exports.updateVendor = async (req, res) => {
   try {
     const updated = await Vendor.findByIdAndUpdate(
@@ -48,13 +50,13 @@ exports.updateVendor = async (req, res) => {
       { new: true }
     );
 
-    res.json(updated);
+    res.json({ data: updated });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
 
-// DELETE vendor
+// ================= DELETE =================
 exports.deleteVendor = async (req, res) => {
   try {
     await Vendor.findByIdAndDelete(req.params.id);

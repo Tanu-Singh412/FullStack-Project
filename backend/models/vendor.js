@@ -1,21 +1,27 @@
 const mongoose = require("mongoose");
 
 const vendorSchema = new mongoose.Schema({
-  vendorName: String,
-  phone: String,
+  vendorName: { type: String, required: true },
+  phone: { type: String, required: true },
   email: String,
   address: String,
   company: String,
   gst: String,
-  status: String,
+
+  status: {
+    type: String,
+    default: "Active",
+  },
+
   note: String,
 
+  // ✅ SIMPLE CATEGORY (NO OBJECTID)
   category: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Category",
+    type: String,
     required: true,
   },
 
+  // ✅ MATERIALS
   materials: [
     {
       materialName: String,
