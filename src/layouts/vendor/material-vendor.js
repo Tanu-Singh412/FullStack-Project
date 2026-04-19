@@ -20,18 +20,19 @@ function VendorList() {
   const [vendors, setVendors] = useState([]);
 const cleanCategory = category?.trim();
 
-// ✅ Capitalize first letter
-const formattedCategory =
-  cleanCategory?.charAt(0).toUpperCase() + cleanCategory?.slice(1);
-
 useEffect(() => {
+  if (!cleanCategory) return;
+
   fetch(
-    `https://fullstack-project-1-n510.onrender.com/api/vendors?category=${formattedCategory}`
+    `https://fullstack-project-1-n510.onrender.com/api/vendors?category=${encodeURIComponent(cleanCategory)}`
   )
     .then((res) => res.json())
-    .then((res) => setVendors(res.data || []))
+    .then((res) => {
+      console.log("API RESPONSE:", res);
+      setVendors(res.data || []);
+    })
     .catch((err) => console.log(err));
-}, [formattedCategory]);
+}, [cleanCategory]);
 
   return (
     <DashboardLayout>
