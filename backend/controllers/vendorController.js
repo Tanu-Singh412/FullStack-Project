@@ -28,18 +28,20 @@ exports.getVendors = async (req, res) => {
 
     if (category) {
       filter.category = {
-        $regex: new RegExp(`^${category.trim()}$`, "i"),
+        $regex: new RegExp(`^${category.trim()}$`, "i"), // ✅ case-insensitive + trim
       };
     }
 
     const data = await Vendor.find(filter);
+
+    console.log("FILTER:", filter);
+    console.log("RESULT:", data);
 
     res.json({ data });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
-
 // ================= GET SINGLE VENDOR =================
 exports.getVendorById = async (req, res) => {
   try {
