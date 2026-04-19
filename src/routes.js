@@ -9,7 +9,7 @@ import AddVendor from "layouts/vendor/add-vendor";
 import VendorDetail from "layouts/vendor/vendor-detail";
 import SignIn from "layouts/authentication/sign-in";
 import ProjectDetails from "layouts/projectTables/data/project-details";
-import MaterialVendor from "layouts/vendor/material-vendor";
+import VendorList from "layouts/vendor/vendor-detail";
 
 import Icon from "@mui/material/Icon";
 
