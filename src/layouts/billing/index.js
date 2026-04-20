@@ -7,66 +7,56 @@ import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
 
-// MUI
-import Card from "@mui/material/Card";
-import IconButton from "@mui/material/IconButton";
-import Icon from "@mui/material/Icon";
-import TextField from "@mui/material/TextField";
-import Button from "@mui/material/Button";
+const API = "http://127.0.0.1:5000/api/invoices";
 
-import MDBox from "components/MDBox";
-import MDTypography from "components/MDTypography";
+/* ================= PDF ================= */
+const downloadPDF = async (el) => {
+  if (!el) return;
 
-const API = "https://fullstack-project-1-n510.onrender.com/api/invoices";
+  const canvas = await html2canvas(el, { scale: 2 });
+  const img = canvas.toDataURL("image/png");
 
-const defaultForm = {
-  clientName: "",
-  company: "",
-  invoiceNo: "",
-  date: "",
-  sgst: 9,
-  cgst: 9,
-  items: [{ name: "", qty: 1, price: 0 }],
+  const pdf = new jsPDF("p", "mm", "a4");
+  const width = pdf.internal.pageSize.getWidth();
+  const height = (canvas.height * width) / canvas.width;
+
+  pdf.addImage(img, "PNG", 0, 0, width, height);
+  pdf.save("invoice.pdf");
 };
 
+/* ================= MAIN ================= */
 export default function InvoicePage() {
-  const [form, setForm] = useState(defaultForm);
+  const pdfRef = useRef();
+
+  const [form, setForm] = useState({
+    clientName: "",
+    company: "",
+    invoiceNo: "",
+    date: "",
+    sgst: 9,
+    cgst: 9,
+    items: [{ name: "", qty: 1, price: 0 }],
+  });
+
   const [invoices, setInvoices] = useState([]);
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("all");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
   const [preview, setPreview] = useState(null);
 
-  const pdfRef = useRef();
-
   /* ================= FETCH ================= */
-  useEffect(() => {
-    loadInvoices();
-  }, []);
+  const fetchInvoices = async () => {
+    const res = await axios.get(API, {
+      params: { search, filter, startDate, endDate },
+    });
 
-  const loadInvoices = async () => {
-    const res = await axios.get(API);
-    setInvoices(res.data.data || []);
+    setInvoices(res.data.data);
   };
 
-  /* ================= FILTER ================= */
-  const filtered = invoices.filter((inv) => {
-    const match =
-      inv.clientName?.toLowerCase().includes(search.toLowerCase()) ||
-      inv.invoiceNo?.toLowerCase().includes(search.toLowerCase());
-
-    if (!match) return false;
-
-    const d = new Date(inv.createdAt);
-    const now = new Date();
-
-    if (filter === "day") return d.toDateString() === now.toDateString();
-    if (filter === "month")
-      return d.getMonth() === now.getMonth() &&
-             d.getFullYear() === now.getFullYear();
-    if (filter === "year") return d.getFullYear() === now.getFullYear();
-
-    return true;
-  });
+  useEffect(() => {
+    fetchInvoices();
+  }, [search, filter, startDate, endDate]);
 
   /* ================= ITEMS ================= */
   const updateItem = (i, field, value) => {
@@ -83,170 +73,234 @@ export default function InvoicePage() {
   };
 
   /* ================= TOTAL ================= */
-  const subtotal = form.items.reduce((s, i) => s + i.qty * i.price, 0);
+  const subtotal = form.items.reduce(
+    (s, i) => s + i.qty * i.price,
+    0
+  );
+
   const sgst = (subtotal * form.sgst) / 100;
   const cgst = (subtotal * form.cgst) / 100;
   const total = subtotal + sgst + cgst;
 
   /* ================= SAVE ================= */
   const saveInvoice = async () => {
-    await axios.post(API, { ...form, subtotal, total });
-    loadInvoices();
-    downloadPDF();
-    setForm(defaultForm);
+    await axios.post(API, {
+      ...form,
+      subtotal,
+      total,
+    });
+
+    fetchInvoices();
+    downloadPDF(pdfRef.current);
   };
 
   /* ================= DELETE ================= */
   const deleteInvoice = async (id) => {
     await axios.delete(`${API}/${id}`);
-    loadInvoices();
+    fetchInvoices();
   };
 
-  /* ================= PDF ================= */
-  const downloadPDF = async () => {
-    const canvas = await html2canvas(pdfRef.current, { scale: 2 });
-    const img = canvas.toDataURL("image/png");
-
-    const pdf = new jsPDF("p", "mm", "a4");
-    const w = pdf.internal.pageSize.getWidth();
-    const h = (canvas.height * w) / canvas.width;
-
-    pdf.addImage(img, "PNG", 0, 0, w, h);
-    pdf.save("invoice.pdf");
-  };
-
+  /* ================= UI ================= */
   return (
     <DashboardLayout>
       <DashboardNavbar />
 
-      <MDBox p={3}>
+      <div style={{ padding: 20 }}>
+        <h2>Invoice Generator</h2>
 
-        <MDTypography variant="h5" mb={2}>
-          Invoice Generator
-        </MDTypography>
-
-        {/* FORM */}
-        <Card sx={{ p: 3, mb: 3 }}>
-          <MDBox display="grid" gridTemplateColumns="repeat(3,1fr)" gap={2}>
-            <TextField label="Client Name"
-              value={form.clientName}
-              onChange={(e)=>setForm({...form, clientName:e.target.value})}
+        {/* ================= FORM ================= */}
+        <div style={styles.card}>
+          <div style={styles.grid}>
+            <input
+              placeholder="Client Name"
+              onChange={(e) =>
+                setForm({ ...form, clientName: e.target.value })
+              }
             />
-            <TextField label="Company"
-              value={form.company}
-              onChange={(e)=>setForm({...form, company:e.target.value})}
+
+            <input
+              placeholder="Company"
+              onChange={(e) =>
+                setForm({ ...form, company: e.target.value })
+              }
             />
-            <TextField label="Invoice No"
-              value={form.invoiceNo}
-              onChange={(e)=>setForm({...form, invoiceNo:e.target.value})}
+
+            <input
+              placeholder="Invoice No"
+              onChange={(e) =>
+                setForm({ ...form, invoiceNo: e.target.value })
+              }
             />
-          </MDBox>
 
-          <MDBox mt={2}>
-            <MDTypography variant="h6">Items</MDTypography>
+            <input
+              type="date"
+              onChange={(e) =>
+                setForm({ ...form, date: e.target.value })
+              }
+            />
+          </div>
 
-            {form.items.map((item,i)=>(
-              <MDBox key={i} display="grid" gridTemplateColumns="2fr 1fr 1fr" gap={2} mt={1}>
-                <TextField placeholder="Item"
-                  value={item.name}
-                  onChange={(e)=>updateItem(i,"name",e.target.value)}
-                />
-                <TextField type="number"
-                  placeholder="Qty"
-                  value={item.qty}
-                  onChange={(e)=>updateItem(i,"qty",+e.target.value)}
-                />
-                <TextField type="number"
-                  placeholder="Price"
-                  value={item.price}
-                  onChange={(e)=>updateItem(i,"price",+e.target.value)}
-                />
-              </MDBox>
-            ))}
+          <h4>Items</h4>
 
-            <Button onClick={addItem} sx={{ mt:1 }}>
-              + Add Item
-            </Button>
-          </MDBox>
+          {form.items.map((item, i) => (
+            <div key={i} style={styles.row}>
+              <input
+                placeholder="Item"
+                onChange={(e) =>
+                  updateItem(i, "name", e.target.value)
+                }
+              />
+              <input
+                type="number"
+                placeholder="Qty"
+                onChange={(e) =>
+                  updateItem(i, "qty", +e.target.value)
+                }
+              />
+              <input
+                type="number"
+                placeholder="Price"
+                onChange={(e) =>
+                  updateItem(i, "price", +e.target.value)
+                }
+              />
+            </div>
+          ))}
 
-          <MDTypography mt={2}>Total: ₹{total}</MDTypography>
+          <button onClick={addItem}>Add Item</button>
 
-          <Button variant="contained" color="success" sx={{ mt:2 }}
-            onClick={saveInvoice}
-          >
+          <h3>Total: ₹{total.toFixed(2)}</h3>
+
+          <button onClick={saveInvoice}>
             Save + Download
-          </Button>
-        </Card>
+          </button>
+        </div>
 
-        {/* SEARCH + FILTER */}
-        <MDBox display="flex" gap={2} mb={2}>
-          <TextField
-            placeholder="Search"
+        {/* ================= SEARCH ================= */}
+        <div style={styles.filterBar}>
+          <input
+            placeholder="Search..."
             value={search}
-            onChange={(e)=>setSearch(e.target.value)}
+            onChange={(e) => setSearch(e.target.value)}
           />
 
-          <TextField
-            select
-            SelectProps={{ native:true }}
+          <select
             value={filter}
-            onChange={(e)=>setFilter(e.target.value)}
+            onChange={(e) => setFilter(e.target.value)}
           >
             <option value="all">All</option>
             <option value="day">Today</option>
             <option value="month">Month</option>
             <option value="year">Year</option>
-          </TextField>
-        </MDBox>
+          </select>
 
-        {/* LIST */}
-        {filtered.map((inv)=>(
-          <Card key={inv._id} sx={{ p:2, mb:1, display:"flex", justifyContent:"space-between" }}>
-            <div>
-              <MDTypography fontWeight="bold">{inv.clientName}</MDTypography>
-              <MDTypography variant="caption">{inv.invoiceNo}</MDTypography>
-            </div>
-
-            <MDBox display="flex" gap={1}>
-              <IconButton onClick={()=>setPreview(inv)}>
-                <Icon>visibility</Icon>
-              </IconButton>
-
-              <IconButton onClick={()=>{
-                setForm(inv);
-                setTimeout(downloadPDF,400);
-              }}>
-                <Icon>download</Icon>
-              </IconButton>
-
-              <IconButton color="error" onClick={()=>deleteInvoice(inv._id)}>
-                <Icon>delete</Icon>
-              </IconButton>
-            </MDBox>
-          </Card>
-        ))}
-
-        {/* PDF */}
-        <div ref={pdfRef} style={{ position:"absolute", left:-9999 }}>
-          <h2>{form.company}</h2>
-          <p>{form.clientName}</p>
-          <h3>Total ₹{total}</h3>
+          <input
+            type="date"
+            onChange={(e) => setStartDate(e.target.value)}
+          />
+          <input
+            type="date"
+            onChange={(e) => setEndDate(e.target.value)}
+          />
         </div>
 
-        {/* PREVIEW */}
+        {/* ================= LIST ================= */}
+        {invoices.map((inv) => (
+          <div key={inv._id} style={styles.item}>
+            <div>
+              <b>{inv.clientName}</b>
+              <p>{inv.invoiceNo}</p>
+              <small>
+                {new Date(inv.createdAt).toLocaleDateString()}
+              </small>
+            </div>
+
+            <div>
+              <button onClick={() => setPreview(inv)}>
+                View
+              </button>
+
+              <button
+                onClick={() => {
+                  setForm(inv);
+                  setTimeout(
+                    () => downloadPDF(pdfRef.current),
+                    500
+                  );
+                }}
+              >
+                Download
+              </button>
+
+              <button onClick={() => deleteInvoice(inv._id)}>
+                Delete
+              </button>
+            </div>
+          </div>
+        ))}
+
+        {/* ================= PREVIEW ================= */}
         {preview && (
-          <div className="modal" onClick={()=>setPreview(null)}>
-            <div onClick={(e)=>e.stopPropagation()}>
-              <h2>{preview.company}</h2>
-              <p>{preview.clientName}</p>
-              <h3>₹{preview.total}</h3>
+          <div style={styles.overlay} onClick={() => setPreview(null)}>
+            <div style={styles.modal}>
+              <div ref={pdfRef}>
+                <h2>{preview.company}</h2>
+                <p>{preview.clientName}</p>
+                <h3>Total: ₹{preview.total}</h3>
+              </div>
             </div>
           </div>
         )}
-
-      </MDBox>
+      </div>
 
       <Footer />
     </DashboardLayout>
   );
 }
+
+/* ================= STYLES ================= */
+const styles = {
+  card: {
+    background: "#fff",
+    padding: 20,
+    borderRadius: 10,
+    marginBottom: 20,
+  },
+  grid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(4,1fr)",
+    gap: 10,
+  },
+  row: {
+    display: "grid",
+    gridTemplateColumns: "repeat(3,1fr)",
+    gap: 10,
+    marginBottom: 10,
+  },
+  filterBar: {
+    display: "flex",
+    gap: 10,
+    marginBottom: 20,
+  },
+  item: {
+    display: "flex",
+    justifyContent: "space-between",
+    background: "#fff",
+    padding: 15,
+    borderRadius: 8,
+    marginBottom: 10,
+  },
+  overlay: {
+    position: "fixed",
+    inset: 0,
+    background: "rgba(0,0,0,0.6)",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modal: {
+    background: "#fff",
+    padding: 20,
+    borderRadius: 10,
+  },
+};
