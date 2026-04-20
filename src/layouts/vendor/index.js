@@ -75,11 +75,16 @@ function VendorHome() {
                 <Button
                   variant="contained"
                   onClick={() => setOpen(true)}
-                  sx={{
-                    background: "#fff",
-                    color: "#fff",
-                    fontWeight: "600",
-                  }}
+             sx={{
+  background: "#fff",
+  color: "#1976d2",
+  fontWeight: "600",
+  "&:hover": {
+    background: "#fff",   // keep same
+    color: "#1976d2",     // keep same
+    boxShadow: "none",    // optional (removes dark hover shadow)
+  },
+}}
                 >
                   + Add Category
                 </Button>
