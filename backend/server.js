@@ -7,6 +7,8 @@ const clientRoutes = require("./routes/clientRoutes");
 const projectRoutes = require("./routes/projectRoutes");
 const vendorRoutes = require("./routes/vendorRoutes");
 const categoryRoutes = require("./routes/categoryRoutes")
+const invoiceRoutes = require("./routes/invoiceRoutes");
+
 const app = express();
 
 // Connect DB
@@ -25,6 +27,7 @@ app.use("/api/clients", clientRoutes);
 app.use("/api/projects", projectRoutes); 
 app.use("/api/vendors", vendorRoutes);
 app.use("/api/vendor-categories", categoryRoutes);
+app.use("/api/invoices", invoiceRoutes);
 
 
 // Test route
