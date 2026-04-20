@@ -7,7 +7,7 @@ const clientRoutes = require("./routes/clientRoutes");
 const projectRoutes = require("./routes/projectRoutes");
 const vendorRoutes = require("./routes/vendorRoutes");
 const categoryRoutes = require("./routes/categoryRoutes")
-const invoiceRoutes = require("./routes/invoiceRoutes");
+const invoiceRoutes = require("./routes/InvoiceRoutes");
 
 const app = express();
 
