@@ -12,6 +12,8 @@ import Footer from "examples/Footer";
 
 const API = "http://127.0.0.1:5000/api/invoices"; // use 127.0.0.1 to avoid axios network error
 
+const generateInvoiceNo = () => `INV-${new Date().getFullYear()}-${Date.now().toString().slice(-6)}`;
+
 const defaultForm = {
   clientName: "",
   email: "",
@@ -19,8 +21,8 @@ const defaultForm = {
   address: "",
   gstin: "",
   phone: "",
-  invoiceNo: `INV-${Date.now()}`, // auto generated invoice no
-  date: "",
+  invoiceNo: generateInvoiceNo(),
+  date: new Date().toISOString().split("T")[0],
     sgst: 9,
   cgst: 9,
   items: [
@@ -219,19 +221,19 @@ export default function InvoicePage() {
       <DashboardNavbar />
 
       <div style={{ padding: 24 }}>
-        <h2>Professional Invoice Generator</h2>
+        <h2 style={{ fontWeight:'700', marginBottom:20 }}>Professional Invoice Generator</h2>
 
-        <div style={{ background: "#fff", padding: 20, borderRadius: 12 }}>
+        <div style={{ background:'#fff', padding:24, borderRadius:16, boxShadow:'0 8px 24px rgba(0,0,0,0.06)' }}>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 12 }}>
             {Object.keys(defaultForm)
               .filter((k) => k !== "items")
               .map((field) => (
                 <input
                   key={field}
-                  placeholder={field}
+                  placeholder={field.replace(/([A-Z])/g,' $1')}
                   value={form[field]}
                   onChange={(e) => setForm({ ...form, [field]: e.target.value })}
-                  style={{ padding: 12, border: "1px solid #ddd", borderRadius: 8 }}
+                  style={{ padding:14, border:'1px solid #dcdcdc', borderRadius:10, width:'100%' }}
                 />
               ))}
           </div>
@@ -246,19 +248,31 @@ export default function InvoicePage() {
               {["name", "hsn", "qty", "price"].map((field) => (
                 <input
                   key={field}
-                  placeholder={field}
+                  placeholder={field.replace(/([A-Z])/g,' $1')}
                   value={item[field]}
                   onChange={(e) => updateItem(i, field, e.target.value)}
-                  style={{ padding: 12, border: "1px solid #ddd", borderRadius: 8 }}
+                  style={{ padding:14, border:'1px solid #dcdcdc', borderRadius:10, width:'100%' }}
                 />
               ))}
             </div>
           ))}
 
-          <button onClick={addItem}>Add Item</button>
-          <button onClick={saveInvoice} style={{ marginLeft: 10 }}>
-            Save + Download PDF
-          </button>
+          <div style={{ display:'flex', gap:12, flexWrap:'wrap', marginTop:20 }}>
+<button onClick={addItem} style={{ padding:'12px 20px', border:'none', borderRadius:10, background:'#111', color:'#fff', cursor:'pointer' }}>Add Item</button>
+          <button
+  onClick={saveInvoice}
+  style={{
+    padding:'12px 20px',
+    border:'none',
+    borderRadius:10,
+    background:'#2e7d32',
+    color:'#fff',
+    cursor:'pointer'
+  }}
+>
+  Save + Download PDF
+</button>
+</div>
         </div>
 
         <div style={{ display:'flex', gap:10, marginTop:30, marginBottom:20, flexWrap:'wrap' }}>
@@ -296,13 +310,46 @@ export default function InvoicePage() {
             }}
           >
             <div>
-              <b>{inv.clientName}</b>
-              <p>{inv.invoiceNo}</p>
+              <b style={{ fontSize:15 }}>{inv.clientName}</b>
+              <p style={{ margin:'6px 0' }}>{inv.invoiceNo}</p>
+              <small>{new Date(inv.createdAt).toLocaleDateString('en-IN')}</small>
             </div>
 
-            <button onClick={() => deleteInvoice(inv._id)}>
-              Delete
+            <div style={{ display:'flex', gap:10 }}>
+            <button
+              onClick={() => {
+                setPreviewData(inv);
+                setOpenPreview(true);
+              }}
+              style={{ padding:'8px 14px', border:'1px solid #ddd', borderRadius:8, cursor:'pointer' }}
+            >
+              View
             </button>
+
+            <button
+              onClick={async () => {
+                setForm(inv);
+                setTimeout(() => downloadPDF(), 500);
+              }}
+              style={{ padding:'8px 14px', background:'#1976d2', color:'#fff', border:'none', borderRadius:8, cursor:'pointer' }}
+            >
+              Download
+            </button>
+
+            <button
+  onClick={() => deleteInvoice(inv._id)}
+  style={{
+    padding:'8px 14px',
+    background:'#d32f2f',
+    color:'#fff',
+    border:'none',
+    borderRadius:8,
+    cursor:'pointer'
+  }}
+>
+  Delete
+</button>
+            </div>
           </div>
         ))}
 
@@ -329,7 +376,15 @@ export default function InvoicePage() {
       style={{ background:'#fff', borderRadius:12, maxHeight:'90vh', overflow:'auto' }}
       onClick={(e)=>e.stopPropagation()}
     >
-      <ForwardInvoice form={previewData} totals={totals} />
+      <ForwardInvoice
+  form={previewData}
+  totals={{
+    subtotal: previewData.subtotal || 0,
+    sgst: ((previewData.subtotal || 0) * (previewData.sgst || 0) / 100).toFixed(2),
+    cgst: ((previewData.subtotal || 0) * (previewData.cgst || 0) / 100).toFixed(2),
+    total: previewData.total || 0,
+  }}
+/>
     </div>
   </div>
 )}
