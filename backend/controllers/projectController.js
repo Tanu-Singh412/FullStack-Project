@@ -50,7 +50,7 @@ if (req.files && req.files.dwgFile) {
   dwgFile,
   projectId,
   clientId: req.body.clientId,
-
+  phone: req.body.phone,
   payments: req.body.advanceAmount
     ? [{ amount: Number(req.body.advanceAmount) }]
     : [],
@@ -156,6 +156,7 @@ exports.updateProject = async (req, res) => {
       images,
       dwgFile,
       clientId: req.body.clientId || "",
+      phone: req.body.phone,
       totalAmount: Number(req.body.totalAmount || 0),
     };
 
