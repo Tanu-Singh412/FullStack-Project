@@ -16,6 +16,8 @@ const {
   updateDrawing,
   deleteDrawing,
   deleteDrawingImage,
+    getProjectById, // ✅ ADD THIS
+
 
 } = require("../controllers/projectController");
 
@@ -33,7 +35,7 @@ router.post(
 
 // GET ALL
 router.get("/", getProjects);
-
+router.get("/:id", getProjectById);
 // DELETE
 router.delete("/:id", deleteProject);
 

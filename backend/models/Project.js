@@ -64,7 +64,10 @@ clientId: {
 },
 civilImages: [String],
 interiorImages: [String],
-
+client: {
+  type: mongoose.Schema.Types.ObjectId,
+  ref: "Client"
+},
 scope: [scopeSchema], 
   },
   

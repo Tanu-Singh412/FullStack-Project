@@ -18,10 +18,6 @@ clientId: {
   type: String,
   unique: true,
 },
-client: {
-  type: mongoose.Schema.Types.ObjectId,
-  ref: "Client"
-}
 
 },
 {

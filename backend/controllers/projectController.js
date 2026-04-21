@@ -92,7 +92,43 @@ exports.getProjects = async (req, res) => {
     res.status(500).json(err);
   }
 };
+exports.getProjectById = async (req, res) => {
+  try {
+    const project = await Project.findById(req.params.id);
 
+    if (!project) {
+      return res.status(404).json({ msg: "Project not found" });
+    }
+
+    // ================= CALCULATE =================
+    const totalPaid = (project.payments || []).reduce(
+      (sum, pay) => sum + Number(pay.amount || 0),
+      0
+    );
+
+    const balance =
+      Number(project.totalAmount || 0) - totalPaid;
+
+    // ================= RESPONSE =================
+    const response = {
+      ...project._doc,
+
+      totalPaid,
+      balance,
+
+      // ✅ IMPORTANT (FOR YOUR WHATSAPP)
+      clientPhone: project.phone || "",
+
+      clientName: project.clientName || "",
+    };
+
+    res.json(response);
+
+  } catch (err) {
+    console.log("GET PROJECT ERROR:", err);
+    res.status(500).json({ msg: "Server error" });
+  }
+};
 
 // DELETE
 exports.deleteProject =
@@ -121,7 +157,7 @@ exports.deleteProject =
 // UPDATE
 exports.updateProject = async (req, res) => {
   try {
-    const existingProject = await Project.findById(req.params.id).populate("client");
+    const existingProject = await Project.findById(req.params.id)
 
     // ✅ images user kept
     let existingImages = [];
