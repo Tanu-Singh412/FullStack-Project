@@ -154,30 +154,69 @@ export default function useClientTableData() {
     rows,
     dialog: (
       <>
-        <Dialog
-          open={!!selectedClient}
-          onClose={() => setSelectedClient(null)}
-        >
-          <DialogTitle>Client Details</DialogTitle>
-          <DialogContent>
-            {selectedClient?.name}
-          </DialogContent>
-        </Dialog>
+<Dialog
+  open={!!selectedClient}
+  onClose={() => setSelectedClient(null)}
+  maxWidth="sm"
+  fullWidth
+>
+  <DialogTitle sx={{ fontWeight: "bold" }}>
+    Client Details
+  </DialogTitle>
 
-        <Dialog open={!!deleteId} onClose={() => setDeleteId(null)}>
-          <DialogTitle>Confirm Delete</DialogTitle>
-          <DialogActions>
-            <Button onClick={() => setDeleteId(null)}>Cancel</Button>
-            <Button
-              onClick={async () => {
-                await deleteClient(deleteId);
-                setDeleteId(null);
-              }}
-            >
-              Delete
-            </Button>
-          </DialogActions>
-        </Dialog>
+  <DialogContent>
+    {selectedClient && (
+      <MDBox>
+
+        {/* HEADER */}
+        <MDBox display="flex" alignItems="center" mb={2}>
+          <Avatar sx={{ bgcolor: "#1976d2", mr: 2 }}>
+            {selectedClient.name?.charAt(0)}
+          </Avatar>
+
+          <MDBox>
+            <MDTypography variant="h6">
+              {selectedClient.name}
+            </MDTypography>
+
+            <MDTypography variant="caption" color="text">
+              ID: {selectedClient.clientId || selectedClient._id}
+            </MDTypography>
+          </MDBox>
+        </MDBox>
+
+        <Divider sx={{ mb: 2 }} />
+
+        {/* DETAILS */}
+        <MDBox display="flex" flexDirection="column" gap={1}>
+
+          <MDTypography>
+            📞 <b>Phone:</b> {selectedClient.phone || "-"}
+          </MDTypography>
+
+          <MDTypography>
+            📧 <b>Email:</b> {selectedClient.email || "-"}
+          </MDTypography>
+
+          <MDTypography>
+            📍 <b>Address:</b> {selectedClient.address || "-"}
+          </MDTypography>
+
+          <MDTypography>
+            📅 <b>Created:</b>{" "}
+            {new Date(selectedClient.createdAt).toLocaleDateString("en-IN")}
+          </MDTypography>
+
+          <MDTypography>
+            📊 <b>Status:</b> {selectedClient.status || "Active"}
+          </MDTypography>
+
+        </MDBox>
+
+      </MDBox>
+    )}
+  </DialogContent>
+</Dialog>
       </>
     ),
   };

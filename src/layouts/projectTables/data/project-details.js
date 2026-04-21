@@ -87,7 +87,12 @@ const fetchProject = async () => {
   setProject({
     ...data,
     totalAmount: Number(data.totalAmount || 0),
-    clientPhone: data.clientPhone || data.phone || "",
+  clientPhone:
+    data.phone ||              // 🔥 MAIN
+    data.clientPhone ||
+    data.client?.phone ||
+    "",
+  
   });
 };
 
@@ -158,15 +163,22 @@ useEffect(() => {
   }
 }, [project?._id]);
 const handleSendWhatsApp = (pay) => {
-  let phone = project?.clientPhone;
+  let phone =
+    project?.clientPhone ||
+    project?.phone ||              // ✅ THIS LINE FIXES YOUR ISSUE
+    project?.client?.phone ||      // optional fallback
+    "";
 
   if (!phone) {
     alert("Client phone not found");
     return;
   }
 
-  // remove spaces, +91 etc
   phone = phone.replace(/\D/g, "");
+
+  if (phone.length === 10) {
+    phone = "91" + phone; // country code
+  }
 
   const amount =
     pay?.amount ??
@@ -190,6 +202,7 @@ Thank you!`;
 
   window.open(url, "_blank");
 };
+
 // ✅ AFTER ALL HOOKS
 if (!project?._id) return <div>Loading...</div>;
   // ================= PAYMENT =================
