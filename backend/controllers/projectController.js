@@ -121,7 +121,7 @@ exports.deleteProject =
 // UPDATE
 exports.updateProject = async (req, res) => {
   try {
-    const existingProject = await Project.findById(req.params.id);
+    const existingProject = await Project.findById(req.params.id).populate("client");
 
     // ✅ images user kept
     let existingImages = [];
