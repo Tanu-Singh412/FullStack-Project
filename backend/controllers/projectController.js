@@ -69,7 +69,7 @@ if (req.files && req.files.dwgFile) {
 // GET
 exports.getProjects = async (req, res) => {
   try {
-    const data = await Project.find().sort({ createdAt: -1 });
+    const data = await Project.find().populate("client").sort({ createdAt: -1 });
 
     const updated = data.map((p) => {
       const totalPaid = (p.payments || []).reduce(
