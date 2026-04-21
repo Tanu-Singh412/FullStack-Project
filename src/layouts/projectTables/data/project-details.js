@@ -163,30 +163,21 @@ useEffect(() => {
   }
 }, [project?._id]);
 const handleSendWhatsApp = (pay) => {
-  let phone =
-    project?.clientPhone ||
-    project?.phone ||              // ✅ THIS LINE FIXES YOUR ISSUE
-    project?.client?.phone ||      // optional fallback
-    "";
+  let phone = project?.client?.phone || "";
 
   if (!phone) {
     alert("Client phone not found");
     return;
   }
 
-  phone = phone.replace(/\D/g, "");
+  phone = String(phone).replace(/\D/g, "");
 
   if (phone.length === 10) {
-    phone = "91" + phone; // country code
+    phone = "91" + phone;
   }
 
-  const amount =
-    pay?.amount ??
-    pay?.payment?.amount ??
-    pay?.data?.amount ??
-    0;
-
-  const date = pay?.date || pay?.createdAt;
+  const amount = Number(pay?.amount || 0);
+  const date = pay?.date || new Date();
 
   const msg = `🧾 Payment Receipt
 
@@ -233,6 +224,7 @@ const handleAddPayment = async () => {
     ...prev,
     payments: [...(prev.payments || []), newPayment],
   }));
+    handleSendWhatsApp(newPayment);
 
   setPaymentData({ amount: "", date: "", note: "" });
   setLoading(false);
