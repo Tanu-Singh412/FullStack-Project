@@ -94,7 +94,7 @@ exports.getProjects = async (req, res) => {
 };
 exports.getProjectById = async (req, res) => {
   try {
-    const project = await Project.findById(req.params.id);
+    const project = await Project.findById(req.params.id).populate("client");
 
     if (!project) {
       return res.status(404).json({ msg: "Project not found" });
@@ -110,17 +110,13 @@ exports.getProjectById = async (req, res) => {
       Number(project.totalAmount || 0) - totalPaid;
 
     // ================= RESPONSE =================
-    const response = {
-      ...project._doc,
+const response = {
+  ...project._doc,
 
-      totalPaid,
-      balance,
+  clientPhone: project.client?.phone || "",
 
-      // ✅ IMPORTANT (FOR YOUR WHATSAPP)
-      clientPhone: project.phone || "",
-
-      clientName: project.clientName || "",
-    };
+  clientName: project.client?.name || "",
+};
 
     res.json(response);
 

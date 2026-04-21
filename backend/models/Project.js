@@ -62,6 +62,7 @@ dwgFile: {
 clientId: {
   type: String,
 },
+ phone: String, 
 civilImages: [String],
 interiorImages: [String],
 client: {
