@@ -84,17 +84,11 @@ const fetchProject = async () => {
   const res = await fetch(`${Base_API}/projects/${state._id}`);
   const data = await res.json();
 
- setProject({
+setProject({
   ...data,
   totalAmount: Number(data.totalAmount || 0),
-  clientPhone:
-    data?.client?.phone ||
-    data?.client?.phoneNumber ||
-    data?.client?.mobile ||
-    data?.phone ||
-    data?.phoneNumber ||
-    data?.clientPhone ||
-    "",
+  clientPhone: data.client?.phone || "",
+  clientName: data.client?.name || "",
 });
 };
 
@@ -164,12 +158,7 @@ useEffect(() => {
 
 
 const handleSendWhatsApp = (pay) => {
-  const phone =
-    project?.clientPhone ||
-    project?.client?.phone ||
-    project?.client?.phoneNumber ||
-    project?.phone ||
-    "";
+ let phone = project?.client?.phone || "";
 
   if (!phone) {
     console.log("DEBUG PROJECT:", project); // 🔥 add this
