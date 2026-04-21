@@ -148,22 +148,25 @@ const handleUpload = async () => {
 
 
 useEffect(() => {
-  fetchProject();
+  if (state?._id) {
+    fetchProject();
+  }
 }, []);
 
 useEffect(() => {
   if (project?._id) {
     fetchScope();
-  }
-}, [project?._id]);
-
-useEffect(() => {
-  if (project?._id) {
     fetchDrawings();
   }
 }, [project?._id]);
+
+
 const handleSendWhatsApp = (pay) => {
-  let phone = project?.client?.phone || "";
+let phone =
+  project?.clientPhone ||
+  project?.phone ||
+  project?.client?.phone ||
+  "";
 
   if (!phone) {
     alert("Client phone not found");
