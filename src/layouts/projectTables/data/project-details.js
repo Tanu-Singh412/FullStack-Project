@@ -357,8 +357,6 @@ const inputStyle = {
       notes: "",
     });
   };
-
-  
   return (
     <DashboardLayout>
       <DashboardNavbar />
@@ -606,7 +604,7 @@ const inputStyle = {
                   borderRadius: "8px",
                   textTransform: "none",
                   height: "40px",
-                  color:"#fff",
+                  color:"#fff"
                 }}
               >
                 {loading ? <CircularProgress size={20} /> : "Add Payment"}
@@ -996,41 +994,94 @@ const inputStyle = {
     sx={{
       position: "fixed",
       inset: 0,
-      background: "rgba(0,0,0,0.6)",
+      background: "rgba(0,0,0,0.65)",
       display: "flex",
       justifyContent: "center",
       alignItems: "center",
       zIndex: 9999,
+      backdropFilter: "blur(6px)",
     }}
   >
     <Card
       sx={{
         p: 3,
-        minWidth: 300,
-        borderRadius: "12px",
+        width: 380,
+        borderRadius: "18px",
+        boxShadow: "0 20px 50px rgba(0,0,0,0.25)",
         textAlign: "center",
+        background: "linear-gradient(145deg, #ffffff, #f8fafc)",
       }}
     >
-      {/* FILE INPUT */}
-      <input
-        type="file"
-        multiple
-        onChange={(e) => setFiles(e.target.files)}
-        style={{ marginBottom: "15px" }}
-      />
+      {/* TITLE */}
+      <MDTypography variant="h6" fontWeight="bold" mb={1}>
+        Upload Drawings
+      </MDTypography>
+
+      <MDTypography variant="caption" sx={{ opacity: 0.6 }}>
+        Select images to upload for this project
+      </MDTypography>
+
+      {/* FILE INPUT AREA */}
+      <MDBox
+        sx={{
+          mt: 3,
+          p: 2,
+          border: "2px dashed #1976d2",
+          borderRadius: "14px",
+          background: "#f5f9ff",
+          cursor: "pointer",
+          transition: "0.2s",
+          "&:hover": {
+            background: "#eaf3ff",
+          },
+        }}
+      >
+        <input
+          type="file"
+          multiple
+          onChange={(e) => setFiles(e.target.files)}
+          style={{
+            width: "100%",
+            cursor: "pointer",
+          }}
+        />
+
+        <MDTypography
+          variant="caption"
+          sx={{ display: "block", mt: 1, opacity: 0.7 }}
+        >
+          Drag & drop or select files
+        </MDTypography>
+      </MDBox>
+
+      {/* FILE COUNT */}
+      {files?.length > 0 && (
+        <MDBox mt={2}>
+          <MDTypography variant="caption" sx={{ color: "#1976d2" }}>
+            {files.length} file(s) selected
+          </MDTypography>
+        </MDBox>
+      )}
 
       {/* UPLOAD BUTTON */}
       <Button
         onClick={handleUpload}
-        variant="contained"
         fullWidth
         sx={{
+          mt: 3,
+          py: 1.2,
+          borderRadius: "10px",
           textTransform: "none",
-          borderRadius: "8px",
-          color:"#fff"
+          fontWeight: 600,
+          color: "#fff",
+          background: "linear-gradient(135deg,#1976d2,#42a5f5)",
+          boxShadow: "0 8px 20px rgba(25,118,210,0.3)",
+          "&:hover": {
+            background: "linear-gradient(135deg,#1565c0,#1e88e5)",
+          },
         }}
       >
-        {loading ? "Uploading..." : "Upload"}
+        {loading ? "Uploading..." : "Upload Files"}
       </Button>
 
       {/* CANCEL BUTTON */}
@@ -1040,14 +1091,18 @@ const inputStyle = {
           setFiles([]);
         }}
         fullWidth
-        sx={{ mt: 1, textTransform: "none" }}
+        sx={{
+          mt: 1.5,
+          textTransform: "none",
+          color: "#666",
+          fontWeight: 500,
+        }}
       >
         Cancel
       </Button>
     </Card>
   </MDBox>
 )}
-
       <Footer />
     </DashboardLayout>
   );
