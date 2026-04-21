@@ -180,8 +180,9 @@ const handleAddPayment = async () => {
   const data = await res.json();
 
   const newPayment =
-    data?.payment || data?.data || data;
+    data?.payment || data?.data || payload;
 
+  // ✅ instant UI update (NO refresh needed)
   setProject((prev) => ({
     ...prev,
     payments: [...(prev.payments || []), newPayment],
@@ -190,6 +191,7 @@ const handleAddPayment = async () => {
   setPaymentData({ amount: "", date: "", note: "" });
   setLoading(false);
 };
+
   // ================= DELETE IMAGE =================
 const handleDeleteImage = async (imgUrl) => {
   await fetch(`${Base_API}/projects/${project._id}/drawing/image`, {
@@ -496,38 +498,25 @@ const inputStyle = {
 {tab === 2 && (
   <MDBox mt={3}>
     {(() => {
-      const getAmount = (p) =>
-        Number(
-          p?.amount ||
-          p?.payment?.amount ||
-          p?.data?.amount ||
-          0
-        );
-
-      const getNote = (p) =>
-        p?.note ||
-        p?.payment?.note ||
-        p?.data?.note ||
-        "-";
-
-      const getDate = (p) =>
-        p?.date ||
-        p?.payment?.date ||
-        p?.createdAt ||
-        p?.data?.createdAt;
-
       const total = Number(project?.totalAmount || 0);
 
-      const paid = (project?.payments || []).reduce(
-        (sum, p) => sum + getAmount(p),
-        0
-      );
+      const paid = (project?.payments || []).reduce((sum, p) => {
+        const amount =
+          Number(
+            p?.amount ??
+            p?.payment?.amount ??
+            p?.data?.amount ??
+            0
+          );
+
+        return sum + amount;
+      }, 0);
 
       const balance = total - paid;
 
       return (
         <>
-          {/* SUMMARY */}
+          {/* ================= SUMMARY ================= */}
           <MDBox
             display="grid"
             gridTemplateColumns="repeat(3, 1fr)"
@@ -539,29 +528,46 @@ const inputStyle = {
               { label: "Paid", value: paid, color: "#2e7d32", bg: "#e8f5e9" },
               { label: "Balance", value: balance, color: "#d32f2f", bg: "#ffebee" },
             ].map((item, i) => (
-              <Card key={i} sx={{ p: 2, borderRadius: "12px", textAlign: "center", background: item.bg }}>
+              <Card
+                key={i}
+                sx={{
+                  p: 2,
+                  borderRadius: "12px",
+                  textAlign: "center",
+                  background: item.bg,
+                }}
+              >
                 <MDTypography variant="caption">
                   {item.label}
                 </MDTypography>
 
-                <MDTypography variant="h6" fontWeight="bold" sx={{ color: item.color }}>
+                <MDTypography
+                  variant="h6"
+                  fontWeight="bold"
+                  sx={{ color: item.color }}
+                >
                   ₹ {item.value}
                 </MDTypography>
               </Card>
             ))}
           </MDBox>
 
-          {/* ADD PAYMENT */}
+          {/* ================= ADD PAYMENT ================= */}
           <Card sx={{ p: 2, borderRadius: "12px", mb: 3 }}>
-            <MDBox display="grid" gridTemplateColumns="repeat(4, 1fr)" gap={2}>
-              
+            <MDBox
+              display="grid"
+              gridTemplateColumns="repeat(4, 1fr)"
+              gap={2}
+            >
               <input
                 type="number"
-                step="0.01"
                 placeholder="Amount"
                 value={paymentData.amount}
                 onChange={(e) =>
-                  setPaymentData({ ...paymentData, amount: e.target.value })
+                  setPaymentData({
+                    ...paymentData,
+                    amount: e.target.value,
+                  })
                 }
                 style={inputStyle}
               />
@@ -570,7 +576,10 @@ const inputStyle = {
                 type="date"
                 value={paymentData.date}
                 onChange={(e) =>
-                  setPaymentData({ ...paymentData, date: e.target.value })
+                  setPaymentData({
+                    ...paymentData,
+                    date: e.target.value,
+                  })
                 }
                 style={inputStyle}
               />
@@ -580,46 +589,61 @@ const inputStyle = {
                 placeholder="Note"
                 value={paymentData.note}
                 onChange={(e) =>
-                  setPaymentData({ ...paymentData, note: e.target.value })
+                  setPaymentData({
+                    ...paymentData,
+                    note: e.target.value,
+                  })
                 }
                 style={inputStyle}
               />
 
-              <Button variant="contained" onClick={handleAddPayment}>
-                {loading ? <CircularProgress size={20} /> : "Add"}
+              <Button
+                variant="contained"
+                onClick={handleAddPayment}
+                sx={{
+                  borderRadius: "8px",
+                  textTransform: "none",
+                  height: "40px",
+                }}
+              >
+                {loading ? <CircularProgress size={20} /> : "Add Payment"}
               </Button>
-
             </MDBox>
           </Card>
 
-          {/* TABLE */}
+          {/* ================= TABLE ================= */}
           <Card sx={{ p: 2, borderRadius: "12px" }}>
             <table
               style={{
                 width: "100%",
                 borderCollapse: "collapse",
-                tableLayout: "fixed",
               }}
             >
               <thead>
-                <tr style={{ background: "#f1f5f9" }}>
-                  <th style={{ ...thStyle, textAlign: "center" }}>Date</th>
-                  <th style={{ ...thStyle, textAlign: "center" }}>Amount</th>
-                  <th style={{ ...thStyle, textAlign: "center" }}>Note</th>
+                <tr style={{ background: "#f8fafc" }}>
+                  <th style={{ padding: "10px", textAlign: "center" }}>Date</th>
+                  <th style={{ padding: "10px", textAlign: "center" }}>Amount</th>
+                  <th style={{ padding: "10px", textAlign: "center" }}>Note</th>
                 </tr>
               </thead>
 
               <tbody>
                 {(project?.payments || []).map((pay, i) => {
-                  const amount = getAmount(pay);
-                  const note = getNote(pay);
-                  const date = getDate(pay);
+                  const amount =
+                    Number(
+                      pay?.amount ??
+                      pay?.payment?.amount ??
+                      pay?.data?.amount ??
+                      0
+                    );
+
+                  const date = pay?.date || pay?.createdAt;
 
                   return (
-                    <tr key={i} style={{ height: "55px" }}>
-                      <td style={tdStyle}>
+                    <tr key={i}>
+                      <td style={{ padding: "10px", textAlign: "center" }}>
                         {date
-                          ? new Date(date).toLocaleDateString("en-GB", {
+                          ? new Date(date).toLocaleDateString("en-IN", {
                               day: "2-digit",
                               month: "long",
                               year: "numeric",
@@ -627,11 +651,20 @@ const inputStyle = {
                           : "-"}
                       </td>
 
-                      <td style={{ ...tdStyle, color: "#2e7d32", fontWeight: "600" }}>
+                      <td
+                        style={{
+                          padding: "10px",
+                          textAlign: "center",
+                          fontWeight: "600",
+                          color: "#2e7d32",
+                        }}
+                      >
                         ₹ {amount}
                       </td>
 
-                      <td style={tdStyle}>{note}</td>
+                      <td style={{ padding: "10px", textAlign: "center" }}>
+                        {pay?.note || pay?.payment?.note || "-"}
+                      </td>
                     </tr>
                   );
                 })}
@@ -642,11 +675,14 @@ const inputStyle = {
       );
     })()}
   </MDBox>
-)}
+)}      
+
+
 
   {tab === 3 && (
 
 
+  
           <MDBox mt={3}>
             {/* ================= FORM ================= */}
             <Card
@@ -1014,23 +1050,4 @@ const inputStyle = {
   );
 }
 
-const thStyle = {
-  padding: "14px 16px",
-  textAlign: "left",
-  fontWeight: "600",
-  borderBottom: "1px solid #e5e7eb",
-};
-
-const tdStyle = {
-  padding: "14px 16px",
-  borderBottom: "1px solid #f1f5f9",
-  textAlign: "center",
-};
-
-const inputStyle = {
-  padding: "10px",
-  borderRadius: "8px",
-  border: "1px solid #d1d5db",
-  width: "100%",
-};
 export default ProjectDetails;
