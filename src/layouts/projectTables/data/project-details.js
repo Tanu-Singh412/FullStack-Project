@@ -87,12 +87,6 @@ const fetchProject = async () => {
   setProject({
     ...data,
     totalAmount: Number(data.totalAmount || 0),
-  clientPhone:
-    data.phone ||              // 🔥 MAIN
-    data.clientPhone ||
-    data.client?.phone ||
-    "",
-  
   });
 };
 
@@ -148,53 +142,20 @@ const handleUpload = async () => {
 
 
 useEffect(() => {
-  if (state?._id) {
-    fetchProject();
-  }
+  fetchProject();
 }, []);
 
 useEffect(() => {
   if (project?._id) {
     fetchScope();
-    fetchDrawings();
   }
 }, [project?._id]);
 
-const handleSendWhatsApp = (pay) => {
-let phone =
-  project?.clientPhone ||
-  project?.phone ||
-  project?.client?.phone ||
-  "";
-
-  if (!phone) {
-    alert("Client phone not found");
-    return;
+useEffect(() => {
+  if (project?._id) {
+    fetchDrawings();
   }
-
-  phone = String(phone).replace(/\D/g, "");
-
-  if (phone.length === 10) {
-    phone = "91" + phone;
-  }
-
-  const amount = Number(pay?.amount || 0);
-  const date = pay?.date || new Date();
-
-  const msg = `🧾 Payment Receipt
-
-Client: ${project.clientName}
-Project: ${project.projectName}
-
-Amount: ₹${amount}
-Date: ${new Date(date).toLocaleDateString("en-IN")}
-
-Thank you!`;
-
-  const url = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
-
-  window.open(url, "_blank");
-};
+}, [project?._id]);
 
 // ✅ AFTER ALL HOOKS
 if (!project?._id) return <div>Loading...</div>;
@@ -226,7 +187,6 @@ const handleAddPayment = async () => {
     ...prev,
     payments: [...(prev.payments || []), newPayment],
   }));
-    handleSendWhatsApp(newPayment);
 
   setPaymentData({ amount: "", date: "", note: "" });
   setLoading(false);
@@ -397,7 +357,6 @@ const inputStyle = {
       notes: "",
     });
   };
-
 
   
   return (
@@ -668,61 +627,51 @@ const inputStyle = {
                   <th style={{ padding: "10px", textAlign: "center" }}>Date</th>
                   <th style={{ padding: "10px", textAlign: "center" }}>Amount</th>
                   <th style={{ padding: "10px", textAlign: "center" }}>Note</th>
-                  <th style={{ padding: "10px", textAlign: "center" }}>
-  Send
-</th>
                 </tr>
               </thead>
 
-<tbody>
-  {(project?.payments || []).map((pay, i) => {
-    const amount =
-      Number(
-        pay?.amount ??
-        pay?.payment?.amount ??
-        pay?.data?.amount ??
-        0
-      );
+              <tbody>
+                {(project?.payments || []).map((pay, i) => {
+                  const amount =
+                    Number(
+                      pay?.amount ??
+                      pay?.payment?.amount ??
+                      pay?.data?.amount ??
+                      0
+                    );
 
-    const date = pay?.date || pay?.createdAt;
+                  const date = pay?.date || pay?.createdAt;
 
-    return (
-      <tr key={i}>
-        <td style={{ padding: "10px", textAlign: "center" }}>
-          {date
-            ? new Date(date).toLocaleDateString("en-IN")
-            : "-"}
-        </td>
+                  return (
+                    <tr key={i}>
+                      <td style={{ padding: "10px", textAlign: "center" }}>
+                        {date
+                          ? new Date(date).toLocaleDateString("en-IN", {
+                              day: "2-digit",
+                              month: "long",
+                              year: "numeric",
+                            })
+                          : "-"}
+                      </td>
 
-        <td style={{ textAlign: "center", fontWeight: "600" }}>
-          ₹ {amount}
-        </td>
+                      <td
+                        style={{
+                          padding: "10px",
+                          textAlign: "center",
+                          fontWeight: "600",
+                          color: "#2e7d32",
+                        }}
+                      >
+                        ₹ {amount}
+                      </td>
 
-        <td style={{ textAlign: "center" }}>
-          {pay?.note || "-"}
-        </td>
-
-        {/* ✅ CHECKBOX */}
-       <td style={{ textAlign: "center" }}>
-  <Button
-    variant="contained"
-    size="small"
-    sx={{
-      borderRadius: "20px",
-      textTransform: "none",
-      background: "#25D366",
-      color: "#fff",
-    }}
-    onClick={() => handleSendWhatsApp(pay)}
-  >
-    WhatsApp
-  </Button>
-</td>
-
-      </tr>
-    );
-  })}
-</tbody>
+                      <td style={{ padding: "10px", textAlign: "center" }}>
+                        {pay?.note || pay?.payment?.note || "-"}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
             </table>
           </Card>
         </>
