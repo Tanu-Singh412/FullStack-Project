@@ -160,28 +160,34 @@ useEffect(() => {
 // ✅ AFTER ALL HOOKS
 if (!project?._id) return <div>Loading...</div>;
   // ================= PAYMENT =================
-  const handleAddPayment = async () => {
-    if (!paymentData.amount) return;
+const handleAddPayment = async () => {
+  if (!paymentData.amount) return;
 
-    setLoading(true);
+  setLoading(true);
 
-    const payload = {
-      amount: Number(paymentData.amount),
-      date: paymentData.date || new Date().toISOString(),
-      note: paymentData.note,
-    };
-
-    await fetch(`${Base_API}/projects/${project._id}/payment`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
-
-    await fetchProject();
-    setPaymentData({ amount: "", date: "", note: "" });
-    setShowPaymentForm(false);
-    setLoading(false);
+  const payload = {
+    amount: Number(paymentData.amount),
+    date: paymentData.date || new Date().toISOString(),
+    note: paymentData.note,
   };
+
+  const res = await fetch(`${Base_API}/projects/${project._id}/payment`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+
+  const newPayment = await res.json(); // ✅ get created payment
+
+  // ✅ INSTANT UI UPDATE (no refresh needed)
+  setProject((prev) => ({
+    ...prev,
+    payments: [...(prev.payments || []), newPayment],
+  }));
+
+  setPaymentData({ amount: "", date: "", note: "" });
+  setLoading(false);
+};
 
   // ================= DELETE IMAGE =================
 const handleDeleteImage = async (imgUrl) => {
@@ -594,15 +600,18 @@ const inputStyle = {
                 width: "100%",
                 borderCollapse: "collapse",
                 fontSize: "14px",
+                tableLayout: "fixed",
               }}
             >
-              <thead>
-                <tr style={{ background: "#f8fafc" }}>
-                  <th style={thStyle}>Date</th>
-                  <th style={{ ...thStyle, textAlign: "right" }}>Amount</th>
-                  <th style={thStyle}>Note</th>
-                </tr>
-              </thead>
+           <thead>
+  <tr>
+    <th style={{ ...thStyle, width: "33%" }}>Date</th>
+    <th style={{ ...thStyle, width: "33%", textAlign: "right" }}>
+      Amount
+    </th>
+    <th style={{ ...thStyle, width: "34%" }}>Note</th>
+  </tr>
+</thead>
 
               <tbody>
                 {(project?.payments || []).map((pay, i) => (
@@ -1019,14 +1028,14 @@ const inputStyle = {
 }
 
 const thStyle = {
-  padding: "12px",
+  padding: "14px 16px",
   textAlign: "left",
   fontWeight: "600",
   borderBottom: "1px solid #e5e7eb",
 };
 
 const tdStyle = {
-  padding: "12px",
+  padding: "14px 16px",
   borderBottom: "1px solid #f1f5f9",
 };
 
