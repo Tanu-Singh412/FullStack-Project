@@ -66,7 +66,7 @@ function VendorDetail() {
               {/* HEADER */}
               <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
                 <Box display="flex" alignItems="center">
-                  <Avatar sx={{ bgcolor: '#1976d2', mr: 2 }}>
+                  <Avatar sx={{ bgcolor: '#1976d2', mr: 2 , color:"#fff" }}>
                     {vendor.vendorName?.charAt(0)}
                   </Avatar>
                   <Typography variant="h5" fontWeight="bold">

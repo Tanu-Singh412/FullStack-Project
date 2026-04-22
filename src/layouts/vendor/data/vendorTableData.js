@@ -22,7 +22,7 @@ function useVendorTableData() {
         const formattedRows = vendors.map((v) => ({
           vendorName: (
             <Box display="flex" alignItems="center">
-              <Avatar sx={{ mr: 1, bgcolor: '#1976d2' }}>
+              <Avatar sx={{ mr: 1, bgcolor: '#1976d2', color:"#fff" }}>
                 {v.vendorName?.charAt(0)}
               </Avatar>
               <Typography fontWeight="medium">{v.vendorName}</Typography>
