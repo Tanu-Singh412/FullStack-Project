@@ -30,7 +30,7 @@ export default function useClientTableData() {
 
   const columns = [
     { Header: "S.No.", accessor: "serial" },
-    { Header: "", accessor: "expand" },
+    // { Header: "", accessor: "expand" },
     { Header: "Client", accessor: "client" },
     { Header: "Client ID", accessor: "clientId" },
     { Header: "Date", accessor: "date" },
@@ -41,7 +41,9 @@ export default function useClientTableData() {
   // LOAD DATA
   const loadData = async () => {
     try {
-      const res = await fetch("https://fullstack-project-1-n510.onrender.com/api/clients");
+      const res = await fetch(
+        "https://fullstack-project-1-n510.onrender.com/api/clients",
+      );
       const data = await res.json();
       setClients(data);
     } catch (error) {
@@ -52,25 +54,31 @@ export default function useClientTableData() {
   // STATUS UPDATE
   const handleStatusChange = async (id, value) => {
     setClients((prev) =>
-      prev.map((c) => (c._id === id ? { ...c, status: value } : c))
+      prev.map((c) => (c._id === id ? { ...c, status: value } : c)),
     );
 
     const clientToUpdate = clients.find((c) => c._id === id);
     if (!clientToUpdate) return;
 
-    await fetch(`https://fullstack-project-1-n510.onrender.com/api/clients/${id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...clientToUpdate, status: value }),
-    });
+    await fetch(
+      `https://fullstack-project-1-n510.onrender.com/api/clients/${id}`,
+      {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...clientToUpdate, status: value }),
+      },
+    );
   };
 
   // DELETE
   const deleteClient = async (id) => {
     try {
-      await fetch(`https://fullstack-project-1-n510.onrender.com/api/clients/${id}`, {
-        method: "DELETE",
-      });
+      await fetch(
+        `https://fullstack-project-1-n510.onrender.com/api/clients/${id}`,
+        {
+          method: "DELETE",
+        },
+      );
       loadData();
     } catch (error) {
       console.error("Failed to delete client:", error);
@@ -94,43 +102,81 @@ export default function useClientTableData() {
         const bg = currentStatus === "Active" ? "#4caf50" : "#f44336";
 
         return {
-          serial: <MDTypography variant="caption">{i + 1}</MDTypography>,
-
-          expand: (
-            <IconButton onClick={() => setSelectedClient(c)}>
-              <AddCircleIcon />
-            </IconButton>
+          serial: (
+            <MDTypography variant="caption">
+              {i + 1}{" "}
+              <IconButton onClick={() => setSelectedClient(c)}>
+                <AddCircleIcon />
+              </IconButton>{" "}
+            </MDTypography>
           ),
 
           client: <MDTypography variant="caption">{c.name}</MDTypography>,
 
           clientId: (
-            <MDTypography variant="caption">
-              {c.clientId || c._id}
-            </MDTypography>
+            <MDTypography variant="caption">{c.clientId || c._id}</MDTypography>
           ),
 
           date: <MDTypography variant="caption">{date}</MDTypography>,
 
-          status: (
-            <Select
-              size="small"
-              value={currentStatus}
-              onChange={(e) => handleStatusChange(c._id, e.target.value)}
-              sx={{ bgcolor: bg, color: "#fff" }}
-            >
-              <MenuItem value="Active">Active</MenuItem>
-              <MenuItem value="Inactive">Inactive</MenuItem>
-            </Select>
-          ),
+status: (
+  <Select
+    size="small"
+    value={currentStatus}
+    onChange={(e) => handleStatusChange(c._id, e.target.value)}
+    sx={{
+      minWidth: 130,
+      px: 1.5,
+      py: 0.5,
+      borderRadius: 3,
+      fontWeight: "600",
+      bgcolor: "#fff",
+      color: currentStatus === "Active" ? "#2e7d32" : "#b31b10",
+      border: "1px solid",
+      borderColor:
+        currentStatus === "Active" ? "#2e7d32" : "#b31b10",
 
+      "& .MuiSelect-icon": {
+        color: currentStatus === "Active" ? "#2e7d32" : "#b31b10",
+      },
+
+      "& fieldset": {
+        border: "none",
+      },
+    }}
+  >
+    <MenuItem value="Active" sx={{ fontWeight: "600" }}>
+      🟢 Active
+    </MenuItem>
+
+    <MenuItem value="Inactive" sx={{ fontWeight: "600" }}>
+      🔴 Inactive
+    </MenuItem>
+  </Select>
+),
           actions: (
-            <MDBox display="flex">
-              <IconButton onClick={() => editClient(c)}>
+            <MDBox display="flex" gap={1}>
+              <IconButton
+                onClick={() => editClient(c)}
+                sx={{
+                  bgcolor: "#e3f2fd",
+                  color: "#1976d2",
+                  "&:hover": { bgcolor: "#bbdefb" },
+                  borderRadius: 2,
+                }}
+              >
                 <EditIcon />
               </IconButton>
 
-              <IconButton onClick={() => setDeleteId(c._id)}>
+              <IconButton
+                onClick={() => setDeleteId(c._id)}
+                sx={{
+                  bgcolor: "#ffebee",
+                  color: "#d32f2f",
+                  "&:hover": { bgcolor: "#ffcdd2" },
+                  borderRadius: 2,
+                }}
+              >
                 <DeleteIcon />
               </IconButton>
             </MDBox>
@@ -154,69 +200,65 @@ export default function useClientTableData() {
     rows,
     dialog: (
       <>
-<Dialog
-  open={!!selectedClient}
-  onClose={() => setSelectedClient(null)}
-  maxWidth="sm"
-  fullWidth
->
-  <DialogTitle sx={{ fontWeight: "bold" }}>
-    Client Details
-  </DialogTitle>
+        <Dialog
+          open={!!selectedClient}
+          onClose={() => setSelectedClient(null)}
+          maxWidth="sm"
+          fullWidth
+        >
+          <DialogTitle sx={{ fontWeight: "bold" }}>Client Details</DialogTitle>
 
-  <DialogContent>
-    {selectedClient && (
-      <MDBox>
+          <DialogContent>
+            {selectedClient && (
+              <MDBox>
+                {/* HEADER */}
+                <MDBox display="flex" alignItems="center" mb={2}>
+                  <Avatar sx={{ bgcolor: "#1976d2", mr: 2 }}>
+                    {selectedClient.name?.charAt(0)}
+                  </Avatar>
 
-        {/* HEADER */}
-        <MDBox display="flex" alignItems="center" mb={2}>
-          <Avatar sx={{ bgcolor: "#1976d2", mr: 2 }}>
-            {selectedClient.name?.charAt(0)}
-          </Avatar>
+                  <MDBox>
+                    <MDTypography variant="h6">
+                      {selectedClient.name}
+                    </MDTypography>
 
-          <MDBox>
-            <MDTypography variant="h6">
-              {selectedClient.name}
-            </MDTypography>
+                    <MDTypography variant="caption" color="text">
+                      ID: {selectedClient.clientId || selectedClient._id}
+                    </MDTypography>
+                  </MDBox>
+                </MDBox>
 
-            <MDTypography variant="caption" color="text">
-              ID: {selectedClient.clientId || selectedClient._id}
-            </MDTypography>
-          </MDBox>
-        </MDBox>
+                <Divider sx={{ mb: 2 }} />
 
-        <Divider sx={{ mb: 2 }} />
+                {/* DETAILS */}
+                <MDBox display="flex" flexDirection="column" gap={1}>
+                  <MDTypography>
+                    📞 <b>Phone:</b> {selectedClient.phone || "-"}
+                  </MDTypography>
 
-        {/* DETAILS */}
-        <MDBox display="flex" flexDirection="column" gap={1}>
+                  <MDTypography>
+                    📧 <b>Email:</b> {selectedClient.email || "-"}
+                  </MDTypography>
 
-          <MDTypography>
-            📞 <b>Phone:</b> {selectedClient.phone || "-"}
-          </MDTypography>
+                  <MDTypography>
+                    📍 <b>Address:</b> {selectedClient.address || "-"}
+                  </MDTypography>
 
-          <MDTypography>
-            📧 <b>Email:</b> {selectedClient.email || "-"}
-          </MDTypography>
+                  <MDTypography>
+                    📅 <b>Created:</b>{" "}
+                    {new Date(selectedClient.createdAt).toLocaleDateString(
+                      "en-IN",
+                    )}
+                  </MDTypography>
 
-          <MDTypography>
-            📍 <b>Address:</b> {selectedClient.address || "-"}
-          </MDTypography>
-
-          <MDTypography>
-            📅 <b>Created:</b>{" "}
-            {new Date(selectedClient.createdAt).toLocaleDateString("en-IN")}
-          </MDTypography>
-
-          <MDTypography>
-            📊 <b>Status:</b> {selectedClient.status || "Active"}
-          </MDTypography>
-
-        </MDBox>
-
-      </MDBox>
-    )}
-  </DialogContent>
-</Dialog>
+                  <MDTypography>
+                    📊 <b>Status:</b> {selectedClient.status || "Active"}
+                  </MDTypography>
+                </MDBox>
+              </MDBox>
+            )}
+          </DialogContent>
+        </Dialog>
       </>
     ),
   };
