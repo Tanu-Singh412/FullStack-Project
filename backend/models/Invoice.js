@@ -9,7 +9,7 @@ const itemSchema = new mongoose.Schema({
 
 const invoiceSchema = new mongoose.Schema(
   {
-    clientName: { type: String, required: true },
+    invoiceName: { type: String, required: true },
     email: String,
     company: String,
     address: String,

@@ -33,7 +33,7 @@ exports.getInvoices = async (req, res) => {
     /* 🔍 SEARCH */
     if (search) {
       query.$or = [
-        { clientName: { $regex: search, $options: "i" } },
+        { invoiceName: { $regex: search, $options: "i" } },
         { invoiceNo: { $regex: search, $options: "i" } },
       ];
     }

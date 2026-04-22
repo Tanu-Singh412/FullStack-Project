@@ -50,6 +50,7 @@ if (req.files && req.files.dwgFile) {
   dwgFile,
   projectId,
   clientId: req.body.clientId,
+  phone: req.body.phone,
   payments: req.body.advanceAmount
     ? [{ amount: Number(req.body.advanceAmount) }]
     : [],
@@ -69,7 +70,7 @@ if (req.files && req.files.dwgFile) {
 // GET
 exports.getProjects = async (req, res) => {
   try {
-    const data = await Project.find().populate("client").sort({ createdAt: -1 });
+    const data = await Project.find().sort({ createdAt: -1 });
 
     const updated = data.map((p) => {
       const totalPaid = (p.payments || []).reduce(
@@ -93,7 +94,7 @@ exports.getProjects = async (req, res) => {
 };
 exports.getProjectById = async (req, res) => {
   try {
-    const project = await Project.findById(req.params.id).populate("client");
+    const project = await Project.findById(req.params.id);
 
     if (!project) {
       return res.status(404).json({ msg: "Project not found" });
@@ -112,11 +113,16 @@ exports.getProjectById = async (req, res) => {
 const response = {
   ...project._doc,
 
-  clientPhone: project.client?.phone || "",
+  totalPaid,
+  balance,
 
-  clientName: project.client?.name || "",
+  clientPhone:
+    project.phone || 
+    project.client?.phone || 
+    "",
+
+  clientName: project.clientName || "",
 };
-
     res.json(response);
 
   } catch (err) {
@@ -187,6 +193,7 @@ exports.updateProject = async (req, res) => {
       images,
       dwgFile,
       clientId: req.body.clientId || "",
+      phone: req.body.phone,
       totalAmount: Number(req.body.totalAmount || 0),
     };
 
