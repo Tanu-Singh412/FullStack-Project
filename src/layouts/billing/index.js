@@ -881,7 +881,7 @@ export default function InvoicePage() {
       px: 3,
       py: 2,
       borderRadius: "10px",
-      width: "55%",
+      width: "100%",
       fontWeight: 600,
       fontSize: "13px",
     }}
