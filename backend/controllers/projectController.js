@@ -94,10 +94,16 @@ exports.getProjects = async (req, res) => {
 };
 exports.getProjectById = async (req, res) => {
   try {
-    const project = await Project.findById(req.params.id).populate("client");
+    const project = await Project.findById(req.params.id);
 
     if (!project) {
       return res.status(404).json({ msg: "Project not found" });
+    }
+
+    const Client = require("../models/Client");
+    let clientData = null;
+    if (project.clientId) {
+      clientData = await Client.findOne({ clientId: project.clientId });
     }
 
     // ================= CALCULATE =================
@@ -118,7 +124,7 @@ const response = {
 
   clientPhone:
     project.phone || 
-    project.client?.phone || 
+    clientData?.phone || 
     "",
 
   clientName: project.clientName || "",
