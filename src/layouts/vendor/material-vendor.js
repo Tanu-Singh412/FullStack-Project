@@ -12,7 +12,7 @@ import Box from "@mui/material/Box";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
-
+import Chip from "@mui/material/Chip";
 function VendorList() {
   const { categoryId } = useParams();
   const navigate = useNavigate();
