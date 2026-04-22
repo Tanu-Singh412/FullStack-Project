@@ -721,7 +721,7 @@ function ProjectDetails() {
                                   size="small"
                                   variant="contained"
                                   color="success"
-                                  sx={{ color: "#fff", textTransform: "none", borderRadius: "20px", fontWeight: "bold", background: "#25D366", "&:hover": { background: "#128C7E" } }}
+                                  sx={{ color: "#000", textTransform: "none", borderRadius: "20px", fontWeight: "bold", background: "#25D366", "&:hover": { background: "#128C7E" } }}
                                   onClick={() => sendWhatsAppSlip(pay)}
                                 >
                                   Send WA Slip
