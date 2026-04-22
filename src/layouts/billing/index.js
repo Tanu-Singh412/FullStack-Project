@@ -479,13 +479,13 @@ export default function InvoicePage() {
           ) : (
             <TableContainer component={Paper} elevation={0} sx={{ border: "1px solid #eee" }}>
               <Table>
-                <TableHead sx={{ backgroundColor: "#e9ecef" }}>
+                <TableHead sx={{ background: "linear-gradient(135deg, #1976d2, #42a5f5)" }}>
                   <TableRow>
-                    <TableCell sx={{ color: "#344767", fontWeight: "bold" }}>Invoice No</TableCell>
-                    <TableCell sx={{ color: "#344767", fontWeight: "bold" }}>Billing Name</TableCell>
-                    <TableCell sx={{ color: "#344767", fontWeight: "bold" }}>Date</TableCell>
-                    <TableCell sx={{ color: "#344767", fontWeight: "bold" }}>Total Amount</TableCell>
-                    <TableCell align="center" sx={{ color: "#344767", fontWeight: "bold" }}>Actions</TableCell>
+                    <TableCell sx={{ color: "#fff", fontWeight: "bold", fontSize: "14px" }}>Invoice No</TableCell>
+                    <TableCell sx={{ color: "#fff", fontWeight: "bold", fontSize: "14px" }}>Billing Name</TableCell>
+                    <TableCell sx={{ color: "#fff", fontWeight: "bold", fontSize: "14px" }}>Date</TableCell>
+                    <TableCell sx={{ color: "#fff", fontWeight: "bold", fontSize: "14px" }}>Total Amount</TableCell>
+                    <TableCell align="center" sx={{ color: "#fff", fontWeight: "bold", fontSize: "14px" }}>Actions</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -504,18 +504,18 @@ export default function InvoicePage() {
                         <TableCell sx={{ color: "#555", fontWeight: "bold" }}>₹{inv.total}</TableCell>
                         <TableCell align="center">
                           <Box display="flex" justifyContent="center" gap={1}>
-                            <IconButton color="info" onClick={() => {
+                            <Button size="small" variant="contained" sx={{ color: "white", background: "#1976d2", textTransform: "none", fontWeight: "bold", "&:hover": { background: "#1565c0" } }} startIcon={<VisibilityIcon />} onClick={() => {
                               setData({ ...data, ...inv, billingName: inv.invoiceName || inv.clientName, billingGstin: inv.clientGstin || inv.billingGstin, date: new Date(inv.date || inv.createdAt).toISOString().split('T')[0] });
                               setPreviewOpen(true);
                             }}>
-                              <VisibilityIcon />
-                            </IconButton>
-                            <IconButton color="success" onClick={() => handleDownloadExisting(inv)}>
-                              <DownloadIcon />
-                            </IconButton>
-                            <IconButton color="error" onClick={() => setDeleteId(inv._id)}>
-                              <DeleteIcon />
-                            </IconButton>
+                              Preview
+                            </Button>
+                            <Button size="small" variant="contained" color="success" startIcon={<DownloadIcon />} sx={{ color: "white", textTransform: "none", fontWeight: "bold" }} onClick={() => handleDownloadExisting(inv)}>
+                              Download
+                            </Button>
+                            <Button size="small" variant="contained" color="error" startIcon={<DeleteIcon />} sx={{ color: "white", textTransform: "none", fontWeight: "bold" }} onClick={() => setDeleteId(inv._id)}>
+                              Delete
+                            </Button>
                           </Box>
                         </TableCell>
                       </TableRow>

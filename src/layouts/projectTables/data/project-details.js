@@ -215,11 +215,11 @@ const sendWhatsAppSlip = (pay) => {
   const formattedDate = date ? new Date(date).toLocaleDateString("en-IN") : new Date().toLocaleDateString("en-IN");
   
   // Use clientPhone from backend
-  const phone = project?.clientPhone || project?.phone;
+  let phone = project?.clientPhone || project?.phone;
   
   if (!phone) {
-    alert("Client phone number is missing in project data!");
-    return;
+    phone = prompt("Client phone number is missing in project data! Please manually enter the WhatsApp number (with country code, e.g., 919876543210):");
+    if (!phone) return;
   }
   
   let cleanPhone = phone.toString().replace(/\D/g, '');
