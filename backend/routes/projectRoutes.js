@@ -17,8 +17,7 @@ const {
   deleteDrawing,
   deleteDrawingImage,
     getProjectById, // ✅ ADD THIS
-
-
+  addDrawingBase64,
 } = require("../controllers/projectController");
 
 const upload = require("../middleware/upload");
@@ -54,6 +53,7 @@ router.post("/:id/payment", addPayment);
 
 // ================= DRAWINGS =================
 router.post("/:projectId/drawing", upload.array("images", 10), addDrawing);
+router.post("/:projectId/drawing/base64", addDrawingBase64);
 
 router.get("/:projectId/drawing", getDrawings);
 

@@ -361,6 +361,32 @@ exports.addDrawing = async (req, res) => {
   }
 };
 
+// ================= ADD DRAWING BASE64 =================
+exports.addDrawingBase64 = async (req, res) => {
+  try {
+    const { projectId } = req.params;
+    const { type, images } = req.body; // images is an array of base64 strings
+
+    const project = await Project.findById(projectId);
+    if (!project) return res.status(404).json({ msg: "Project not found" });
+
+    if (type === "civil") {
+      project.civilImages = [...(project.civilImages || []), ...images];
+    }
+
+    if (type === "interior") {
+      project.interiorImages = [...(project.interiorImages || []), ...images];
+    }
+
+    await project.save();
+
+    res.json({ msg: "Uploaded", images });
+  } catch (err) {
+    console.log("ADD DRAWING BASE64 ERROR:", err);
+    res.status(500).json(err);
+  }
+};
+
 // ================= GET DRAWINGS =================
 exports.getDrawings = async (req, res) => {
   try {
