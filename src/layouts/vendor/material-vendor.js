@@ -13,9 +13,7 @@ import { useEffect, useState } from "react";
 
 import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
-import Avatar from "@mui/material/Avatar";
 import CardContent from "@mui/material/CardContent";
-import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Chip from "@mui/material/Chip";
 
