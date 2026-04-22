@@ -66,41 +66,47 @@ const numberToWords = (num) => {
 const Invoice = React.forwardRef(({ data, totals }, ref) => {
   return (
     <div ref={ref} style={styles.page}>
-      <div style={styles.header}>
-        <div style={styles.logoBox}>
-          {data.logo && (
-            <img src={data.logo} alt="logo" style={styles.logo} crossOrigin="anonymous" />
-          )}
-        </div>
-        <div style={styles.companyBox}>
-          <h2 style={styles.title}>TAX INVOICE</h2>
-          <b>{data.company}</b>
-          <br />
-          {data.address && <>{data.address}<br /></>}
-          {data.gstin && <>GSTIN: {data.gstin}<br /></>}
-          {data.phone && <>Phone: {data.phone}</>}
-        </div>
-        <div style={styles.invoiceBox}>
-          <b>Invoice No:</b> {data.invoiceNo}<br />
-          <b>Date:</b> {data.date ? new Date(data.date).toLocaleDateString('en-IN') : ''}
-        </div>
+      <div style={styles.headerCenter}>
+        {data.logo && <img src={data.logo} alt="logo" style={styles.logo} crossOrigin="anonymous" />}
+        <h1 style={styles.companyTitle}>{data.company || "YOUR COMPANY"}</h1>
+      </div>
+      
+      <div style={styles.invoiceTitle}>TAX INVOICE</div>
+
+      <div style={styles.invoiceMeta}>
+        <div style={styles.metaItem}><b>Invoice No:</b> {data.invoiceNo}</div>
+        <div style={styles.metaItem}><b>Date:</b> {data.date ? new Date(data.date).toLocaleDateString('en-IN') : ''}</div>
       </div>
 
-      <div style={styles.billBox}>
-        <b>Bill To</b><br />
-        {data.billingName}<br />
-        {data.email && <>{data.email}<br /></>}
-        {data.billingGstin && <>GSTIN: {data.billingGstin}</>}
+      <div style={styles.flexRow}>
+        <div style={styles.senderBox}>
+          <div style={styles.sectionTitle}>From</div>
+          <div style={styles.infoText}>
+            <b>{data.company}</b><br />
+            {data.address && <>{data.address}<br /></>}
+            {data.phone && <>Phone: {data.phone}<br /></>}
+            {data.gstin && <>GSTIN: {data.gstin}</>}
+          </div>
+        </div>
+
+        <div style={styles.receiverBox}>
+          <div style={styles.sectionTitle}>Bill To</div>
+          <div style={styles.infoText}>
+            <b>{data.billingName}</b><br />
+            {data.email && <>{data.email}<br /></>}
+            {data.billingGstin && <>GSTIN: {data.billingGstin}</>}
+          </div>
+        </div>
       </div>
 
       <table style={styles.table}>
         <thead>
           <tr>
-            <th style={styles.th}>Item</th>
-            {data.items.some((i) => i.hsn) && <th style={styles.th}>HSN</th>}
-            <th style={styles.th}>Qty</th>
-            <th style={styles.th}>Rate</th>
-            <th style={styles.th}>Amount</th>
+            <th style={{...styles.th, width: "40%"}}>Description</th>
+            {data.items.some((i) => i.hsn) && <th style={styles.th}>HSN/SAC</th>}
+            <th style={{...styles.th, textAlign: "center"}}>Qty</th>
+            <th style={{...styles.th, textAlign: "right"}}>Rate</th>
+            <th style={{...styles.th, textAlign: "right"}}>Amount</th>
           </tr>
         </thead>
         <tbody>
@@ -108,19 +114,35 @@ const Invoice = React.forwardRef(({ data, totals }, ref) => {
             <tr key={i}>
               <td style={styles.td}>{item.name}</td>
               {data.items.some((i) => i.hsn) && <td style={styles.td}>{item.hsn || "-"}</td>}
-              <td style={styles.td}>{item.qty}</td>
-              <td style={styles.td}>₹{item.price}</td>
-              <td style={styles.td}>₹{item.qty * item.price}</td>
+              <td style={{...styles.td, textAlign: "center"}}>{item.qty}</td>
+              <td style={{...styles.td, textAlign: "right"}}>₹{item.price}</td>
+              <td style={{...styles.td, textAlign: "right"}}>₹{item.qty * item.price}</td>
             </tr>
           ))}
         </tbody>
       </table>
 
       <div style={styles.totalBox}>
-        <div>Subtotal: ₹{totals.subtotal}</div>
-        {data.sgst > 0 && <div>SGST ({data.sgst}%): ₹{totals.sgst}</div>}
-        {data.cgst > 0 && <div>CGST ({data.cgst}%): ₹{totals.cgst}</div>}
-        <h3>Total: ₹{totals.total}</h3>
+        <div style={styles.totalRow}>
+          <span>Subtotal:</span>
+          <span>₹{totals.subtotal}</span>
+        </div>
+        {data.sgst > 0 && (
+          <div style={styles.totalRow}>
+            <span>SGST ({data.sgst}%):</span>
+            <span>₹{totals.sgst}</span>
+          </div>
+        )}
+        {data.cgst > 0 && (
+          <div style={styles.totalRow}>
+            <span>CGST ({data.cgst}%):</span>
+            <span>₹{totals.cgst}</span>
+          </div>
+        )}
+        <div style={styles.finalTotal}>
+          <span>Total:</span>
+          <span>₹{totals.total}</span>
+        </div>
       </div>
 
       <div style={styles.words}>
@@ -223,7 +245,8 @@ export default function InvoicePage() {
     try {
       const payload = {
         ...data,
-        invoiceName: data.billingName,
+        clientName: data.billingName, // Backwards compatibility with old schema
+        invoiceName: data.billingName, // New schema
         clientGstin: data.billingGstin, // backend uses clientGstin or we should keep it billingGstin
         subtotal: Number(totals.subtotal),
         total: Number(totals.total),
@@ -239,10 +262,12 @@ export default function InvoicePage() {
           billingName: "", email: "", invoiceNo: "", date: new Date().toISOString().split('T')[0],
           items: [{ name: "", hsn: "", qty: 1, price: 0 }]
         });
+      } else {
+        alert("Failed to save invoice: " + (res.message || "Please check required fields."));
       }
     } catch (err) {
       console.error("Failed to save invoice", err);
-      alert("Failed to save invoice. Please check the required fields.");
+      alert("Network error or failed to save. Is the backend running?");
     }
   };
 
@@ -518,10 +543,10 @@ export default function InvoicePage() {
             <Invoice data={data} totals={totals} />
           </Paper>
         </DialogContent>
-        <DialogActions>
+        <DialogActions sx={{ padding: "20px 24px", justifyContent: "flex-end" }}>
           <Button onClick={() => setPreviewOpen(false)} color="inherit">Close</Button>
-          <Button onClick={() => { downloadPDF(pdfRef.current); setPreviewOpen(false); }} variant="contained" color="success" sx={{ color: 'white' }} startIcon={<DownloadIcon />}>
-            Download PDF
+          <Button onClick={() => { handleSaveAndDownload(); setPreviewOpen(false); }} variant="contained" color="success" sx={{ color: 'white' }} startIcon={<DownloadIcon />}>
+            Save & Download PDF
           </Button>
         </DialogActions>
       </Dialog>
@@ -531,17 +556,23 @@ export default function InvoicePage() {
 
 /* ================= STYLES ================= */
 const styles = {
-  page: { width: "210mm", padding: 25, background: "#fff", fontFamily: "Arial", color: "#000" },
-  header: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20, borderBottom: "2px solid #000", paddingBottom: 10, color: "#000" },
-  logo: { height: 60 },
-  logoBox: { width: "20%" },
-  companyBox: { width: "50%", textAlign: "center", color: "#000" },
-  invoiceBox: { width: "30%", textAlign: "right", color: "#000" },
-  title: { margin: 0, color: "#000", fontWeight: "bold" },
-  billBox: { marginBottom: 20, padding: 10, border: "1px solid #000", color: "#000" },
-  table: { width: "100%", borderCollapse: "collapse", color: "#000" },
-  th: { border: "1px solid #000", padding: 8, background: "#eee", color: "#000", fontWeight: "bold" },
-  td: { border: "1px solid #000", padding: 8, color: "#000" },
-  totalBox: { marginTop: 20, textAlign: "right", color: "#000" },
-  words: { marginTop: 20, color: "#000" },
+  page: { width: "210mm", minHeight: "297mm", padding: 40, background: "#fff", fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif", color: "#333" },
+  headerCenter: { textAlign: "center", marginBottom: 30 },
+  logo: { height: 80, marginBottom: 10 },
+  companyTitle: { margin: 0, fontSize: 24, fontWeight: "bold", color: "#111", textTransform: "uppercase" },
+  invoiceTitle: { fontSize: 28, fontWeight: "bold", color: "#2c3e50", margin: "10px 0 20px 0", textAlign: "center", textTransform: "uppercase", letterSpacing: 2 },
+  flexRow: { display: "flex", justifyContent: "space-between", marginBottom: 30 },
+  senderBox: { width: "45%" },
+  receiverBox: { width: "45%", textAlign: "right" },
+  sectionTitle: { fontSize: 14, fontWeight: "bold", color: "#7f8c8d", textTransform: "uppercase", marginBottom: 5, borderBottom: "2px solid #3498db", display: "inline-block", paddingBottom: 3 },
+  infoText: { fontSize: 13, lineHeight: 1.6, color: "#444" },
+  table: { width: "100%", borderCollapse: "collapse", marginBottom: 30 },
+  th: { borderBottom: "2px solid #bdc3c7", padding: "12px 8px", background: "#f8f9fa", color: "#2c3e50", fontWeight: "bold", textAlign: "left", fontSize: 14 },
+  td: { borderBottom: "1px solid #ecf0f1", padding: "12px 8px", color: "#333", fontSize: 13 },
+  totalBox: { width: "50%", marginLeft: "auto", background: "#f8f9fa", padding: 20, borderRadius: 5 },
+  totalRow: { display: "flex", justifyContent: "space-between", marginBottom: 10, fontSize: 14 },
+  finalTotal: { display: "flex", justifyContent: "space-between", marginTop: 10, paddingTop: 10, borderTop: "2px solid #bdc3c7", fontSize: 18, fontWeight: "bold", color: "#2c3e50" },
+  words: { marginTop: 20, fontSize: 13, color: "#7f8c8d", fontStyle: "italic" },
+  invoiceMeta: { width: "100%", display: "flex", justifyContent: "space-between", background: "#f8f9fa", padding: 15, borderRadius: 5, marginBottom: 30 },
+  metaItem: { fontSize: 13 },
 };
