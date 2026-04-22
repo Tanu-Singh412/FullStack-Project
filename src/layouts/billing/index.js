@@ -384,8 +384,13 @@ export default function InvoicePage() {
       const formattedDate = inv.date
         ? new Date(inv.date).toLocaleDateString("en-IN")
         : new Date(inv.createdAt).toLocaleDateString("en-IN");
-      const text = `Hello ${clientName},\n\nPlease find the details for Invoice No: ${inv.invoiceNo} dated ${formattedDate} for a total amount of ₹${inv.total.toLocaleString("en-IN")}.\n\nThank you!\n- Satya Group`;
+      const text = `Dear ${clientName},
 
+Please find the details for Invoice No: ${inv.invoiceNo} dated ${formattedDate} for a total amount of ₹${inv.total.toLocaleString("en-IN")}.
+
+Kindly review the same and let us know if any clarification is required.
+
+Thank you.`;
       const encodedText = encodeURIComponent(text);
       window.open(`https://wa.me/${cleanPhone}?text=${encodedText}`, "_blank");
     } catch (error) {
@@ -884,6 +889,7 @@ export default function InvoicePage() {
                   width: "100%",
                   fontWeight: 600,
                   fontSize: "13px",
+
                 }}
               >
                 <span>Invoice No</span>
