@@ -4,34 +4,28 @@ import { useEffect, useState } from "react";
 import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
 import Button from "@mui/material/Button";
+import Avatar from "@mui/material/Avatar";
+import CardContent from "@mui/material/CardContent";
+import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
 
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
 
-import MDBox from "components/MDBox";
-import MDTypography from "components/MDTypography";
-
 function VendorList() {
-  const { categoryId } = useParams(); // ✅ correct
+  const { categoryId } = useParams();
   const navigate = useNavigate();
   const [vendors, setVendors] = useState([]);
 
-  const cleanCategory = categoryId?.trim().toLowerCase(); // ✅ IMPORTANT
+  const cleanCategory = categoryId?.trim().toLowerCase();
 
   useEffect(() => {
     if (!cleanCategory) return;
 
-    console.log("FETCH CATEGORY:", cleanCategory);
-
-    fetch(
-      `https://fullstack-project-1-n510.onrender.com/api/vendors?category=${cleanCategory}`
-    )
+    fetch(`https://fullstack-project-1-n510.onrender.com/api/vendors?category=${cleanCategory}`)
       .then((res) => res.json())
-      .then((res) => {
-        console.log("API RESPONSE:", res);
-        setVendors(res.data || []);
-      })
+      .then((res) => setVendors(res.data || []))
       .catch((err) => console.log(err));
   }, [cleanCategory]);
 
@@ -39,64 +33,85 @@ function VendorList() {
     <DashboardLayout>
       <DashboardNavbar />
 
-      <MDBox pt={6} pb={3}>
-        <Grid container spacing={6}>
-          <Grid item xs={12}>
-            <Card>
+      <Box sx={{ pt: 6, pb: 3, px: 2 }}>
+        {/* HEADER */}
+        <Box
+          sx={{
+            mb: 4,
+            p: 3,
+            borderRadius: 3,
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            background: "linear-gradient(135deg, #1976d2, #42a5f5)",
+            color: "white",
+            boxShadow: 4,
+          }}
+        >
+          <Typography variant="h5" fontWeight="bold">
+            {categoryId} Vendors
+          </Typography>
 
-              {/* HEADER */}
-              <MDBox
-                mx={2}
-                mt={-3}
-                py={2.5}
-                px={3}
-                bgColor="info"
-                borderRadius="lg"
-                display="flex"
-                justifyContent="space-between"
-                alignItems="center"
-              >
-                <MDTypography variant="h6" color="white">
-                  {categoryId} Vendors
-                </MDTypography>
+          <Button
+            variant="contained"
+            onClick={() => navigate(`/add-vendor/${categoryId}`)}
+            sx={{
+              background: "#fff",
+              color: "#1976d2",
+              fontWeight: "bold",
+              borderRadius: 2,
+              px: 3,
+              '&:hover': { background: '#e3f2fd' },
+            }}
+          >
+            + Add Vendor
+          </Button>
+        </Box>
 
-                <Button
-                  variant="contained"
-                  onClick={() => navigate(`/add-vendor/${categoryId}`)}
-                  sx={{ background: "#fff", color: "#1976d2" }}
+        {/* VENDOR GRID */}
+        <Grid container spacing={3}>
+          {vendors.length === 0 ? (
+            <Typography sx={{ ml: 2 }}>No vendors found</Typography>
+          ) : (
+            vendors.map((v) => (
+              <Grid item xs={12} sm={6} md={4} key={v._id}>
+                <Card
+                  onClick={() => navigate(`/vendor/${v._id}`)}
+                  sx={{
+                    cursor: "pointer",
+                    borderRadius: 3,
+                    transition: "0.3s",
+                    boxShadow: 3,
+                    '&:hover': {
+                      transform: "translateY(-6px)",
+                      boxShadow: 6,
+                    },
+                  }}
                 >
-                  + Add Vendor
-                </Button>
-              </MDBox>
+                  <CardContent>
+                    <Box display="flex" alignItems="center" mb={2}>
+                      <Avatar sx={{ mr: 2, bgcolor: '#1976d2' }}>
+                        {v.vendorName?.charAt(0).toUpperCase()}
+                      </Avatar>
+                      <Typography variant="h6" fontWeight="bold">
+                        {v.vendorName}
+                      </Typography>
+                    </Box>
 
-              {/* LIST */}
-              <MDBox p={3}>
-                <Grid container spacing={3}>
-                  {vendors.length === 0 ? (
-                    <MDTypography>No vendors found</MDTypography>
-                  ) : (
-                    vendors.map((v) => (
-                      <Grid item xs={12} md={4} key={v._id}>
-                        <Card
-                          sx={{ p: 2, cursor: "pointer" }}
-                          onClick={() => navigate(`/vendor/${v._id}`)}
-                        >
-                          <MDTypography variant="h6">
-                            {v.vendorName}
-                          </MDTypography>
-                          <MDTypography>{v.phone}</MDTypography>
-                          <MDTypography>{v.company}</MDTypography>
-                        </Card>
-                      </Grid>
-                    ))
-                  )}
-                </Grid>
-              </MDBox>
+                    <Typography variant="body2" color="text.secondary">
+                      📞 {v.phone}
+                    </Typography>
 
-            </Card>
-          </Grid>
+                    <Typography variant="body2" color="text.secondary">
+                      🏢 {v.company}
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </Grid>
+            ))
+          )}
         </Grid>
-      </MDBox>
+      </Box>
 
       <Footer />
     </DashboardLayout>

@@ -925,22 +925,22 @@ Thank you.`;
                     }}
                   >
                     {/* Invoice No */}
-                    <Typography fontWeight={700} fontSize={12}>
+                    <Typography fontWeight={700} fontSize={14}>
                       {inv.invoiceNo}
                     </Typography>
 
                     {/* Billing */}
-                    <Typography color="#475569" fontSize={12}>
+                    <Typography color="#475569" fontSize={14}>
                       {inv.invoiceName || inv.clientName}
                     </Typography>
 
                     {/* Date */}
-                    <Typography color="#64748b" fontSize={12}>
+                    <Typography color="#64748b" fontSize={14}>
                       {new Date(inv.date || inv.createdAt).toLocaleDateString("en-IN")}
                     </Typography>
 
                     {/* Amount */}
-                    <Typography fontWeight={700} color="#16a34a" fontSize={12}>
+                    <Typography fontWeight={700} color="#16a34a" fontSize={14}>
                       ₹{inv.total.toLocaleString("en-IN")}
                     </Typography>
 

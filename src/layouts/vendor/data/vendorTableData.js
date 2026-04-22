@@ -1,31 +1,57 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import Button from "@mui/material/Button";
+import Chip from "@mui/material/Chip";
+import Avatar from "@mui/material/Avatar";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+
 const Base_API = "https://fullstack-project-1-n510.onrender.com/api";
 
 function useVendorTableData() {
-  const [rows, setRows] = useState([]); // ✅ IMPORTANT
+  const [rows, setRows] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
     fetch(`${Base_API}/vendors`)
       .then((res) => res.json())
       .then((data) => {
-        console.log("VENDORS API:", data);
-
-        // ✅ adjust based on your API response
         const vendors = data.data || data;
 
         const formattedRows = vendors.map((v) => ({
-          vendorName: v.vendorName,
-          phone: v.phone,
-          email: v.email,
-          company: v.company,
+          vendorName: (
+            <Box display="flex" alignItems="center">
+              <Avatar sx={{ mr: 1, bgcolor: '#1976d2' }}>
+                {v.vendorName?.charAt(0)}
+              </Avatar>
+              <Typography fontWeight="medium">{v.vendorName}</Typography>
+            </Box>
+          ),
+
+          phone: <Typography>📞 {v.phone}</Typography>,
+
+          email: (
+            <Typography color="text.secondary">{v.email}</Typography>
+          ),
+
+          company: (
+            <Chip
+              label={v.company}
+              variant="outlined"
+              sx={{ borderRadius: 2 }}
+            />
+          ),
 
           action: (
-            <button onClick={() => navigate(`/vendor/${v._id}`)}>
+            <Button
+              variant="contained"
+              size="small"
+              onClick={() => navigate(`/vendor/${v._id}`)}
+              sx={{ borderRadius: 2 }}
+            >
               View
-            </button>
+            </Button>
           ),
         }));
 
@@ -33,13 +59,12 @@ function useVendorTableData() {
       })
       .catch((err) => {
         console.error("Vendor fetch error:", err);
-        setRows([]); // ✅ fallback
+        setRows([]);
       });
   }, []);
 
-  // ✅ TABLE COLUMNS
   const columns = [
-    { Header: "Vendor Name", accessor: "vendorName" },
+    { Header: "Vendor", accessor: "vendorName" },
     { Header: "Phone", accessor: "phone" },
     { Header: "Email", accessor: "email" },
     { Header: "Company", accessor: "company" },
@@ -49,7 +74,7 @@ function useVendorTableData() {
   return {
     columns,
     rows,
-    dialog: null, // optional
+    dialog: null,
   };
 }
 

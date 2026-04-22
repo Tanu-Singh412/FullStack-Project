@@ -6,11 +6,10 @@ import Card from "@mui/material/Card";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import TextField from "@mui/material/TextField";
+import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
+import Avatar from "@mui/material/Avatar";
 
-import MDBox from "components/MDBox";
-import MDTypography from "components/MDTypography";
-
-// ✅ IMPORTANT
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
@@ -37,7 +36,7 @@ function VendorHome() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name }),
-      },
+      }
     );
 
     const data = await res.json();
@@ -51,74 +50,88 @@ function VendorHome() {
     <DashboardLayout>
       <DashboardNavbar />
 
-      {/* ✅ HEADER (BLUE BAR) */}
-      <MDBox pt={6} pb={3}>
-        <Grid container spacing={6}>
-          <Grid item xs={12}>
-            <Card>
-              <MDBox
-                mx={2}
-                mt={-3}
-                py={2.5}
-                px={3}
-                bgColor="info"
-                borderRadius="lg"
-                coloredShadow="info"
-                display="flex"
-                justifyContent="space-between"
-                alignItems="center"
+      <Box sx={{ pt: 6, pb: 3, px: 2 }}>
+        {/* HEADER */}
+        <Box
+          sx={{
+            mb: 4,
+            p: 3,
+            borderRadius: 3,
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            background: "linear-gradient(135deg, #1976d2, #42a5f5)",
+            color: "white",
+            boxShadow: 4,
+          }}
+        >
+          <Typography variant="h5" fontWeight="bold">
+            Vendor Categories
+          </Typography>
+
+          <Button
+            variant="contained"
+            onClick={() => setOpen(true)}
+            sx={{
+              background: "#fff",
+              color: "#1976d2",
+              fontWeight: "bold",
+              borderRadius: 2,
+              px: 3,
+              '&:hover': { background: '#e3f2fd' },
+            }}
+          >
+            + Add Category
+          </Button>
+        </Box>
+
+        {/* CATEGORY GRID */}
+        <Grid container spacing={3}>
+          {categories.map((c) => (
+            <Grid item xs={12} sm={6} md={3} key={c._id}>
+              <Card
+                onClick={() => navigate(`/vendor/category/${c.name}`)}
+                sx={{
+                  p: 3,
+                  textAlign: "center",
+                  cursor: "pointer",
+                  borderRadius: 3,
+                  transition: "0.3s",
+                  boxShadow: 3,
+                  '&:hover': {
+                    transform: "translateY(-6px)",
+                    boxShadow: 6,
+                  },
+                }}
               >
-                <MDTypography variant="h6" color="white">
-                  Vendor Categories
-                </MDTypography>
-
-                <Button
-                  variant="contained"
-                  onClick={() => setOpen(true)}
-             sx={{
-  background: "#fff",
-  color: "#1976d2",
-  fontWeight: "600",
-  "&:hover": {
-    background: "#fff",   // keep same
-    color: "#1976d2",     // keep same
-    boxShadow: "none",    // optional (removes dark hover shadow)
-  },
-}}
+                <Avatar
+                  sx={{
+                    mx: "auto",
+                    mb: 2,
+                    bgcolor: "#1976d2",
+                    width: 56,
+                    height: 56,
+                    fontSize: 22,
+                  }}
                 >
-                  + Add Category
-                </Button>
-              </MDBox>
+                  {c.name?.charAt(0).toUpperCase()}
+                </Avatar>
 
-              {/* ✅ CATEGORY GRID */}
-              <MDBox p={3}>
-                <Grid container spacing={3}>
-                  {categories.map((c) => (
-                    <Grid item xs={12} md={3} key={c._id}>
-                      <Card
-                        sx={{
-                          p: 3,
-                          cursor: "pointer",
-                          textAlign: "center",
-                          color: "#fff",
-                        }}
-                        onClick={() => navigate(`/vendor/category/${c.name}`)}
-                      >
-                        <MDTypography variant="h6">{c.name}</MDTypography>
-                      </Card>
-                    </Grid>
-                  ))}
-                </Grid>
-              </MDBox>
-            </Card>
-          </Grid>
+                <Typography variant="h6" fontWeight="bold">
+                  {c.name}
+                </Typography>
+              </Card>
+            </Grid>
+          ))}
         </Grid>
-      </MDBox>
+      </Box>
 
-      {/* ✅ DIALOG */}
+      {/* DIALOG */}
       <Dialog open={open} onClose={() => setOpen(false)}>
-        <MDBox p={3} width="300px">
-          <MDTypography mb={2}>Add Category</MDTypography>
+        <Box sx={{ p: 4, width: 320 }}>
+          <Typography variant="h6" mb={2} fontWeight="bold">
+            Add Category
+          </Typography>
 
           <TextField
             fullWidth
@@ -129,13 +142,13 @@ function VendorHome() {
 
           <Button
             fullWidth
-            sx={{ mt: 2, color: "#fff" }}
+            sx={{ mt: 3 }}
             variant="contained"
             onClick={addCategory}
           >
-            Save
+            Save Category
           </Button>
-        </MDBox>
+        </Box>
       </Dialog>
 
       <Footer />

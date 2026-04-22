@@ -5,13 +5,14 @@ import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
 
-import MDBox from "components/MDBox";
-import MDTypography from "components/MDTypography";
-
 import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
+import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
+import Avatar from "@mui/material/Avatar";
+import Divider from "@mui/material/Divider";
 
 function VendorDetail() {
   const { id } = useParams();
@@ -20,7 +21,6 @@ function VendorDetail() {
   const [vendor, setVendor] = useState(null);
   const [editMode, setEditMode] = useState(false);
 
-  // ================= FETCH =================
   useEffect(() => {
     fetch(`https://fullstack-project-1-n510.onrender.com/api/vendors/${id}`)
       .then((res) => res.json())
@@ -28,45 +28,28 @@ function VendorDetail() {
       .catch((err) => console.error(err));
   }, [id]);
 
-  // ================= HANDLE CHANGE =================
   const handleChange = (e) => {
     setVendor({ ...vendor, [e.target.name]: e.target.value });
   };
 
-  // ================= UPDATE =================
   const handleUpdate = async () => {
-    try {
-      await fetch(
-        `https://fullstack-project-1-n510.onrender.com/api/vendors/${id}`,
-        {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(vendor),
-        },
-      );
+    await fetch(`https://fullstack-project-1-n510.onrender.com/api/vendors/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(vendor),
+    });
 
-      alert("Vendor updated ✅");
-      setEditMode(false);
-    } catch (err) {
-      console.log(err);
-    }
+    setEditMode(false);
   };
 
-  // ================= DELETE =================
   const handleDelete = async () => {
     if (!window.confirm("Are you sure?")) return;
 
-    try {
-      await fetch(
-        `https://fullstack-project-1-n510.onrender.com/api/vendors/${id}`,
-        { method: "DELETE" },
-      );
+    await fetch(`https://fullstack-project-1-n510.onrender.com/api/vendors/${id}`, {
+      method: "DELETE",
+    });
 
-      alert("Vendor deleted successfully ✅");
-      navigate("/vendor");
-    } catch (err) {
-      console.log(err);
-    }
+    navigate("/vendor");
   };
 
   if (!vendor) return <p>Loading...</p>;
@@ -75,195 +58,137 @@ function VendorDetail() {
     <DashboardLayout>
       <DashboardNavbar />
 
-      <MDBox p={3}>
+      <Box sx={{ p: 3 }}>
         <Grid container spacing={3}>
+          {/* MAIN CARD */}
           <Grid item xs={12}>
-            <Card sx={{ p: 3 }}>
+            <Card sx={{ p: 4, borderRadius: 3, boxShadow: 4 }}>
               {/* HEADER */}
-              <MDBox display="flex" justifyContent="space-between">
-                <MDTypography variant="h4">
-                  {editMode ? "Edit Vendor" : vendor.vendorName}
-                </MDTypography>
+              <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
+                <Box display="flex" alignItems="center">
+                  <Avatar sx={{ bgcolor: '#1976d2', mr: 2 }}>
+                    {vendor.vendorName?.charAt(0)}
+                  </Avatar>
+                  <Typography variant="h5" fontWeight="bold">
+                    {editMode ? "Edit Vendor" : vendor.vendorName}
+                  </Typography>
+                </Box>
 
-                <MDBox>
+                <Box>
                   {!editMode ? (
                     <>
-                      <Button
-                        variant="contained"
-                        sx={{ mr: 1 , color: "#fff", background: "#1976d2"}}
-                        onClick={() => setEditMode(true)}
-                      >
+                      <Button variant="contained" sx={{ mr: 1 }} onClick={() => setEditMode(true)}>
                         Edit
                       </Button>
-
-                      <Button
-                        variant="contained"
-                        color="error"
-                        onClick={handleDelete}
-                      >
+                      <Button variant="contained" color="error" onClick={handleDelete}>
                         Delete
                       </Button>
                     </>
                   ) : (
                     <>
-                      <Button
-                        variant="contained"
-                        sx={{ mr: 1, color: "#fff", background: "#1976d2" }}
-                        onClick={handleUpdate}
-                      >
+                      <Button variant="contained" sx={{ mr: 1 }} onClick={handleUpdate}>
                         Save
                       </Button>
-
-                      <Button sx={{color: "#1976d2", border: "1px solid #1976d2"}}
-                        variant="outlined"
-                        onClick={() => setEditMode(false)}
-                      >
+                      <Button variant="outlined" onClick={() => setEditMode(false)}>
                         Cancel
                       </Button>
                     </>
                   )}
-                </MDBox>
-              </MDBox>
+                </Box>
+              </Box>
 
-              {/* ================= VIEW / EDIT ================= */}
+              <Divider sx={{ mb: 3 }} />
+
+              {/* DETAILS */}
               {!editMode ? (
-                <>
-                  <MDTypography>📞 {vendor.phone}</MDTypography>
-                  <MDTypography>📧 {vendor.email}</MDTypography>
-                  <MDTypography>🏢 {vendor.company}</MDTypography>
-                  <MDTypography>🧾 {vendor.gst}</MDTypography>
-                  <MDTypography>📂 {vendor.category}</MDTypography>
-                </>
+                <Grid container spacing={2}>
+                  <Grid item xs={12} md={6}>
+                    <Typography>📞 {vendor.phone}</Typography>
+                    <Typography>📧 {vendor.email}</Typography>
+                  </Grid>
+                  <Grid item xs={12} md={6}>
+                    <Typography>🏢 {vendor.company}</Typography>
+                    <Typography>📂 {vendor.category}</Typography>
+                  </Grid>
+                </Grid>
               ) : (
-                <>
-                  <TextField
-                    fullWidth
-                    label="Vendor Name"
-                    name="vendorName"
-                    value={vendor.vendorName}
-                    onChange={handleChange}
-                    sx={{ mb: 2 }}
-                  />
-
-                  <TextField
-                    fullWidth
-                    label="Phone"
-                    name="phone"
-                    value={vendor.phone}
-                    onChange={handleChange}
-                    sx={{ mb: 2 }}
-                  />
-
-                  <TextField
-                    fullWidth
-                    label="Email"
-                    name="email"
-                    value={vendor.email}
-                    onChange={handleChange}
-                    sx={{ mb: 2 }}
-                  />
-
-                  <TextField
-                    fullWidth
-                    label="Company"
-                    name="company"
-                    value={vendor.company}
-                    onChange={handleChange}
-                    sx={{ mb: 2 }}
-                  />
-                </>
+                <Grid container spacing={2}>
+                  <Grid item xs={12} md={6}>
+                    <TextField fullWidth label="Vendor Name" name="vendorName" value={vendor.vendorName} onChange={handleChange} />
+                  </Grid>
+                  <Grid item xs={12} md={6}>
+                    <TextField fullWidth label="Phone" name="phone" value={vendor.phone} onChange={handleChange} />
+                  </Grid>
+                  <Grid item xs={12} md={6}>
+                    <TextField fullWidth label="Email" name="email" value={vendor.email} onChange={handleChange} />
+                  </Grid>
+                  <Grid item xs={12} md={6}>
+                    <TextField fullWidth label="Company" name="company" value={vendor.company} onChange={handleChange} />
+                  </Grid>
+                </Grid>
               )}
             </Card>
           </Grid>
 
           {/* MATERIALS */}
           <Grid item xs={12}>
-            <Card sx={{ p: 3 }}>
-              <MDTypography variant="h6" mb={2}>
+            <Card sx={{ p: 4, borderRadius: 3, boxShadow: 3 }}>
+              <Typography variant="h6" mb={2} fontWeight="bold">
                 Materials
-              </MDTypography>
+              </Typography>
 
-              {editMode ? (
+              {!editMode ? (
+                vendor.materials?.length ? (
+                  vendor.materials.map((m, i) => (
+                    <Box key={i} display="flex" justifyContent="space-between" p={1} sx={{ borderBottom: '1px solid #eee' }}>
+                      <Typography>{m.materialName}</Typography>
+                      <Typography fontWeight="bold">₹{m.rate}</Typography>
+                    </Box>
+                  ))
+                ) : (
+                  <Typography>No materials</Typography>
+                )
+              ) : (
                 <>
                   {vendor.materials?.map((m, index) => (
                     <Grid container spacing={2} key={index} sx={{ mb: 1 }}>
                       <Grid item xs={5}>
-                        <TextField
-                          fullWidth
-                          label="Material Name"
-                          value={m.materialName}
-                          onChange={(e) => {
-                            const updated = [...vendor.materials];
-                            updated[index].materialName = e.target.value;
-                            setVendor({ ...vendor, materials: updated });
-                          }}
-                        />
+                        <TextField fullWidth label="Material" value={m.materialName} onChange={(e) => {
+                          const updated = [...vendor.materials];
+                          updated[index].materialName = e.target.value;
+                          setVendor({ ...vendor, materials: updated });
+                        }} />
                       </Grid>
 
                       <Grid item xs={5}>
-                        <TextField
-                          fullWidth
-                          type="number"
-                          label="Rate"
-                          value={m.rate}
-                          onChange={(e) => {
-                            const updated = [...vendor.materials];
-                            updated[index].rate = e.target.value;
-                            setVendor({ ...vendor, materials: updated });
-                          }}
-                        />
+                        <TextField fullWidth type="number" label="Rate" value={m.rate} onChange={(e) => {
+                          const updated = [...vendor.materials];
+                          updated[index].rate = e.target.value;
+                          setVendor({ ...vendor, materials: updated });
+                        }} />
                       </Grid>
 
                       <Grid item xs={2}>
-                        <Button
-                          color="error"
-                          onClick={() => {
-                            const updated = vendor.materials.filter(
-                              (_, i) => i !== index,
-                            );
-                            setVendor({ ...vendor, materials: updated });
-                          }}
-                        >
-                          Delete
-                        </Button>
+                        <Button color="error" onClick={() => {
+                          const updated = vendor.materials.filter((_, i) => i !== index);
+                          setVendor({ ...vendor, materials: updated });
+                        }}>Delete</Button>
                       </Grid>
                     </Grid>
                   ))}
 
-                  {/* ADD MATERIAL BUTTON */}
-                  <Button
-                    variant="contained"
-                    sx={{ mt: 2, color: "#fff", background: "#1976d2" }}
-                    onClick={() =>
-                      setVendor({
-                        ...vendor,
-                        materials: [
-                          ...(vendor.materials || []),
-                          { materialName: "", rate: "" },
-                        ],
-                      })
-                    }
-                  >
+                  <Button variant="contained" sx={{ mt: 2 }} onClick={() => setVendor({
+                    ...vendor,
+                    materials: [...(vendor.materials || []), { materialName: "", rate: "" }]
+                  })}>
                     + Add Material
                   </Button>
-                </>
-              ) : (
-                <>
-                  {vendor.materials?.length > 0 ? (
-                    vendor.materials.map((m, i) => (
-                      <MDBox key={i}>
-                        {m.materialName} — ₹{m.rate}
-                      </MDBox>
-                    ))
-                  ) : (
-                    <MDTypography>No materials</MDTypography>
-                  )}
                 </>
               )}
             </Card>
           </Grid>
         </Grid>
-      </MDBox>
+      </Box>
 
       <Footer />
     </DashboardLayout>
