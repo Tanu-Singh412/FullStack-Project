@@ -218,8 +218,8 @@ const sendWhatsAppSlip = (pay) => {
   let phone = project?.clientPhone || project?.phone;
   
   if (!phone) {
-    phone = prompt("Client phone number is missing in project data! Please manually enter the WhatsApp number (with country code, e.g., 919876543210):");
-    if (!phone) return;
+    alert("Client phone number is missing in project data! Please update the client record.");
+    return;
   }
   
   let cleanPhone = phone.toString().replace(/\D/g, '');

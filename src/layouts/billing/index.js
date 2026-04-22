@@ -70,11 +70,11 @@ const Invoice = React.forwardRef(({ data, totals }, ref) => {
         <div style={styles.headerLeft}>
           {data.logo && <img src={data.logo} alt="logo" style={styles.logo} crossOrigin="anonymous" />}
         </div>
-        
+
         <div style={styles.headerCenter}>
           <div style={styles.invoiceTitle}>TAX INVOICE</div>
         </div>
-        
+
         <div style={styles.headerRight}>
           <div style={styles.metaText}><b>Invoice No:</b> {data.invoiceNo}</div>
           <div style={styles.metaText}><b>Date:</b> {data.date ? new Date(data.date).toLocaleDateString('en-IN') : ''}</div>
@@ -105,11 +105,11 @@ const Invoice = React.forwardRef(({ data, totals }, ref) => {
       <table style={styles.table}>
         <thead>
           <tr>
-            <th style={{...styles.th, width: "40%"}}>Description</th>
+            <th style={{ ...styles.th, width: "40%" }}>Description</th>
             {data.items.some((i) => i.hsn) && <th style={styles.th}>HSN/SAC</th>}
-            <th style={{...styles.th, textAlign: "center"}}>Qty</th>
-            <th style={{...styles.th, textAlign: "right"}}>Rate</th>
-            <th style={{...styles.th, textAlign: "right"}}>Amount</th>
+            <th style={{ ...styles.th, textAlign: "center" }}>Qty</th>
+            <th style={{ ...styles.th, textAlign: "right" }}>Rate</th>
+            <th style={{ ...styles.th, textAlign: "right" }}>Amount</th>
           </tr>
         </thead>
         <tbody>
@@ -117,9 +117,9 @@ const Invoice = React.forwardRef(({ data, totals }, ref) => {
             <tr key={i}>
               <td style={styles.td}>{item.name}</td>
               {data.items.some((i) => i.hsn) && <td style={styles.td}>{item.hsn || "-"}</td>}
-              <td style={{...styles.td, textAlign: "center"}}>{item.qty}</td>
-              <td style={{...styles.td, textAlign: "right"}}>₹{item.price}</td>
-              <td style={{...styles.td, textAlign: "right"}}>₹{item.qty * item.price}</td>
+              <td style={{ ...styles.td, textAlign: "center" }}>{item.qty}</td>
+              <td style={{ ...styles.td, textAlign: "right" }}>₹{item.price}</td>
+              <td style={{ ...styles.td, textAlign: "right" }}>₹{item.qty * item.price}</td>
             </tr>
           ))}
         </tbody>
@@ -163,13 +163,13 @@ Invoice.propTypes = {
 /* ================= MAIN COMPONENT ================= */
 export default function InvoicePage() {
   const pdfRef = useRef();
-  
+
   // Data States
   const [invoices, setInvoices] = useState([]);
   const [loading, setLoading] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
   const [previewOpen, setPreviewOpen] = useState(false);
-  
+
   // Filter States
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("all"); // all, day, month, year, custom
@@ -341,17 +341,17 @@ export default function InvoicePage() {
               <TextField fullWidth label="Company Address" variant="outlined" value={data.address} onChange={(e) => handleInputChange("address", e.target.value)} />
             </Grid>
             <Grid item xs={12} sm={6}>
-               <Button variant="contained" component="label" fullWidth sx={{ height: '100%', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: '#fff', fontWeight: 'bold', '&:hover': { background: 'linear-gradient(135deg, #764ba2 0%, #667eea 100%)' } }}>
-                  Upload Logo
-                  <input type="file" hidden accept="image/*" onChange={(e) => {
-                    const file = e.target.files[0];
-                    if (file) {
-                      const reader = new FileReader();
-                      reader.onloadend = () => handleInputChange("logo", reader.result);
-                      reader.readAsDataURL(file);
-                    }
-                  }} />
-                </Button>
+              <Button variant="contained" component="label" fullWidth sx={{ height: '100%', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: '#fff', fontWeight: 'bold', '&:hover': { background: 'linear-gradient(135deg, #764ba2 0%, #667eea 100%)' } }}>
+                Upload Logo
+                <input type="file" hidden accept="image/*" onChange={(e) => {
+                  const file = e.target.files[0];
+                  if (file) {
+                    const reader = new FileReader();
+                    reader.onloadend = () => handleInputChange("logo", reader.result);
+                    reader.readAsDataURL(file);
+                  }
+                }} />
+              </Button>
             </Grid>
 
             {/* Client Info */}
@@ -436,7 +436,7 @@ export default function InvoicePage() {
             <Typography variant="h5" fontWeight="900" sx={{ color: "#2c3e50" }}>
               Saved Invoices
             </Typography>
-            
+
             {/* Search and Filters */}
             <Box display="flex" gap={2} flexWrap="wrap" alignItems="center">
               <TextField
@@ -453,7 +453,7 @@ export default function InvoicePage() {
                   ),
                 }}
               />
-              
+
               <FormControl size="small" sx={{ minWidth: 120 }}>
                 <InputLabel>Filter By</InputLabel>
                 <Select value={filter} label="Filter By" onChange={(e) => setFilter(e.target.value)}>
@@ -477,45 +477,45 @@ export default function InvoicePage() {
           {loading ? (
             <Box display="flex" justifyContent="center" p={4}><CircularProgress /></Box>
           ) : (
-            <TableContainer component={Paper} elevation={0} sx={{ border: "1px solid #eee" }}>
+            <TableContainer component={Paper} elevation={0} sx={{ border: "1px solid #e0e0e0", borderRadius: "16px", overflow: "hidden", boxShadow: "0 8px 30px rgba(0,0,0,0.06)" }}>
               <Table>
                 <TableHead sx={{ background: "linear-gradient(135deg, #1976d2, #42a5f5)" }}>
                   <TableRow>
-                    <TableCell sx={{ color: "#fff", fontWeight: "bold", fontSize: "14px" }}>Invoice No</TableCell>
-                    <TableCell sx={{ color: "#fff", fontWeight: "bold", fontSize: "14px" }}>Billing Name</TableCell>
-                    <TableCell sx={{ color: "#fff", fontWeight: "bold", fontSize: "14px" }}>Date</TableCell>
-                    <TableCell sx={{ color: "#fff", fontWeight: "bold", fontSize: "14px" }}>Total Amount</TableCell>
-                    <TableCell align="center" sx={{ color: "#fff", fontWeight: "bold", fontSize: "14px" }}>Actions</TableCell>
+                    <TableCell sx={{ color: "#fff", fontWeight: "bold", fontSize: "14px", py: 2, px: 3 }}>Invoice No</TableCell>
+                    <TableCell sx={{ color: "#fff", fontWeight: "bold", fontSize: "14px", py: 2 }}>Billing Name</TableCell>
+                    <TableCell sx={{ color: "#fff", fontWeight: "bold", fontSize: "14px", py: 2 }}>Date</TableCell>
+                    <TableCell sx={{ color: "#fff", fontWeight: "bold", fontSize: "14px", py: 2 }}>Total Amount</TableCell>
+                    <TableCell align="center" sx={{ color: "#fff", fontWeight: "bold", fontSize: "14px", py: 2 }}>Actions</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {invoices.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={5} align="center" sx={{ py: 3 }}>
-                        <Typography variant="body1" color="textSecondary">No invoices found</Typography>
+                      <TableCell colSpan={5} align="center" sx={{ py: 6 }}>
+                        <Typography variant="h6" color="textSecondary" sx={{ opacity: 0.6 }}>No invoices found</Typography>
                       </TableCell>
                     </TableRow>
                   ) : (
-                    invoices.map((inv) => (
-                      <TableRow key={inv._id} hover>
-                        <TableCell sx={{ color: "#555" }}>{inv.invoiceNo}</TableCell>
-                        <TableCell sx={{ color: "#555", fontWeight: 500 }}>{inv.invoiceName || inv.clientName}</TableCell>
-                        <TableCell sx={{ color: "#555" }}>{inv.date ? new Date(inv.date).toLocaleDateString('en-IN') : new Date(inv.createdAt).toLocaleDateString('en-IN')}</TableCell>
-                        <TableCell sx={{ color: "#555", fontWeight: "bold" }}>₹{inv.total}</TableCell>
-                        <TableCell align="center">
-                          <Box display="flex" justifyContent="center" gap={1}>
-                            <Button size="small" variant="contained" sx={{ color: "white", background: "#1976d2", textTransform: "none", fontWeight: "bold", "&:hover": { background: "#1565c0" } }} startIcon={<VisibilityIcon />} onClick={() => {
+                    invoices.map((inv, index) => (
+                      <TableRow key={inv._id} sx={{ backgroundColor: index % 2 === 0 ? "#ffffff" : "#f8fafc", transition: "all 0.2s", "&:hover": { backgroundColor: "#f1f5f9" } }}>
+                        <TableCell sx={{ color: "#334155", fontWeight: 700, py: 2, px: 3 }}>{inv.invoiceNo}</TableCell>
+                        <TableCell sx={{ color: "#475569", fontWeight: 600, py: 2 }}>{inv.invoiceName || inv.clientName}</TableCell>
+                        <TableCell sx={{ color: "#64748b", py: 2, fontWeight: 500 }}>{inv.date ? new Date(inv.date).toLocaleDateString('en-IN') : new Date(inv.createdAt).toLocaleDateString('en-IN')}</TableCell>
+                        <TableCell sx={{ color: "#16a34a", fontWeight: "bold", fontSize: "15px", py: 2 }}>₹{inv.total.toLocaleString("en-IN")}</TableCell>
+                        <TableCell align="center" sx={{ py: 2 }}>
+                          <Box display="flex" justifyContent="center" gap={1.5}>
+                            <IconButton sx={{ color: "#1976d2", background: "#f0f7ff", "&:hover": { background: "#1976d2", color: "#fff" } }} onClick={() => {
                               setData({ ...data, ...inv, billingName: inv.invoiceName || inv.clientName, billingGstin: inv.clientGstin || inv.billingGstin, date: new Date(inv.date || inv.createdAt).toISOString().split('T')[0] });
                               setPreviewOpen(true);
                             }}>
-                              Preview
-                            </Button>
-                            <Button size="small" variant="contained" color="success" startIcon={<DownloadIcon />} sx={{ color: "white", textTransform: "none", fontWeight: "bold" }} onClick={() => handleDownloadExisting(inv)}>
-                              Download
-                            </Button>
-                            <Button size="small" variant="contained" color="error" startIcon={<DeleteIcon />} sx={{ color: "white", textTransform: "none", fontWeight: "bold" }} onClick={() => setDeleteId(inv._id)}>
-                              Delete
-                            </Button>
+                              <VisibilityIcon />
+                            </IconButton>
+                            <IconButton sx={{ color: "#16a34a", background: "#f0fdf4", "&:hover": { background: "#16a34a", color: "#fff" } }} onClick={() => handleDownloadExisting(inv)}>
+                              <DownloadIcon />
+                            </IconButton>
+                            <IconButton sx={{ color: "#ef4444", background: "#fef2f2", "&:hover": { background: "#ef4444", color: "#fff" } }} onClick={() => setDeleteId(inv._id)}>
+                              <DeleteIcon />
+                            </IconButton>
                           </Box>
                         </TableCell>
                       </TableRow>
@@ -582,7 +582,7 @@ const styles = {
   companyTitle: { margin: 0, fontSize: "26px", fontWeight: "900", color: "#000", textTransform: "uppercase", letterSpacing: "1px" },
   headerCenter: { flex: 1, textAlign: "center" },
   headerRight: { flex: 1, textAlign: "right" },
-  invoiceTitle: { fontSize: "36px", fontWeight: "900", color: "#2c3e50", margin: "0", textTransform: "uppercase", letterSpacing: "2px" },
+  invoiceTitle: { fontSize: "30px", fontWeight: "900", color: "#2c3e50", margin: "0", textTransform: "uppercase", letterSpacing: "2px" },
   metaText: { fontSize: "16px", marginBottom: "6px", color: "#333", fontWeight: "600" },
   flexRow: { display: "flex", justifyContent: "space-between", marginBottom: "45px" },
   senderBox: { width: "48%" },
