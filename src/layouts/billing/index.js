@@ -72,8 +72,11 @@ const Invoice = React.forwardRef(({ data, totals }, ref) => {
           <h1 style={styles.companyTitle}>{data.company || "YOUR COMPANY"}</h1>
         </div>
         
-        <div style={styles.headerRight}>
+        <div style={styles.headerCenter}>
           <div style={styles.invoiceTitle}>TAX INVOICE</div>
+        </div>
+        
+        <div style={styles.headerRight}>
           <div style={styles.metaText}><b>Invoice No:</b> {data.invoiceNo}</div>
           <div style={styles.metaText}><b>Date:</b> {data.date ? new Date(data.date).toLocaleDateString('en-IN') : ''}</div>
         </div>
@@ -498,21 +501,23 @@ export default function InvoicePage() {
                       <TableRow key={inv._id} hover>
                         <TableCell sx={{ color: "#555" }}>{inv.invoiceNo}</TableCell>
                         <TableCell sx={{ color: "#555", fontWeight: 500 }}>{inv.invoiceName || inv.clientName}</TableCell>
-                        <TableCell sx={{ color: "#555" }}>{new Date(inv.createdAt).toLocaleDateString()}</TableCell>
+                        <TableCell sx={{ color: "#555" }}>{inv.date ? new Date(inv.date).toLocaleDateString('en-IN') : new Date(inv.createdAt).toLocaleDateString('en-IN')}</TableCell>
                         <TableCell sx={{ color: "#555", fontWeight: "bold" }}>₹{inv.total}</TableCell>
                         <TableCell align="center">
-                          <IconButton color="info" onClick={() => {
-                            setData({ ...data, ...inv, billingName: inv.invoiceName || inv.clientName, billingGstin: inv.clientGstin || inv.billingGstin, date: new Date(inv.date).toISOString().split('T')[0] });
-                            setPreviewOpen(true);
-                          }}>
-                            <VisibilityIcon />
-                          </IconButton>
-                          <IconButton color="success" onClick={() => handleDownloadExisting(inv)}>
-                            <DownloadIcon />
-                          </IconButton>
-                          <IconButton color="error" onClick={() => setDeleteId(inv._id)}>
-                            <DeleteIcon />
-                          </IconButton>
+                          <Box display="flex" justifyContent="center" gap={1}>
+                            <Button size="small" variant="outlined" color="info" startIcon={<VisibilityIcon />} onClick={() => {
+                              setData({ ...data, ...inv, billingName: inv.invoiceName || inv.clientName, billingGstin: inv.clientGstin || inv.billingGstin, date: new Date(inv.date || inv.createdAt).toISOString().split('T')[0] });
+                              setPreviewOpen(true);
+                            }}>
+                              Preview
+                            </Button>
+                            <Button size="small" variant="contained" color="success" startIcon={<DownloadIcon />} sx={{ color: "white" }} onClick={() => handleDownloadExisting(inv)}>
+                              Download
+                            </Button>
+                            <Button size="small" variant="contained" color="error" startIcon={<DeleteIcon />} sx={{ color: "white" }} onClick={() => setDeleteId(inv._id)}>
+                              Delete
+                            </Button>
+                          </Box>
                         </TableCell>
                       </TableRow>
                     ))
@@ -572,13 +577,14 @@ export default function InvoicePage() {
 /* ================= STYLES ================= */
 const styles = {
   page: { width: "210mm", minHeight: "297mm", padding: "50px", background: "#fff", fontFamily: "'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif", color: "#111" },
-  headerRow: { display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: "40px", borderBottom: "3px solid #e0e0e0", paddingBottom: "25px" },
-  headerLeft: { display: "flex", flexDirection: "column", alignItems: "flex-start", maxWidth: "60%" },
-  logo: { height: "100px", marginBottom: "20px", objectFit: "contain" },
-  companyTitle: { margin: 0, fontSize: "32px", fontWeight: "900", color: "#000", textTransform: "uppercase", letterSpacing: "1px" },
-  headerRight: { textAlign: "right" },
-  invoiceTitle: { fontSize: "40px", fontWeight: "900", color: "#2c3e50", margin: "0 0 20px 0", textTransform: "uppercase", letterSpacing: "2px" },
-  metaText: { fontSize: "16px", marginBottom: "10px", color: "#333", fontWeight: "500" },
+  headerRow: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "40px", borderBottom: "3px solid #e0e0e0", paddingBottom: "25px" },
+  headerLeft: { flex: 1, display: "flex", flexDirection: "column", alignItems: "flex-start" },
+  logo: { height: "100px", marginBottom: "15px", objectFit: "contain" },
+  companyTitle: { margin: 0, fontSize: "26px", fontWeight: "900", color: "#000", textTransform: "uppercase", letterSpacing: "1px" },
+  headerCenter: { flex: 1, textAlign: "center" },
+  headerRight: { flex: 1, textAlign: "right" },
+  invoiceTitle: { fontSize: "36px", fontWeight: "900", color: "#2c3e50", margin: "0", textTransform: "uppercase", letterSpacing: "2px" },
+  metaText: { fontSize: "16px", marginBottom: "6px", color: "#333", fontWeight: "600" },
   flexRow: { display: "flex", justifyContent: "space-between", marginBottom: "45px" },
   senderBox: { width: "48%" },
   receiverBox: { width: "48%", textAlign: "right" },

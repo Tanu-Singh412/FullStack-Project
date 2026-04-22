@@ -116,27 +116,44 @@ const fetchDrawings = async () => {
   }
 };
 
+const convertToBase64 = (file) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = (error) => reject(error);
+  });
+};
+
 const handleUpload = async () => {
   if (!files.length || !uploadType) return;
 
-  const formData = new FormData();
+  setLoading(true);
 
-  Array.from(files).forEach((file) => {
-    formData.append("images", file);
-  });
+  try {
+    const base64Images = await Promise.all(
+      Array.from(files).map((file) => convertToBase64(file))
+    );
 
-  formData.append("type", uploadType);
+    await fetch(`${Base_API}/projects/${project._id}/drawing/base64`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        type: uploadType,
+        images: base64Images,
+      }),
+    });
 
-  await fetch(`${Base_API}/projects/${project._id}/drawing`, {
-    method: "POST",
-    body: formData,
-  });
-
-  await fetchDrawings();
-  setOpenUpload(false);
-  setFiles([]);
+    await fetchDrawings();
+    setOpenUpload(false);
+    setFiles([]);
+  } catch (error) {
+    console.error("Upload error:", error);
+    alert("Failed to upload images. They might be too large.");
+  } finally {
+    setLoading(false);
+  }
 };
-
 // ================= USE EFFECTS =================
 
 
@@ -424,54 +441,56 @@ const inputStyle = {
 {tab === 1 && (
   <MDBox mt={3}>
     {!drawingType ? (
-      <Grid container spacing={3}>
+      <Grid container spacing={4}>
         {["civil", "interior"].map((type) => (
           <Grid item xs={12} md={6} key={type}>
-            <Card sx={{ p: 3, position: "relative" }}>
-              <MDTypography variant="h5">
-                {type === "civil" ? "Civil Drawings" : "Interior Drawings"}
+            <Card sx={{ p: 4, position: "relative", textAlign: "center", borderRadius: "16px", boxShadow: "0px 10px 30px rgba(0,0,0,0.08)", borderTop: type === "civil" ? "5px solid #1976d2" : "5px solid #9c27b0" }}>
+              <MDTypography variant="h4" fontWeight="bold" sx={{ color: "#2c3e50", textTransform: "capitalize", mb: 1 }}>
+                {type} Drawings
               </MDTypography>
-
-              <Button
-                size="small"
-                sx={{ position: "absolute", top: 10, right: 10, color: "#fff"}}
-                variant="contained"
-                onClick={() => {
-                  setUploadType(type);
-                  setOpenUpload(true);
-                }}
-
-              >
-                Upload
-              </Button>
-
-              <MDBox
-                mt={2}
-                sx={{ cursor: "pointer", color: "#1976d2" }}
-                onClick={() => setDrawingType(type)}
-              >
-                View Images →
+              <MDTypography variant="button" sx={{ color: "#7f8c8d", display: "block", mb: 4 }}>
+                Manage {type} schematics and blueprints
+              </MDTypography>
+              
+              <MDBox display="flex" justifyContent="center" gap={3}>
+                <Button
+                  sx={{ color: "#fff", background: type === "civil" ? "linear-gradient(135deg, #1976d2, #42a5f5)" : "linear-gradient(135deg, #9c27b0, #ce93d8)", px: 4, py: 1.5, borderRadius: "8px", fontWeight: "bold" }}
+                  variant="contained"
+                  onClick={() => {
+                    setUploadType(type);
+                    setOpenUpload(true);
+                  }}
+                >
+                  Upload New
+                </Button>
+                <Button
+                  sx={{ color: type === "civil" ? "#1976d2" : "#9c27b0", border: `2px solid ${type === "civil" ? "#1976d2" : "#9c27b0"}`, px: 4, py: 1.5, borderRadius: "8px", fontWeight: "bold" }}
+                  variant="outlined"
+                  onClick={() => setDrawingType(type)}
+                >
+                  View Gallery
+                </Button>
               </MDBox>
             </Card>
           </Grid>
         ))}
       </Grid>
     ) : (
-      <>
-        <Button onClick={() => setDrawingType(null)}>⬅ Back</Button>
+      <MDBox>
+        <Button onClick={() => setDrawingType(null)} sx={{ mb: 3, background: "#f1f5f9", color: "#334155", px: 3, py: 1, borderRadius: "8px", fontWeight: "bold" }}>⬅ Back to Folders</Button>
 
-        <Grid container spacing={3} mt={1}>
+        <Grid container spacing={3}>
           {images.map((img, i) => (
             <Grid item xs={12} sm={6} md={3} key={i}>
-              <Card sx={{ p: 1 }}>
+              <Card sx={{ p: 1.5, borderRadius: "12px", boxShadow: "0 6px 15px rgba(0,0,0,0.06)", transition: "transform 0.2s", "&:hover": { transform: "translateY(-5px)" } }}>
                 <img
                   src={img}
                   onClick={() => openImage(img, i)}
                   style={{
                     width: "100%",
-                    height: 180,
+                    height: 220,
                     objectFit: "cover",
-                    borderRadius: 10,
+                    borderRadius: "8px",
                     cursor: "pointer",
                   }}
                 />
@@ -480,15 +499,21 @@ const inputStyle = {
                   size="small"
                   color="error"
                   fullWidth
+                  sx={{ mt: 1.5, fontWeight: "bold", background: "#fff5f5" }}
                   onClick={() => handleDeleteImage(img)}
                 >
-                  Delete
+                  Delete Image
                 </Button>
               </Card>
             </Grid>
           ))}
+          {images.length === 0 && (
+             <Grid item xs={12}>
+               <MDTypography variant="h6" align="center" sx={{ mt: 8, color: "#94a3b8", fontWeight: "500" }}>No {drawingType} drawings found. Upload some to see them here.</MDTypography>
+             </Grid>
+          )}
         </Grid>
-      </>
+      </MDBox>
     )}
   </MDBox>
 )}        {/* ACCOUNTS */}
