@@ -434,7 +434,7 @@ export default function InvoicePage() {
       } else {
         alert(
           "Failed to save invoice: " +
-            (res.message || "Please check required fields."),
+          (res.message || "Please check required fields."),
         );
       }
     } catch (err) {
@@ -862,142 +862,142 @@ export default function InvoicePage() {
               <CircularProgress />
             </Box>
           ) : (
-<Box
-  sx={{
-    border: "1px solid #e5e7eb",
-    borderRadius: "16px",
-    p: 3,
-    background: "#fff",
-    boxShadow: "0 6px 20px rgba(0,0,0,0.05)",
-  }}
->
-  {/* HEADER (LEFT SIDE ONLY) */}
-  <Box
-    sx={{
-      display: "grid",
-      gridTemplateColumns: "1.2fr 1.2fr 1fr 1fr 1fr",
-      background: "linear-gradient(135deg, #2b6cb0, #4299e1)",
-      color: "#fff",
-      px: 3,
-      py: 2,
-      borderRadius: "10px",
-      width: "100%",
-      fontWeight: 600,
-      fontSize: "13px",
-    }}
-  >
-    <span>Invoice No</span>
-    <span>Billing Name</span>
-    <span>Date</span>
-    <span>Total</span>
-    <span>Actions</span>
-  </Box>
+            <Box
+              sx={{
+                border: "1px solid #e5e7eb",
+                borderRadius: "16px",
+                p: 3,
+                background: "#fff",
+                boxShadow: "0 6px 20px rgba(0,0,0,0.05)",
+              }}
+            >
+              {/* HEADER (LEFT SIDE ONLY) */}
+              <Box
+                sx={{
+                  display: "grid",
+                  gridTemplateColumns: "1.2fr 1.2fr 1fr 1fr 1fr",
+                  background: "linear-gradient(135deg, #2b6cb0, #4299e1)",
+                  color: "#fff",
+                  px: 3,
+                  py: 2,
+                  borderRadius: "10px",
+                  width: "100%",
+                  fontWeight: 600,
+                  fontSize: "13px",
+                }}
+              >
+                <span>Invoice No</span>
+                <span>Billing Name</span>
+                <span>Date</span>
+                <span>Total</span>
+                <span>Actions</span>
+              </Box>
 
-  {/* LOADING */}
-  {loading ? (
-    <Box display="flex" justifyContent="center" p={4}>
-      <CircularProgress />
-    </Box>
-  ) : invoices.length === 0 ? (
-    <Box textAlign="center" py={4}>
-      No invoices found
-    </Box>
-  ) : (
-    invoices.map((inv) => (
-      <Box
-        key={inv._id}
-        sx={{
-          display: "grid",
-          gridTemplateColumns: "1.2fr 1.2fr 1fr 1fr auto",
-          alignItems: "center",
-          px: 3,
-          py: 2.5,
-          mt: 2,
-          borderRadius: "12px",
-          background: "#f9fafb",
-          boxShadow: "0 4px 10px rgba(0,0,0,0.04)",
-        }}
-      >
-        {/* Invoice No */}
-        <Typography fontWeight={700} fontSize={12}>
-          {inv.invoiceNo}
-        </Typography>
+              {/* LOADING */}
+              {loading ? (
+                <Box display="flex" justifyContent="center" p={4}>
+                  <CircularProgress />
+                </Box>
+              ) : invoices.length === 0 ? (
+                <Box textAlign="center" py={4}>
+                  No invoices found
+                </Box>
+              ) : (
+                invoices.map((inv) => (
+                  <Box
+                    key={inv._id}
+                    sx={{
+                      display: "grid",
+                      gridTemplateColumns: "1.2fr 1.2fr 1fr 1fr auto",
+                      alignItems: "center",
+                      px: 3,
+                      py: 2.5,
+                      mt: 2,
+                      borderRadius: "12px",
+                      background: "#f9fafb",
+                      boxShadow: "0 4px 10px rgba(0,0,0,0.04)",
+                    }}
+                  >
+                    {/* Invoice No */}
+                    <Typography fontWeight={700} fontSize={12}>
+                      {inv.invoiceNo}
+                    </Typography>
 
-        {/* Billing */}
-        <Typography color="#475569" fontSize={12}>
-          {inv.invoiceName || inv.clientName}
-        </Typography>
+                    {/* Billing */}
+                    <Typography color="#475569" fontSize={12}>
+                      {inv.invoiceName || inv.clientName}
+                    </Typography>
 
-        {/* Date */}
-        <Typography color="#64748b" fontSize={12}>
-          {new Date(inv.date || inv.createdAt).toLocaleDateString("en-IN")}
-        </Typography>
+                    {/* Date */}
+                    <Typography color="#64748b" fontSize={12}>
+                      {new Date(inv.date || inv.createdAt).toLocaleDateString("en-IN")}
+                    </Typography>
 
-        {/* Amount */}
-        <Typography fontWeight={700} color="#16a34a" fontSize={12}>
-          ₹{inv.total.toLocaleString("en-IN")}
-        </Typography>
+                    {/* Amount */}
+                    <Typography fontWeight={700} color="#16a34a" fontSize={12}>
+                      ₹{inv.total.toLocaleString("en-IN")}
+                    </Typography>
 
-        {/* Actions */}
-        <Box display="flex" justifyContent="flex-end" gap={1}>
-          
-          {/* Preview */}
-          <IconButton
-            size="small"
-            sx={{
-              bgcolor: "#e0f2fe",
-              color: "#0284c7",
-              "&:hover": { bgcolor: "#0284c7", color: "#fff" },
-            }}
-            onClick={() => {
-              setData({
-                ...data,
-                ...inv,
-                billingName: inv.invoiceName || inv.clientName,
-                billingGstin: inv.clientGstin || inv.billingGstin,
-                date: new Date(inv.date || inv.createdAt)
-                  .toISOString()
-                  .split("T")[0],
-              });
-              setPreviewOpen(true);
-            }}
-          >
-            <VisibilityIcon fontSize="small" />
-          </IconButton>
+                    {/* Actions */}
+                    <Box display="flex" justifyContent="flex-end" gap={1}>
 
-          {/* Download */}
-          <IconButton
-            size="small"
-            sx={{
-              bgcolor: "#dcfce7",
-              color: "#16a34a",
-              "&:hover": { bgcolor: "#16a34a", color: "#fff" },
-            }}
-            onClick={() => handleDownloadExisting(inv)}
-          >
-            <DownloadIcon fontSize="small" />
-          </IconButton>
+                      {/* Preview */}
+                      <IconButton
+                        size="small"
+                        sx={{
+                          bgcolor: "#e0f2fe",
+                          color: "#0284c7",
+                          "&:hover": { bgcolor: "#0284c7", color: "#fff" },
+                        }}
+                        onClick={() => {
+                          setData({
+                            ...data,
+                            ...inv,
+                            billingName: inv.invoiceName || inv.clientName,
+                            billingGstin: inv.clientGstin || inv.billingGstin,
+                            date: new Date(inv.date || inv.createdAt)
+                              .toISOString()
+                              .split("T")[0],
+                          });
+                          setPreviewOpen(true);
+                        }}
+                      >
+                        <VisibilityIcon fontSize="small" />
+                      </IconButton>
 
-          {/* Delete */}
-          <IconButton
-            size="small"
-            sx={{
-              bgcolor: "#fee2e2",
-              color: "#dc2626",
-              "&:hover": { bgcolor: "#dc2626", color: "#fff" },
-            }}
-            onClick={() => setDeleteId(inv._id)}
-          >
-            <DeleteIcon fontSize="small" />
-          </IconButton>
+                      {/* Download */}
+                      <IconButton
+                        size="small"
+                        sx={{
+                          bgcolor: "#dcfce7",
+                          color: "#16a34a",
+                          "&:hover": { bgcolor: "#16a34a", color: "#fff" },
+                        }}
+                        onClick={() => handleDownloadExisting(inv)}
+                      >
+                        <DownloadIcon fontSize="small" />
+                      </IconButton>
 
-        </Box>
-      </Box>
-    ))
-  )}
-</Box>
+                      {/* Delete */}
+                      <IconButton
+                        size="small"
+                        sx={{
+                          bgcolor: "#fee2e2",
+                          color: "#dc2626",
+                          "&:hover": { bgcolor: "#dc2626", color: "#fff" },
+                        }}
+                        onClick={() => setDeleteId(inv._id)}
+                      >
+                        <DeleteIcon fontSize="small" />
+                      </IconButton>
 
-)}
+                    </Box>
+                  </Box>
+                ))
+              )}
+            </Box>
+
+          )}
         </Card>
 
         {/* Hidden PDF Component */}

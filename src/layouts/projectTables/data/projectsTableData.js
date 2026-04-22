@@ -268,9 +268,9 @@ export default function useProjectData() {
             >
               Details
             </Button>
-            <IconButton color="primary" size="small" onClick={() => handleView(p)}>
+            {/* <IconButton color="primary" size="small" onClick={() => handleView(p)}>
               <VisibilityIcon />
-            </IconButton>
+            </IconButton> */}
 
             <IconButton color="info" size="small" onClick={() => editProject(p)}>
               <EditIcon />
