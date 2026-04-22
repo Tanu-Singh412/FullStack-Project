@@ -5,11 +5,31 @@ import jsPDF from "jspdf";
 
 // MUI Components
 import {
-  Card, Grid, TextField, Button, Typography, Dialog, DialogTitle,
-  DialogContent, DialogActions, Box, IconButton, Table, TableBody,
-  TableCell, TableContainer, TableHead, TableRow, Paper, Select,
-  MenuItem, FormControl, InputLabel, Divider, CircularProgress,
-  InputAdornment
+  Card,
+  Grid,
+  TextField,
+  Button,
+  Typography,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Box,
+  IconButton,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  Divider,
+  CircularProgress,
+  InputAdornment,
 } from "@mui/material";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -23,7 +43,12 @@ import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
 
-import { fetchInvoices, createInvoice, updateInvoice, deleteInvoice as apiDeleteInvoice } from "./api/invoiceApi";
+import {
+  fetchInvoices,
+  createInvoice,
+  updateInvoice,
+  deleteInvoice as apiDeleteInvoice,
+} from "./api/invoiceApi";
 
 /* ================= PDF ================= */
 const downloadPDF = async (el) => {
@@ -48,16 +73,53 @@ const downloadPDF = async (el) => {
 
 /* ================= NUMBER TO WORD ================= */
 const numberToWords = (num) => {
-  const a = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"];
-  const b = ["", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"];
+  const a = [
+    "",
+    "One",
+    "Two",
+    "Three",
+    "Four",
+    "Five",
+    "Six",
+    "Seven",
+    "Eight",
+    "Nine",
+    "Ten",
+    "Eleven",
+    "Twelve",
+    "Thirteen",
+    "Fourteen",
+    "Fifteen",
+    "Sixteen",
+    "Seventeen",
+    "Eighteen",
+    "Nineteen",
+  ];
+  const b = [
+    "",
+    "",
+    "Twenty",
+    "Thirty",
+    "Forty",
+    "Fifty",
+    "Sixty",
+    "Seventy",
+    "Eighty",
+    "Ninety",
+  ];
 
   const inWords = (n) => {
     if (n < 20) return a[n];
     if (n < 100) return b[Math.floor(n / 10)] + " " + a[n % 10];
-    if (n < 1000) return a[Math.floor(n / 100)] + " Hundred " + inWords(n % 100);
-    if (n < 100000) return inWords(Math.floor(n / 1000)) + " Thousand " + inWords(n % 1000);
-    if (n < 10000000) return inWords(Math.floor(n / 100000)) + " Lakh " + inWords(n % 100000);
-    return inWords(Math.floor(n / 10000000)) + " Crore " + inWords(n % 10000000);
+    if (n < 1000)
+      return a[Math.floor(n / 100)] + " Hundred " + inWords(n % 100);
+    if (n < 100000)
+      return inWords(Math.floor(n / 1000)) + " Thousand " + inWords(n % 1000);
+    if (n < 10000000)
+      return inWords(Math.floor(n / 100000)) + " Lakh " + inWords(n % 100000);
+    return (
+      inWords(Math.floor(n / 10000000)) + " Crore " + inWords(n % 10000000)
+    );
   };
 
   return inWords(Math.floor(num)) + " Rupees Only";
@@ -69,7 +131,14 @@ const Invoice = React.forwardRef(({ data, totals }, ref) => {
     <div ref={ref} style={styles.page}>
       <div style={styles.headerRow}>
         <div style={styles.headerLeft}>
-          {data.logo && <img src={data.logo} alt="logo" style={styles.logo} crossOrigin="anonymous" />}
+          {data.logo && (
+            <img
+              src={data.logo}
+              alt="logo"
+              style={styles.logo}
+              crossOrigin="anonymous"
+            />
+          )}
         </div>
 
         <div style={styles.headerCenter}>
@@ -77,8 +146,13 @@ const Invoice = React.forwardRef(({ data, totals }, ref) => {
         </div>
 
         <div style={styles.headerRight}>
-          <div style={styles.metaText}><b>Invoice No:</b> {data.invoiceNo}</div>
-          <div style={styles.metaText}><b>Date:</b> {data.date ? new Date(data.date).toLocaleDateString('en-IN') : ''}</div>
+          <div style={styles.metaText}>
+            <b>Invoice No:</b> {data.invoiceNo}
+          </div>
+          <div style={styles.metaText}>
+            <b>Date:</b>{" "}
+            {data.date ? new Date(data.date).toLocaleDateString("en-IN") : ""}
+          </div>
         </div>
       </div>
 
@@ -86,9 +160,20 @@ const Invoice = React.forwardRef(({ data, totals }, ref) => {
         <div style={styles.senderBox}>
           <div style={styles.sectionTitle}>From</div>
           <div style={styles.infoText}>
-            <b>{data.company}</b><br />
-            {data.address && <>{data.address}<br /></>}
-            {data.phone && <>Phone: {data.phone}<br /></>}
+            <b>{data.company}</b>
+            <br />
+            {data.address && (
+              <>
+                {data.address}
+                <br />
+              </>
+            )}
+            {data.phone && (
+              <>
+                Phone: {data.phone}
+                <br />
+              </>
+            )}
             {data.gstin && <>GSTIN: {data.gstin}</>}
           </div>
         </div>
@@ -96,8 +181,14 @@ const Invoice = React.forwardRef(({ data, totals }, ref) => {
         <div style={styles.receiverBox}>
           <div style={styles.sectionTitle}>Bill To</div>
           <div style={styles.infoText}>
-            <b>{data.billingName}</b><br />
-            {data.email && <>{data.email}<br /></>}
+            <b>{data.billingName}</b>
+            <br />
+            {data.email && (
+              <>
+                {data.email}
+                <br />
+              </>
+            )}
             {data.billingGstin && <>GSTIN: {data.billingGstin}</>}
           </div>
         </div>
@@ -107,7 +198,9 @@ const Invoice = React.forwardRef(({ data, totals }, ref) => {
         <thead>
           <tr>
             <th style={{ ...styles.th, width: "40%" }}>Description</th>
-            {data.items.some((i) => i.hsn) && <th style={styles.th}>HSN/SAC</th>}
+            {data.items.some((i) => i.hsn) && (
+              <th style={styles.th}>HSN/SAC</th>
+            )}
             <th style={{ ...styles.th, textAlign: "center" }}>Qty</th>
             <th style={{ ...styles.th, textAlign: "right" }}>Rate</th>
             <th style={{ ...styles.th, textAlign: "right" }}>Amount</th>
@@ -117,10 +210,16 @@ const Invoice = React.forwardRef(({ data, totals }, ref) => {
           {data.items.map((item, i) => (
             <tr key={i}>
               <td style={styles.td}>{item.name}</td>
-              {data.items.some((i) => i.hsn) && <td style={styles.td}>{item.hsn || "-"}</td>}
+              {data.items.some((i) => i.hsn) && (
+                <td style={styles.td}>{item.hsn || "-"}</td>
+              )}
               <td style={{ ...styles.td, textAlign: "center" }}>{item.qty}</td>
-              <td style={{ ...styles.td, textAlign: "right" }}>₹{item.price}</td>
-              <td style={{ ...styles.td, textAlign: "right" }}>₹{item.qty * item.price}</td>
+              <td style={{ ...styles.td, textAlign: "right" }}>
+                ₹{item.price}
+              </td>
+              <td style={{ ...styles.td, textAlign: "right" }}>
+                ₹{item.qty * item.price}
+              </td>
             </tr>
           ))}
         </tbody>
@@ -188,7 +287,7 @@ export default function InvoicePage() {
     gstin: "",
     phone: "",
     invoiceNo: `INV-${Date.now().toString().slice(-6)}`,
-    date: new Date().toISOString().split('T')[0],
+    date: new Date().toISOString().split("T")[0],
     billingGstin: "",
     sgst: 9,
     cgst: 9,
@@ -211,7 +310,12 @@ export default function InvoicePage() {
   const loadInvoices = async () => {
     setLoading(true);
     try {
-      const response = await fetchInvoices(search, filter, filter === 'custom' ? startDate : '', filter === 'custom' ? endDate : '');
+      const response = await fetchInvoices(
+        search,
+        filter,
+        filter === "custom" ? startDate : "",
+        filter === "custom" ? endDate : "",
+      );
       if (response.success) {
         setInvoices(response.data);
       }
@@ -238,7 +342,10 @@ export default function InvoicePage() {
   };
 
   const addItem = () => {
-    setData({ ...data, items: [...data.items, { name: "", hsn: "", qty: 1, price: 0 }] });
+    setData({
+      ...data,
+      items: [...data.items, { name: "", hsn: "", qty: 1, price: 0 }],
+    });
   };
 
   const removeItem = (index) => {
@@ -248,7 +355,9 @@ export default function InvoicePage() {
 
   const handleWhatsAppInvoice = async (inv) => {
     try {
-      const response = await fetch("https://fullstack-project-1-n510.onrender.com/api/clients");
+      const response = await fetch(
+        "https://fullstack-project-1-n510.onrender.com/api/clients",
+      );
       const clients = await response.json();
 
       const clientName = inv.invoiceName || inv.clientName;
@@ -257,23 +366,28 @@ export default function InvoicePage() {
         return;
       }
 
-      const client = clients.find(c => c.name && c.name.toLowerCase() === clientName.toLowerCase());
+      const client = clients.find(
+        (c) => c.name && c.name.toLowerCase() === clientName.toLowerCase(),
+      );
       const phone = client?.phone;
 
       if (!phone) {
-        alert(`Could not find a phone number for client "${clientName}" in the Client Database. Please update the client record.`);
+        alert(
+          `Could not find a phone number for client "${clientName}" in the Client Database. Please update the client record.`,
+        );
         return;
       }
 
-      let cleanPhone = phone.toString().replace(/\D/g, '');
-      if (cleanPhone.length === 10) cleanPhone = '91' + cleanPhone;
+      let cleanPhone = phone.toString().replace(/\D/g, "");
+      if (cleanPhone.length === 10) cleanPhone = "91" + cleanPhone;
 
-      const formattedDate = inv.date ? new Date(inv.date).toLocaleDateString('en-IN') : new Date(inv.createdAt).toLocaleDateString('en-IN');
+      const formattedDate = inv.date
+        ? new Date(inv.date).toLocaleDateString("en-IN")
+        : new Date(inv.createdAt).toLocaleDateString("en-IN");
       const text = `Hello ${clientName},\n\nPlease find the details for Invoice No: ${inv.invoiceNo} dated ${formattedDate} for a total amount of ₹${inv.total.toLocaleString("en-IN")}.\n\nThank you!\n- Satya Group`;
 
       const encodedText = encodeURIComponent(text);
       window.open(`https://wa.me/${cleanPhone}?text=${encodedText}`, "_blank");
-
     } catch (error) {
       console.error("Error sending WhatsApp", error);
       alert("Failed to send WhatsApp message. Please check your connection.");
@@ -311,11 +425,17 @@ export default function InvoicePage() {
         setData({
           ...data,
           _id: null,
-          billingName: "", email: "", invoiceNo: `INV-${Date.now().toString().slice(-6)}`, date: new Date().toISOString().split('T')[0],
-          items: [{ name: "", hsn: "", qty: 1, price: 0 }]
+          billingName: "",
+          email: "",
+          invoiceNo: `INV-${Date.now().toString().slice(-6)}`,
+          date: new Date().toISOString().split("T")[0],
+          items: [{ name: "", hsn: "", qty: 1, price: 0 }],
         });
       } else {
-        alert("Failed to save invoice: " + (res.message || "Please check required fields."));
+        alert(
+          "Failed to save invoice: " +
+            (res.message || "Please check required fields."),
+        );
       }
     } catch (err) {
       console.error("Failed to save invoice", err);
@@ -340,7 +460,9 @@ export default function InvoicePage() {
       ...inv,
       billingName: inv.invoiceName,
       billingGstin: inv.clientGstin || inv.billingGstin,
-      date: inv.date ? new Date(inv.date).toISOString().split('T')[0] : data.date
+      date: inv.date
+        ? new Date(inv.date).toISOString().split("T")[0]
+        : data.date,
     });
     // Wait for state to update, then download
     setTimeout(() => {
@@ -357,67 +479,188 @@ export default function InvoicePage() {
         </Typography>
 
         {/* ================= INVOICE FORM ================= */}
-        <Card sx={{ p: 4, mb: 4, borderRadius: 3, boxShadow: "0px 4px 20px rgba(0,0,0,0.05)" }}>
-          <Typography variant="h5" fontWeight="900" mb={4} sx={{ color: "#2c3e50" }}>
+        <Card
+          sx={{
+            p: 4,
+            mb: 4,
+            borderRadius: 3,
+            boxShadow: "0px 4px 20px rgba(0,0,0,0.05)",
+          }}
+        >
+          <Typography
+            variant="h5"
+            fontWeight="900"
+            mb={4}
+            sx={{ color: "#2c3e50" }}
+          >
             Create / Edit Invoice
           </Typography>
           <Grid container spacing={3}>
             {/* Company Info */}
             <Grid item xs={12} sm={4}>
-              <TextField fullWidth label="Your Company Name" variant="outlined" value={data.company} onChange={(e) => handleInputChange("company", e.target.value)} />
+              <TextField
+                fullWidth
+                label="Your Company Name"
+                variant="outlined"
+                value={data.company}
+                onChange={(e) => handleInputChange("company", e.target.value)}
+              />
             </Grid>
             <Grid item xs={12} sm={4}>
-              <TextField fullWidth label="Company GSTIN" variant="outlined" value={data.gstin} onChange={(e) => handleInputChange("gstin", e.target.value)} />
+              <TextField
+                fullWidth
+                label="Company GSTIN"
+                variant="outlined"
+                value={data.gstin}
+                onChange={(e) => handleInputChange("gstin", e.target.value)}
+              />
             </Grid>
             <Grid item xs={12} sm={4}>
-              <TextField fullWidth label="Company Phone" variant="outlined" value={data.phone} onChange={(e) => handleInputChange("phone", e.target.value)} />
+              <TextField
+                fullWidth
+                label="Company Phone"
+                variant="outlined"
+                value={data.phone}
+                onChange={(e) => handleInputChange("phone", e.target.value)}
+              />
             </Grid>
             <Grid item xs={12} sm={6}>
-              <TextField fullWidth label="Company Address" variant="outlined" value={data.address} onChange={(e) => handleInputChange("address", e.target.value)} />
+              <TextField
+                fullWidth
+                label="Company Address"
+                variant="outlined"
+                value={data.address}
+                onChange={(e) => handleInputChange("address", e.target.value)}
+              />
             </Grid>
             <Grid item xs={12} sm={6}>
-              <Button variant="contained" component="label" fullWidth sx={{ height: '100%', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: '#fff', fontWeight: 'bold', '&:hover': { background: 'linear-gradient(135deg, #764ba2 0%, #667eea 100%)' } }}>
+              <Button
+                variant="contained"
+                component="label"
+                fullWidth
+                sx={{
+                  height: "100%",
+                  background:
+                    "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                  color: "#fff",
+                  fontWeight: "bold",
+                  "&:hover": {
+                    background:
+                      "linear-gradient(135deg, #764ba2 0%, #667eea 100%)",
+                  },
+                }}
+              >
                 Upload Logo
-                <input type="file" hidden accept="image/*" onChange={(e) => {
-                  const file = e.target.files[0];
-                  if (file) {
-                    const reader = new FileReader();
-                    reader.onloadend = () => handleInputChange("logo", reader.result);
-                    reader.readAsDataURL(file);
-                  }
-                }} />
+                <input
+                  type="file"
+                  hidden
+                  accept="image/*"
+                  onChange={(e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                      const reader = new FileReader();
+                      reader.onloadend = () =>
+                        handleInputChange("logo", reader.result);
+                      reader.readAsDataURL(file);
+                    }
+                  }}
+                />
               </Button>
             </Grid>
 
             {/* Client Info */}
             <Grid item xs={12}>
-              <Divider><Typography variant="body2" color="textSecondary">Billing Information</Typography></Divider>
+              <Divider>
+                <Typography variant="body2" color="textSecondary">
+                  Billing Information
+                </Typography>
+              </Divider>
             </Grid>
             <Grid item xs={12} sm={4}>
-              <TextField fullWidth label="Billing Name *" variant="outlined" value={data.billingName} onChange={(e) => handleInputChange("billingName", e.target.value)} required />
+              <TextField
+                fullWidth
+                label="Billing Name *"
+                variant="outlined"
+                value={data.billingName}
+                onChange={(e) =>
+                  handleInputChange("billingName", e.target.value)
+                }
+                required
+              />
             </Grid>
             <Grid item xs={12} sm={4}>
-              <TextField fullWidth label="Billing Email" variant="outlined" value={data.email} onChange={(e) => handleInputChange("email", e.target.value)} />
+              <TextField
+                fullWidth
+                label="Billing Email"
+                variant="outlined"
+                value={data.email}
+                onChange={(e) => handleInputChange("email", e.target.value)}
+              />
             </Grid>
             <Grid item xs={12} sm={4}>
-              <TextField fullWidth label="Billing GSTIN" variant="outlined" value={data.billingGstin} onChange={(e) => handleInputChange("billingGstin", e.target.value)} />
+              <TextField
+                fullWidth
+                label="Billing GSTIN"
+                variant="outlined"
+                value={data.billingGstin}
+                onChange={(e) =>
+                  handleInputChange("billingGstin", e.target.value)
+                }
+              />
             </Grid>
 
             {/* Invoice Details */}
             <Grid item xs={12}>
-              <Divider><Typography variant="body2" color="textSecondary">Invoice Details</Typography></Divider>
+              <Divider>
+                <Typography variant="body2" color="textSecondary">
+                  Invoice Details
+                </Typography>
+              </Divider>
             </Grid>
             <Grid item xs={12} sm={3}>
-              <TextField fullWidth label="Invoice Number *" variant="outlined" value={data.invoiceNo} onChange={(e) => handleInputChange("invoiceNo", e.target.value)} required />
+              <TextField
+                fullWidth
+                label="Invoice Number *"
+                variant="outlined"
+                value={data.invoiceNo}
+                onChange={(e) => handleInputChange("invoiceNo", e.target.value)}
+                required
+              />
             </Grid>
             <Grid item xs={12} sm={3}>
-              <TextField fullWidth label="Date *" type="date" InputLabelProps={{ shrink: true }} value={data.date} onChange={(e) => handleInputChange("date", e.target.value)} required />
+              <TextField
+                fullWidth
+                label="Date *"
+                type="date"
+                InputLabelProps={{ shrink: true }}
+                value={data.date}
+                onChange={(e) => handleInputChange("date", e.target.value)}
+                required
+              />
             </Grid>
             <Grid item xs={12} sm={3}>
-              <TextField fullWidth label="SGST %" type="number" variant="outlined" value={data.sgst} onChange={(e) => handleInputChange("sgst", Number(e.target.value))} />
+              <TextField
+                fullWidth
+                label="SGST %"
+                type="number"
+                variant="outlined"
+                value={data.sgst}
+                onChange={(e) =>
+                  handleInputChange("sgst", Number(e.target.value))
+                }
+              />
             </Grid>
             <Grid item xs={12} sm={3}>
-              <TextField fullWidth label="CGST %" type="number" variant="outlined" value={data.cgst} onChange={(e) => handleInputChange("cgst", Number(e.target.value))} />
+              <TextField
+                fullWidth
+                label="CGST %"
+                type="number"
+                variant="outlined"
+                value={data.cgst}
+                onChange={(e) =>
+                  handleInputChange("cgst", Number(e.target.value))
+                }
+              />
             </Grid>
 
             {/* Items */}
@@ -426,34 +669,89 @@ export default function InvoicePage() {
                 Items
               </Typography>
               {data.items.map((item, i) => (
-                <Grid container spacing={2} key={i} sx={{ mb: 2, alignItems: 'center' }}>
+                <Grid
+                  container
+                  spacing={2}
+                  key={i}
+                  sx={{ mb: 2, alignItems: "center" }}
+                >
                   <Grid item xs={12} sm={4}>
-                    <TextField fullWidth label="Item Name" variant="outlined" size="small" value={item.name} onChange={(e) => updateItem(i, "name", e.target.value)} />
+                    <TextField
+                      fullWidth
+                      label="Item Name"
+                      variant="outlined"
+                      size="small"
+                      value={item.name}
+                      onChange={(e) => updateItem(i, "name", e.target.value)}
+                    />
                   </Grid>
                   <Grid item xs={12} sm={2}>
-                    <TextField fullWidth label="HSN" variant="outlined" size="small" value={item.hsn} onChange={(e) => updateItem(i, "hsn", e.target.value)} />
+                    <TextField
+                      fullWidth
+                      label="HSN"
+                      variant="outlined"
+                      size="small"
+                      value={item.hsn}
+                      onChange={(e) => updateItem(i, "hsn", e.target.value)}
+                    />
                   </Grid>
                   <Grid item xs={12} sm={2}>
-                    <TextField fullWidth label="Qty" type="number" variant="outlined" size="small" value={item.qty} onChange={(e) => updateItem(i, "qty", Number(e.target.value))} />
+                    <TextField
+                      fullWidth
+                      label="Qty"
+                      type="number"
+                      variant="outlined"
+                      size="small"
+                      value={item.qty}
+                      onChange={(e) =>
+                        updateItem(i, "qty", Number(e.target.value))
+                      }
+                    />
                   </Grid>
                   <Grid item xs={12} sm={2}>
-                    <TextField fullWidth label="Price" type="number" variant="outlined" size="small" value={item.price} onChange={(e) => updateItem(i, "price", Number(e.target.value))} />
+                    <TextField
+                      fullWidth
+                      label="Price"
+                      type="number"
+                      variant="outlined"
+                      size="small"
+                      value={item.price}
+                      onChange={(e) =>
+                        updateItem(i, "price", Number(e.target.value))
+                      }
+                    />
                   </Grid>
                   <Grid item xs={12} sm={2}>
-                    <IconButton color="error" onClick={() => removeItem(i)} disabled={data.items.length === 1}>
+                    <IconButton
+                      color="error"
+                      onClick={() => removeItem(i)}
+                      disabled={data.items.length === 1}
+                    >
                       <DeleteIcon />
                     </IconButton>
                   </Grid>
                 </Grid>
               ))}
-              <Button startIcon={<AddIcon />} onClick={addItem} variant="text" color="primary">
+              <Button
+                startIcon={<AddIcon />}
+                onClick={addItem}
+                variant="text"
+                color="primary"
+              >
                 Add Another Item
               </Button>
             </Grid>
           </Grid>
 
-          <Box mt={4} display="flex" justifyContent="space-between" alignItems="center">
-            <Typography variant="h6" fontWeight="bold">Total Amount: ₹{totals.total}</Typography>
+          <Box
+            mt={4}
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+          >
+            <Typography variant="h6" fontWeight="bold">
+              Total Amount: ₹{totals.total}
+            </Typography>
             <Box display="flex" gap={2}>
               <Button
                 variant="outlined"
@@ -465,13 +763,19 @@ export default function InvoicePage() {
                   textTransform: "none",
                   "&:hover": {
                     borderColor: "#000",
-                    backgroundColor: "#f5f5f5"
-                  }
+                    backgroundColor: "#f5f5f5",
+                  },
                 }}
               >
                 Preview
               </Button>
-              <Button variant="contained" color="success" onClick={handleSaveAndDownload} startIcon={<DownloadIcon />} sx={{ color: 'white' }}>
+              <Button
+                variant="contained"
+                color="success"
+                onClick={handleSaveAndDownload}
+                startIcon={<DownloadIcon />}
+                sx={{ color: "white" }}
+              >
                 Save & Download PDF
               </Button>
             </Box>
@@ -479,8 +783,21 @@ export default function InvoicePage() {
         </Card>
 
         {/* ================= SAVED INVOICES ================= */}
-        <Card sx={{ p: 4, borderRadius: 3, boxShadow: "0px 4px 20px rgba(0,0,0,0.05)" }}>
-          <Box display="flex" justifyContent="space-between" alignItems="center" mb={4} flexWrap="wrap" gap={2}>
+        <Card
+          sx={{
+            p: 4,
+            borderRadius: 3,
+            boxShadow: "0px 4px 20px rgba(0,0,0,0.05)",
+          }}
+        >
+          <Box
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+            mb={4}
+            flexWrap="wrap"
+            gap={2}
+          >
             <Typography variant="h5" fontWeight="900" sx={{ color: "#2c3e50" }}>
               Saved Invoices
             </Typography>
@@ -504,7 +821,11 @@ export default function InvoicePage() {
 
               <FormControl size="small" sx={{ minWidth: 120 }}>
                 <InputLabel>Filter By</InputLabel>
-                <Select value={filter} label="Filter By" onChange={(e) => setFilter(e.target.value)}>
+                <Select
+                  value={filter}
+                  label="Filter By"
+                  onChange={(e) => setFilter(e.target.value)}
+                >
                   <MenuItem value="all">All Time</MenuItem>
                   <MenuItem value="day">Today</MenuItem>
                   <MenuItem value="month">This Month</MenuItem>
@@ -515,57 +836,172 @@ export default function InvoicePage() {
 
               {filter === "custom" && (
                 <>
-                  <TextField type="date" size="small" label="Start" InputLabelProps={{ shrink: true }} value={startDate} onChange={(e) => setStartDate(e.target.value)} />
-                  <TextField type="date" size="small" label="End" InputLabelProps={{ shrink: true }} value={endDate} onChange={(e) => setEndDate(e.target.value)} />
+                  <TextField
+                    type="date"
+                    size="small"
+                    label="Start"
+                    InputLabelProps={{ shrink: true }}
+                    value={startDate}
+                    onChange={(e) => setStartDate(e.target.value)}
+                  />
+                  <TextField
+                    type="date"
+                    size="small"
+                    label="End"
+                    InputLabelProps={{ shrink: true }}
+                    value={endDate}
+                    onChange={(e) => setEndDate(e.target.value)}
+                  />
                 </>
               )}
             </Box>
           </Box>
 
           {loading ? (
-            <Box display="flex" justifyContent="center" p={4}><CircularProgress /></Box>
+            <Box display="flex" justifyContent="center" p={4}>
+              <CircularProgress />
+            </Box>
           ) : (
-            <TableContainer component={Paper} elevation={0} sx={{ border: "1px solid #e0e0e0", borderRadius: "16px", overflow: "hidden", boxShadow: "0 8px 30px rgba(0,0,0,0.06)" }}>
+            <TableContainer
+              component={Paper}
+              elevation={0}
+              sx={{
+                borderRadius: "16px",
+                border: "1px solid #e5e7eb",
+                overflow: "hidden",
+                maxWidth: "900px", // 👈 IMPORTANT (controls width like screenshot)
+              }}
+            >
               <Table>
-                <TableHead sx={{ background: "linear-gradient(135deg, #1976d2, #42a5f5)" }}>
-                  <TableRow>
-                    <TableCell sx={{ color: "#fff", fontWeight: "bold", fontSize: "14px", py: 2, px: 3 }}>Invoice No</TableCell>
-                    <TableCell sx={{ color: "#fff", fontWeight: "bold", fontSize: "14px", py: 2 }}>Billing Name</TableCell>
-                    <TableCell sx={{ color: "#fff", fontWeight: "bold", fontSize: "14px", py: 2 }}>Date</TableCell>
-                    <TableCell sx={{ color: "#fff", fontWeight: "bold", fontSize: "14px", py: 2 }}>Total Amount</TableCell>
-                    <TableCell align="center" sx={{ color: "#fff", fontWeight: "bold", fontSize: "14px", py: 2 }}>Actions</TableCell>
+                {/* HEADER */}
+                <TableHead>
+                  <TableRow
+                    sx={{
+                      background: "linear-gradient(135deg, #2b6cb0, #4299e1)",
+                    }}
+                  >
+                    {[
+                      "Invoice No",
+                      "Billing Name",
+                      "Date",
+                      "Total Amount",
+                      "Actions",
+                    ].map((item) => (
+                      <TableCell
+                        key={item}
+                        align={item === "Actions" ? "center" : "left"}
+                        sx={{
+                          color: "#fff",
+                          fontWeight: 700,
+                          fontSize: "13px",
+                          py: 2,
+                          px: 3,
+                          borderBottom: "none",
+                        }}
+                      >
+                        {item}
+                      </TableCell>
+                    ))}
                   </TableRow>
                 </TableHead>
+
+                {/* BODY */}
                 <TableBody>
                   {invoices.length === 0 ? (
                     <TableRow>
                       <TableCell colSpan={5} align="center" sx={{ py: 6 }}>
-                        <Typography variant="h6" color="textSecondary" sx={{ opacity: 0.6 }}>No invoices found</Typography>
+                        No invoices found
                       </TableCell>
                     </TableRow>
                   ) : (
                     invoices.map((inv, index) => (
-                      <TableRow key={inv._id} sx={{ backgroundColor: index % 2 === 0 ? "#ffffff" : "#f8fafc", transition: "all 0.2s", "&:hover": { backgroundColor: "#f1f5f9" } }}>
-                        <TableCell sx={{ color: "#334155", fontWeight: 700, py: 2, px: 3 }}>{inv.invoiceNo}</TableCell>
-                        <TableCell sx={{ color: "#475569", fontWeight: 600, py: 2 }}>{inv.invoiceName || inv.clientName}</TableCell>
-                        <TableCell sx={{ color: "#64748b", py: 2, fontWeight: 500 }}>{inv.date ? new Date(inv.date).toLocaleDateString('en-IN') : new Date(inv.createdAt).toLocaleDateString('en-IN')}</TableCell>
-                        <TableCell sx={{ color: "#16a34a", fontWeight: "bold", fontSize: "15px", py: 2 }}>₹{inv.total.toLocaleString("en-IN")}</TableCell>
-                        <TableCell align="center" sx={{ py: 2 }}>
-                          <Box display="flex" justifyContent="center" gap={1.5}>
-                            <IconButton sx={{ color: "#25D366", background: "#dcf8c6", "&:hover": { background: "#25D366", color: "#fff" } }} onClick={() => handleWhatsAppInvoice(inv)}>
-                              <WhatsAppIcon />
+                      <TableRow
+                        key={inv._id}
+                        sx={{
+                          backgroundColor: index % 2 === 0 ? "#fff" : "#f9fafb",
+                          "&:hover": { backgroundColor: "#f1f5f9" },
+                        }}
+                      >
+                        <TableCell sx={{ px: 3, fontWeight: 600 }}>
+                          {inv.invoiceNo}
+                        </TableCell>
+
+                        <TableCell>
+                          {inv.invoiceName || inv.clientName}
+                        </TableCell>
+
+                        <TableCell sx={{ color: "#64748b" }}>
+                          {new Date(
+                            inv.date || inv.createdAt,
+                          ).toLocaleDateString("en-IN")}
+                        </TableCell>
+
+                        <TableCell sx={{ color: "#16a34a", fontWeight: 700 }}>
+                          ₹{inv.total.toLocaleString("en-IN")}
+                        </TableCell>
+
+                        {/* ACTIONS (NO WHATSAPP) */}
+                        <TableCell align="center">
+                          <Box display="flex" justifyContent="center" gap={1}>
+                            {/* Preview */}
+                            <IconButton
+                              size="small"
+                              sx={{
+                                bgcolor: "#e0f2fe",
+                                color: "#0284c7",
+                                "&:hover": {
+                                  bgcolor: "#0284c7",
+                                  color: "#fff",
+                                },
+                              }}
+                              onClick={() => {
+                                setData({
+                                  ...data,
+                                  ...inv,
+                                  billingName:
+                                    inv.invoiceName || inv.clientName,
+                                  billingGstin:
+                                    inv.clientGstin || inv.billingGstin,
+                                  date: new Date(inv.date || inv.createdAt)
+                                    .toISOString()
+                                    .split("T")[0],
+                                });
+                                setPreviewOpen(true);
+                              }}
+                            >
+                              <VisibilityIcon fontSize="small" />
                             </IconButton>
-                            <IconButton sx={{ color: "#1976d2", background: "#f0f7ff", "&:hover": { background: "#1976d2", color: "#fff" } }} onClick={() => {
-                              setData({ ...data, ...inv, billingName: inv.invoiceName || inv.clientName, billingGstin: inv.clientGstin || inv.billingGstin, date: new Date(inv.date || inv.createdAt).toISOString().split('T')[0] });
-                              setPreviewOpen(true);
-                            }}>
-                              <VisibilityIcon />
+
+                            {/* Download */}
+                            <IconButton
+                              size="small"
+                              sx={{
+                                bgcolor: "#dcfce7",
+                                color: "#16a34a",
+                                "&:hover": {
+                                  bgcolor: "#16a34a",
+                                  color: "#fff",
+                                },
+                              }}
+                              onClick={() => handleDownloadExisting(inv)}
+                            >
+                              <DownloadIcon fontSize="small" />
                             </IconButton>
-                            <IconButton sx={{ color: "#16a34a", background: "#f0fdf4", "&:hover": { background: "#16a34a", color: "#fff" } }} onClick={() => handleDownloadExisting(inv)}>
-                              <DownloadIcon />
-                            </IconButton>
-                            <IconButton sx={{ color: "#ef4444", background: "#fef2f2", "&:hover": { background: "#ef4444", color: "#fff" } }} onClick={() => setDeleteId(inv._id)}>
-                              <DeleteIcon />
+
+                            {/* Delete */}
+                            <IconButton
+                              size="small"
+                              sx={{
+                                bgcolor: "#fee2e2",
+                                color: "#dc2626",
+                                "&:hover": {
+                                  bgcolor: "#dc2626",
+                                  color: "#fff",
+                                },
+                              }}
+                              onClick={() => setDeleteId(inv._id)}
+                            >
+                              <DeleteIcon fontSize="small" />
                             </IconButton>
                           </Box>
                         </TableCell>
@@ -586,36 +1022,102 @@ export default function InvoicePage() {
       <Footer />
 
       {/* Delete Confirmation Dialog */}
-      <Dialog open={!!deleteId} onClose={() => setDeleteId(null)} maxWidth="xs" fullWidth PaperProps={{ sx: { borderRadius: "16px", p: 1 } }}>
-        <DialogTitle sx={{ textAlign: "center", fontWeight: "bold", fontSize: "18px", display: "flex", flexDirection: "column", alignItems: "center", gap: 1 }}>
+      <Dialog
+        open={!!deleteId}
+        onClose={() => setDeleteId(null)}
+        maxWidth="xs"
+        fullWidth
+        PaperProps={{ sx: { borderRadius: "16px", p: 1 } }}
+      >
+        <DialogTitle
+          sx={{
+            textAlign: "center",
+            fontWeight: "bold",
+            fontSize: "18px",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: 1,
+          }}
+        >
           <WarningAmberIcon sx={{ color: "#f44336", fontSize: 40 }} />
           Confirm Delete
         </DialogTitle>
-        <DialogContent sx={{ textAlign: "center", fontSize: "14px", color: "#555" }}>
-          Are you sure you want to delete this invoice?<br />
+        <DialogContent
+          sx={{ textAlign: "center", fontSize: "14px", color: "#555" }}
+        >
+          Are you sure you want to delete this invoice?
+          <br />
           <b style={{ color: "#f44336" }}>This action cannot be undone.</b>
         </DialogContent>
         <DialogActions sx={{ justifyContent: "center", pb: 2, gap: 1 }}>
-          <Button onClick={() => setDeleteId(null)} sx={{ borderRadius: "8px", textTransform: "none", px: 3, border: "1px solid black", color: "#000" }}>
+          <Button
+            onClick={() => setDeleteId(null)}
+            sx={{
+              borderRadius: "8px",
+              textTransform: "none",
+              px: 3,
+              border: "1px solid black",
+              color: "#000",
+            }}
+          >
             Cancel
           </Button>
-          <Button variant="contained" color="error" onClick={handleDelete} sx={{ borderRadius: "8px", textTransform: "none", px: 3, background: "#f44336", color: "#fff", "&:hover": { background: "#d32f2f" } }}>
+          <Button
+            variant="contained"
+            color="error"
+            onClick={handleDelete}
+            sx={{
+              borderRadius: "8px",
+              textTransform: "none",
+              px: 3,
+              background: "#f44336",
+              color: "#fff",
+              "&:hover": { background: "#d32f2f" },
+            }}
+          >
             Delete
           </Button>
         </DialogActions>
       </Dialog>
 
       {/* Preview Dialog */}
-      <Dialog open={previewOpen} onClose={() => setPreviewOpen(false)} maxWidth="md" fullWidth>
+      <Dialog
+        open={previewOpen}
+        onClose={() => setPreviewOpen(false)}
+        maxWidth="md"
+        fullWidth
+      >
         <DialogTitle>Invoice Preview</DialogTitle>
-        <DialogContent dividers sx={{ backgroundColor: "#f5f5f5", display: 'flex', justifyContent: 'center', p: 4 }}>
+        <DialogContent
+          dividers
+          sx={{
+            backgroundColor: "#f5f5f5",
+            display: "flex",
+            justifyContent: "center",
+            p: 4,
+          }}
+        >
           <Paper elevation={3}>
             <Invoice data={data} totals={totals} />
           </Paper>
         </DialogContent>
-        <DialogActions sx={{ padding: "20px 24px", justifyContent: "flex-end" }}>
-          <Button onClick={() => setPreviewOpen(false)} color="inherit">Close</Button>
-          <Button onClick={() => { handleSaveAndDownload(); setPreviewOpen(false); }} variant="contained" color="success" sx={{ color: 'white' }} startIcon={<DownloadIcon />}>
+        <DialogActions
+          sx={{ padding: "20px 24px", justifyContent: "flex-end" }}
+        >
+          <Button onClick={() => setPreviewOpen(false)} color="inherit">
+            Close
+          </Button>
+          <Button
+            onClick={() => {
+              handleSaveAndDownload();
+              setPreviewOpen(false);
+            }}
+            variant="contained"
+            color="success"
+            sx={{ color: "white" }}
+            startIcon={<DownloadIcon />}
+          >
             Save & Download PDF
           </Button>
         </DialogActions>
@@ -626,25 +1128,127 @@ export default function InvoicePage() {
 
 /* ================= STYLES ================= */
 const styles = {
-  page: { width: "210mm", minHeight: "297mm", padding: "50px", background: "#fff", fontFamily: "'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif", color: "#111" },
-  headerRow: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "40px", borderBottom: "3px solid #e0e0e0", paddingBottom: "25px" },
-  headerLeft: { flex: 1, display: "flex", flexDirection: "column", alignItems: "flex-start" },
+  page: {
+    width: "210mm",
+    minHeight: "297mm",
+    padding: "50px",
+    background: "#fff",
+    fontFamily: "'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+    color: "#111",
+  },
+  headerRow: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: "40px",
+    borderBottom: "3px solid #e0e0e0",
+    paddingBottom: "25px",
+  },
+  headerLeft: {
+    flex: 1,
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "flex-start",
+  },
   logo: { height: "100px", marginBottom: "15px", objectFit: "contain" },
-  companyTitle: { margin: 0, fontSize: "26px", fontWeight: "900", color: "#000", textTransform: "uppercase", letterSpacing: "1px" },
+  companyTitle: {
+    margin: 0,
+    fontSize: "26px",
+    fontWeight: "900",
+    color: "#000",
+    textTransform: "uppercase",
+    letterSpacing: "1px",
+  },
   headerCenter: { flex: 1, textAlign: "center" },
   headerRight: { flex: 1, textAlign: "right" },
-  invoiceTitle: { fontSize: "30px", fontWeight: "900", color: "#2c3e50", margin: "0", textTransform: "uppercase", letterSpacing: "2px" },
-  metaText: { fontSize: "16px", marginBottom: "6px", color: "#333", fontWeight: "600" },
-  flexRow: { display: "flex", justifyContent: "space-between", marginBottom: "45px" },
+  invoiceTitle: {
+    fontSize: "25px",
+    fontWeight: "900",
+    color: "#2c3e50",
+    margin: "0",
+    textTransform: "uppercase",
+    letterSpacing: "2px",
+  },
+  metaText: {
+    fontSize: "16px",
+    marginBottom: "6px",
+    color: "#333",
+    fontWeight: "600",
+  },
+  flexRow: {
+    display: "flex",
+    justifyContent: "space-between",
+    marginBottom: "45px",
+  },
   senderBox: { width: "48%" },
   receiverBox: { width: "48%", textAlign: "right" },
-  sectionTitle: { fontSize: "18px", fontWeight: "800", color: "#2c3e50", textTransform: "uppercase", marginBottom: "12px", borderBottom: "3px solid #3498db", display: "inline-block", paddingBottom: "4px" },
-  infoText: { fontSize: "16px", lineHeight: "1.8", color: "#222", fontWeight: "500" },
+  sectionTitle: {
+    fontSize: "18px",
+    fontWeight: "800",
+    color: "#2c3e50",
+    textTransform: "uppercase",
+    marginBottom: "12px",
+    borderBottom: "3px solid #3498db",
+    display: "inline-block",
+    paddingBottom: "4px",
+  },
+  infoText: {
+    fontSize: "16px",
+    lineHeight: "1.8",
+    color: "#222",
+    fontWeight: "500",
+  },
   table: { width: "100%", borderCollapse: "collapse", marginBottom: "45px" },
-  th: { borderBottom: "3px solid #bdc3c7", padding: "16px 12px", background: "#f8f9fa", color: "#2c3e50", fontWeight: "900", textAlign: "left", fontSize: "16px", textTransform: "uppercase" },
-  td: { borderBottom: "1px solid #ecf0f1", padding: "16px 12px", color: "#111", fontSize: "16px", fontWeight: "600" },
-  totalBox: { width: "55%", marginLeft: "auto", background: "#f4f6f8", padding: "25px", borderRadius: "8px", border: "1px solid #e0e0e0" },
-  totalRow: { display: "flex", justifyContent: "space-between", marginBottom: "12px", fontSize: "16px", fontWeight: "700", color: "#333" },
-  finalTotal: { display: "flex", justifyContent: "space-between", marginTop: "15px", paddingTop: "15px", borderTop: "3px solid #bdc3c7", fontSize: "24px", fontWeight: "900", color: "#000" },
-  words: { marginTop: "30px", fontSize: "16px", color: "#444", fontStyle: "italic", fontWeight: "700", borderTop: "2px dashed #ccc", paddingTop: "20px" },
+  th: {
+    borderBottom: "3px solid #bdc3c7",
+    padding: "16px 12px",
+    background: "#f8f9fa",
+    color: "#2c3e50",
+    fontWeight: "900",
+    textAlign: "left",
+    fontSize: "16px",
+    textTransform: "uppercase",
+  },
+  td: {
+    borderBottom: "1px solid #ecf0f1",
+    padding: "16px 12px",
+    color: "#111",
+    fontSize: "16px",
+    fontWeight: "600",
+  },
+  totalBox: {
+    width: "55%",
+    marginLeft: "auto",
+    background: "#f4f6f8",
+    padding: "25px",
+    borderRadius: "8px",
+    border: "1px solid #e0e0e0",
+  },
+  totalRow: {
+    display: "flex",
+    justifyContent: "space-between",
+    marginBottom: "12px",
+    fontSize: "16px",
+    fontWeight: "700",
+    color: "#333",
+  },
+  finalTotal: {
+    display: "flex",
+    justifyContent: "space-between",
+    marginTop: "15px",
+    paddingTop: "15px",
+    borderTop: "3px solid #bdc3c7",
+    fontSize: "24px",
+    fontWeight: "900",
+    color: "#000",
+  },
+  words: {
+    marginTop: "30px",
+    fontSize: "16px",
+    color: "#444",
+    fontStyle: "italic",
+    fontWeight: "700",
+    borderTop: "2px dashed #ccc",
+    paddingTop: "20px",
+  },
 };
