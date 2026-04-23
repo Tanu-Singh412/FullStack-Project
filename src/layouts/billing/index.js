@@ -266,7 +266,7 @@ Invoice.propTypes = {
 /* ================= MAIN COMPONENT ================= */
 export default function InvoicePage() {
   const pdfRef = useRef();
-
+  const navigate = useNavigate();
   // Data States
   const [invoices, setInvoices] = useState([]);
   const [loading, setLoading] = useState(false);
