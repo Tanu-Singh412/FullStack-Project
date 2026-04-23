@@ -144,18 +144,18 @@ export default function useProjectData() {
           <MDBox display="flex" alignItems="center">
             <MDBox
               sx={{
-                width: 36,
-                height: 36,
-                borderRadius: "10px",
+                width: 26,
+                height: 26,
+                borderRadius: "6px",
                 background: "linear-gradient(135deg, #10b981, #3b82f6)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
                 color: "#fff",
                 fontWeight: "bold",
-                mr: 1.5,
-                fontSize: 14,
-                boxShadow: "0 4px 10px rgba(16, 185, 129, 0.2)"
+                mr: 1,
+                fontSize: 12,
+                boxShadow: "0 2px 6px rgba(16, 185, 129, 0.15)"
               }}
             >
               {p.projectName?.charAt(0).toUpperCase()}

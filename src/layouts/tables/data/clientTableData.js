@@ -123,7 +123,7 @@ export default function useClientTableData() {
 
           client: (
             <MDBox display="flex" alignItems="center">
-              <Avatar sx={{ bgcolor: "#3b82f6", width: 30, height: 30, fontSize: 14, mr: 1.5 }}>
+              <Avatar sx={{ bgcolor: "#3b82f6", width: 24, height: 24, fontSize: 11, mr: 1 }}>
                 {c.name?.charAt(0).toUpperCase()}
               </Avatar>
               <MDTypography variant="caption" fontWeight="bold" color="dark">
