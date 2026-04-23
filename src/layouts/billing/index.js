@@ -1022,12 +1022,12 @@ Thank you.`;
             </Box>
           )}
         </Card>
-
         {/* Hidden PDF Component */}
         <div style={{ position: "absolute", left: "-9999px", top: 0 }}>
           <Invoice ref={pdfRef} data={data} totals={totals} />
         </div>
-      </Box>
+      </MDBox>
+    </Box>
       <Footer />
 
       {/* Delete Confirmation Dialog */}
