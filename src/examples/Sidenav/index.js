@@ -17,6 +17,7 @@ import { useEffect } from "react";
 
 // react-router-dom components
 import { useLocation, NavLink } from "react-router-dom";
+import { useState } from "react";
 
 // prop-types is a library for typechecking of props.
 import PropTypes from "prop-types";
@@ -26,6 +27,9 @@ import List from "@mui/material/List";
 import Divider from "@mui/material/Divider";
 import Link from "@mui/material/Link";
 import Icon from "@mui/material/Icon";
+import Collapse from "@mui/material/Collapse";
+import ExpandLess from "@mui/icons-material/ExpandLess";
+import ExpandMore from "@mui/icons-material/ExpandMore";
 
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
@@ -55,6 +59,12 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
   const location = useLocation();
   const collapseName = location.pathname.replace("/", "");
   const navigate = useNavigate();
+
+  const [openCollapse, setOpenCollapse] = useState("");
+
+  const handleCollapseClick = (key) => {
+    setOpenCollapse(openCollapse === key ? "" : key);
+  };
 
   let textColor = "white";
 
@@ -87,30 +97,60 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
   }, [dispatch, location]);
 
   // Render all the routes from the routes.js (All the visible items on the Sidenav)
-  const renderRoutes = routes.map(({ type, name, icon, title, noCollapse, key, href, route }) => {
+  const renderRoutes = routes.map(({ type, name, icon, title, noCollapse, key, href, route, children }) => {
     let returnValue;
 
     if (type === "collapse") {
-      returnValue = href ? (
-        <Link
-          href={href}
-          key={key}
-          target="_blank"
-          rel="noreferrer"
-          sx={{ textDecoration: "none" }}
-        >
-          <SidenavCollapse
-            name={name}
-            icon={icon}
-            active={key === collapseName}
-            noCollapse={noCollapse}
-          />
-        </Link>
-      ) : (
-        <NavLink key={key} to={route}>
-          <SidenavCollapse name={name} icon={icon} active={key === collapseName} />
-        </NavLink>
-      );
+      if (children) {
+        returnValue = (
+          <MDBox key={key}>
+            <MDBox onClick={() => handleCollapseClick(key)} sx={{ cursor: "pointer" }}>
+              <SidenavCollapse
+                name={name}
+                icon={icon}
+                active={key === collapseName || children.some(child => child.key === collapseName)}
+              />
+              <MDBox sx={{ position: "absolute", right: "1.5rem", top: "50%", transform: "translateY(-50%)", color: textColor }}>
+                {openCollapse === key ? <ExpandLess fontSize="small" /> : <ExpandMore fontSize="small" />}
+              </MDBox>
+            </MDBox>
+            <Collapse in={openCollapse === key} timeout="auto" unmountOnExit>
+              <List component="div" disablePadding sx={{ pl: 3 }}>
+                {children.map((child) => (
+                  <NavLink key={child.key} to={child.route}>
+                    <SidenavCollapse
+                      name={child.name}
+                      icon={child.icon || <Icon fontSize="small">circle</Icon>}
+                      active={child.key === collapseName}
+                    />
+                  </NavLink>
+                ))}
+              </List>
+            </Collapse>
+          </MDBox>
+        );
+      } else {
+        returnValue = href ? (
+          <Link
+            href={href}
+            key={key}
+            target="_blank"
+            rel="noreferrer"
+            sx={{ textDecoration: "none" }}
+          >
+            <SidenavCollapse
+              name={name}
+              icon={icon}
+              active={key === collapseName}
+              noCollapse={noCollapse}
+            />
+          </Link>
+        ) : (
+          <NavLink key={key} to={route}>
+            <SidenavCollapse name={name} icon={icon} active={key === collapseName} />
+          </NavLink>
+        );
+      }
     } else if (type === "title") {
       returnValue = (
         <MDTypography

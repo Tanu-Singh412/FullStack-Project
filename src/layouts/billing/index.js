@@ -279,17 +279,21 @@ export default function InvoicePage() {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
 
+  // Pagination State
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
+
   // Form State
   const [data, setData] = useState({
     _id: null,
     logo: "",
     billingName: "",
     email: "",
-    company: "",
-    address: "",
+    company: "Satya Group",
+    address: "Architectural & Interior Design",
     gstin: "",
     phone: "",
-    invoiceNo: `INV-${Date.now().toString().slice(-6)}`,
+    invoiceNo: "",
     date: new Date().toISOString().split("T")[0],
     billingGstin: "",
     sgst: 9,
@@ -323,6 +327,25 @@ export default function InvoicePage() {
       );
       if (response.success) {
         setInvoices(response.data);
+        
+        // AUTO-SERIES Logic: Generate next Invoice No
+        if (response.data.length > 0 && !data._id) {
+          const numbers = response.data
+            .map(inv => parseInt(inv.invoiceNo?.replace(/[^0-9]/g, '')))
+            .filter(n => !isNaN(n));
+          
+          if (numbers.length > 0) {
+            const nextNo = Math.max(...numbers) + 1;
+            setData(prev => ({ 
+              ...prev, 
+              invoiceNo: `INV-${String(nextNo).padStart(4, '0')}` 
+            }));
+          } else {
+             setData(prev => ({ ...prev, invoiceNo: `INV-1001` }));
+          }
+        } else if (!data._id) {
+          setData(prev => ({ ...prev, invoiceNo: `INV-1001` }));
+        }
       }
     } catch (err) {
       console.error("Failed to load invoices", err);
@@ -490,7 +513,7 @@ Thank you.`;
               variant="contained"
               startIcon={<ArrowBackIcon />}
               onClick={() => navigate(-1)}
-              sx={{ bgcolor: "#1e293b", color: "#fff", '&:hover': { bgcolor: "#000" } }}
+              sx={{ bgcolor: "#b6276aff", color: "#fff", '&:hover': { bgcolor: "#000" } }}
             >
               Back
             </Button>
@@ -591,7 +614,7 @@ Thank you.`;
               {/* Client Info */}
               <Grid item xs={12}>
                 <Divider>
-                  <Typography variant="body2" color="textSecondary">
+                  <Typography variant="body2" color="#000">
                     Billing Information
                   </Typography>
                 </Divider>
@@ -632,7 +655,7 @@ Thank you.`;
               {/* Invoice Details */}
               <Grid item xs={12}>
                 <Divider>
-                  <Typography variant="body2" color="textSecondary">
+                  <Typography variant="body2" color="#000">
                     Invoice Details
                   </Typography>
                 </Divider>
@@ -821,10 +844,10 @@ Thank you.`;
               gap={2}
             >
               <Box>
-                <Typography variant="h5" fontWeight="900" sx={{ color: "#1e293b", letterSpacing: -0.5 }}>
-                  Financial Archives
+                <Typography variant="h5" fontWeight="900" sx={{ color: "#c2268eff", letterSpacing: -0.5 }}>
+                  All Invoices
                 </Typography>
-                <Typography variant="caption" color="text">Manage and track your issued invoices</Typography>
+                <Typography variant="caption" color="text" fontWeight="600">Manage and track your issued invoices</Typography>
               </Box>
 
               {/* Search and Filters */}
@@ -864,6 +887,8 @@ Thank you.`;
                       fontWeight: "bold",
                       fontSize: 13,
                       color: "#dc2626",
+                      px: 1.5,
+                      py: 0.8,
                       "& fieldset": { border: "2px solid #fecaca" },
                       "&:hover fieldset": { borderColor: "#ef4444" },
                       "& .MuiSelect-icon": { color: "#dc2626" }
@@ -916,7 +941,9 @@ Thank you.`;
                     </Typography>
                   </Box>
                 ) : (
-                  invoices.map((inv) => (
+                  invoices
+                    .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+                    .map((inv) => (
                     <Box
                       key={inv._id}
                       sx={{
@@ -1015,10 +1042,32 @@ Thank you.`;
                           onClick={() => setDeleteId(inv._id)}
                         >
                           <DeleteIcon fontSize="small" />
-                        </IconButton>
-                      </Box>
-                    </Box>
-                  ))
+                    ))
+                )}
+
+                {/* PAGINATION CONTROLS */}
+                {invoices.length > itemsPerPage && (
+                  <Box display="flex" justifyContent="center" alignItems="center" mt={4} gap={2}>
+                    <Button 
+                      variant="outlined" 
+                      disabled={currentPage === 1}
+                      onClick={() => setCurrentPage(prev => prev - 1)}
+                      sx={{ borderRadius: 2, textTransform: "none" }}
+                    >
+                      Previous
+                    </Button>
+                    <Typography variant="button" fontWeight="bold">
+                      Page {currentPage} of {Math.ceil(invoices.length / itemsPerPage)}
+                    </Typography>
+                    <Button 
+                      variant="outlined" 
+                      disabled={currentPage === Math.ceil(invoices.length / itemsPerPage)}
+                      onClick={() => setCurrentPage(prev => prev + 1)}
+                      sx={{ borderRadius: 2, textTransform: "none" }}
+                    >
+                      Next
+                    </Button>
+                  </Box>
                 )}
               </Box>
             )}

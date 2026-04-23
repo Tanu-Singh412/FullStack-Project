@@ -141,9 +141,14 @@ export default function useClientTableData() {
           ),
 
           date: (
-            <MDTypography variant="caption" color="text">
-              {dateString}
-            </MDTypography>
+            <MDBox>
+                <MDTypography variant="caption" fontWeight="bold" display="block">
+                    {new Date(c.createdAt).toLocaleDateString("en-IN", { day: 'numeric', month: 'short', year: 'numeric' })}
+                </MDTypography>
+                <MDTypography variant="xxs" color="text">
+                    {new Date(c.createdAt).toLocaleTimeString("en-IN", { hour: '2-digit', minute: '2-digit' })}
+                </MDTypography>
+            </MDBox>
           ),
 
           status: (
@@ -233,8 +238,8 @@ export default function useClientTableData() {
           fullWidth
           PaperProps={{ sx: { borderRadius: 4 } }}
         >
-          <DialogTitle sx={{ fontWeight: "bold", background: "linear-gradient(135deg, #1e293b, #334155)", color: "#fff" }}>
-            Client Dossier
+          <DialogTitle sx={{ fontWeight: "bold", background: "#22c55e", color: "#fff" }}>
+            Client Details
           </DialogTitle>
 
           <DialogContent sx={{ p: 4 }}>
@@ -280,7 +285,11 @@ export default function useClientTableData() {
 
                   <MDBox display="flex" alignItems="center" gap={1.5}>
                     <MDTypography variant="button" fontWeight="bold" color="info">📅 Joined:</MDTypography>
-                    <MDTypography variant="body2">{new Date(selectedClient.createdAt).toLocaleDateString("en-IN")}</MDTypography>
+                    <MDTypography variant="body2">
+                        {new Date(selectedClient.createdAt).toLocaleDateString("en-IN", { day: 'numeric', month: 'short', year: 'numeric' })} 
+                        {" • "}
+                        {new Date(selectedClient.createdAt).toLocaleTimeString("en-IN", { hour: '2-digit', minute: '2-digit' })}
+                    </MDTypography>
                   </MDBox>
 
                   <MDBox display="flex" alignItems="center" gap={1.5}>
@@ -297,7 +306,7 @@ export default function useClientTableData() {
             )}
           </DialogContent>
           <DialogActions sx={{ p: 3 }}>
-            <Button onClick={() => setSelectedClient(null)} variant="outlined" sx={{ borderRadius: 2 }}>Close</Button>
+            <Button onClick={() => setSelectedClient(null)} variant="outlined" sx={{ bgcolor: "darkred", color: "#fff", borderRadius: 2 }}>Close</Button>
           </DialogActions>
         </Dialog>
 

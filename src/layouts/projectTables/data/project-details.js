@@ -60,6 +60,12 @@ function ProjectDetails() {
   const [editScopeId, setEditScopeId] = useState(null);
   const [tab, setTab] = useState(0);
 
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const t = params.get("tab");
+    if (t) setTab(parseInt(t));
+  }, []);
+
   const [drawingType, setDrawingType] = useState(null);
   const [openUpload, setOpenUpload] = useState(false);
   const [uploadType, setUploadType] = useState(null);
@@ -448,7 +454,7 @@ function ProjectDetails() {
         >
           <Tab label="Overview" />
           <Tab label="Drawings" />
-          <Tab label="Accounts" />
+          <Tab label="Accounts (Financials)" />
           <Tab label="Scope of Work" />
         </Tabs>
 
@@ -669,11 +675,11 @@ function ProjectDetails() {
                       }}
                     >
                       <thead>
-                        <tr style={{ background: "#e0e7ff", color: "#3730a3" }}>
-                          <th style={{ padding: "15px", textAlign: "center", fontWeight: "bold" }}>Date</th>
-                          <th style={{ padding: "15px", textAlign: "center", fontWeight: "bold" }}>Amount</th>
-                          <th style={{ padding: "15px", textAlign: "center", fontWeight: "bold" }}>Note</th>
-                          <th style={{ padding: "15px", textAlign: "center", fontWeight: "bold" }}>Action</th>
+                        <tr style={{ background: "linear-gradient(90deg, #1e293b, #334155)", color: "#fff" }}>
+                          <th style={{ padding: "15px", textAlign: "center", fontWeight: "bold", fontSize: "13px", textTransform: "uppercase" }}>Transaction Date</th>
+                          <th style={{ padding: "15px", textAlign: "center", fontWeight: "bold", fontSize: "13px", textTransform: "uppercase" }}>Amount Received</th>
+                          <th style={{ padding: "15px", textAlign: "center", fontWeight: "bold", fontSize: "13px", textTransform: "uppercase" }}>Description/Note</th>
+                          <th style={{ padding: "15px", textAlign: "center", fontWeight: "bold", fontSize: "13px", textTransform: "uppercase" }}>Actions</th>
                         </tr>
                       </thead>
 
@@ -909,94 +915,107 @@ function ProjectDetails() {
               </Button>
             </Card>
 
-            {/* ================= TABLE ================= */}
-            <Card
-              sx={{
-                p: 0,
-                borderRadius: "16px",
-                boxShadow: "0 10px 30px rgba(0,0,0,0.08)",
-                overflow: "hidden",
-              }}
-            >
-              <table style={{ width: "100%", borderCollapse: "collapse" }}>
-                <thead>
-                  <tr style={{ background: "linear-gradient(135deg, #1976d2, #42a5f5)", color: "#fff" }}>
-                    <th style={{ padding: "15px 10px", textAlign: "left", fontWeight: "bold" }}>Project</th>
-                    <th style={{ padding: "15px 10px", textAlign: "left", fontWeight: "bold" }}>Work</th>
-                    <th style={{ padding: "15px 10px", textAlign: "left", fontWeight: "bold" }}>Area</th>
-                    <th style={{ padding: "15px 10px", textAlign: "left", fontWeight: "bold" }}>Floors</th>
-                    <th style={{ padding: "15px 10px", textAlign: "left", fontWeight: "bold" }}>Timeline</th>
-                    <th style={{ padding: "15px 10px", textAlign: "left", fontWeight: "bold" }}>Services</th>
-                    <th style={{ padding: "15px 10px", textAlign: "left", fontWeight: "bold" }}>Notes</th>
-                    <th style={{ padding: "15px 10px", textAlign: "center", fontWeight: "bold" }}>Actions</th>
-                  </tr>
-                </thead>
+            {/* ================= LIST ================= */}
+            <MDBox mt={2}>
+              {scopeList.length === 0 ? (
+                <Card sx={{ p: 4, textAlign: "center", border: "1px dashed #cbd5e1", bgcolor: "#f8fafc" }}>
+                  <MDTypography variant="h6" color="textSecondary">No scope records found for this project.</MDTypography>
+                </Card>
+              ) : (
+                <Grid container spacing={3}>
+                  {scopeList.map((s, i) => (
+                    <Grid item xs={12} key={i}>
+                      <Card sx={{ 
+                        p: 3, 
+                        borderRadius: "16px", 
+                        boxShadow: "0 4px 20px rgba(0,0,0,0.06)",
+                        borderLeft: "6px solid #1976d2",
+                        background: "#fff",
+                        position: "relative",
+                        overflow: "hidden"
+                      }}>
+                        {/* Background Decoration */}
+                        <MDBox sx={{ position: "absolute", top: -20, right: -20, width: 100, height: 100, borderRadius: "50%", background: "rgba(25, 118, 210, 0.03)" }} />
+                        
+                        <MDBox display="flex" justifyContent="space-between" alignItems="flex-start" mb={2}>
+                          <MDBox>
+                            <MDTypography variant="h5" fontWeight="bold" color="info" sx={{ letterSpacing: -0.5 }}>
+                              {s.projectType} <span style={{ color: "#94a3b8", fontWeight: "normal" }}>—</span> {s.workType}
+                            </MDTypography>
+                            <MDBox display="flex" gap={2} mt={0.5}>
+                              <MDTypography variant="caption" sx={{ display: "flex", alignItems: "center", gap: 0.5, color: "#64748b", fontWeight: "bold" }}>
+                                📐 {s.area} sqft
+                              </MDTypography>
+                              <MDTypography variant="caption" sx={{ display: "flex", alignItems: "center", gap: 0.5, color: "#64748b", fontWeight: "bold" }}>
+                                🏢 {s.floors} Floors
+                              </MDTypography>
+                            </MDBox>
+                          </MDBox>
+                          <MDBox display="flex" gap={1}>
+                            <IconButton color="info" size="small" onClick={() => { setScopeData(s); setEditScopeId(s._id); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>
+                              <VisibilityIcon fontSize="small" />
+                            </IconButton>
+                            <IconButton color="error" size="small" onClick={() => handleDeleteScope(s._id)}>
+                              <DeleteIcon fontSize="small" />
+                            </IconButton>
+                          </MDBox>
+                        </MDBox>
 
-                <tbody>
-                  {scopeList.length === 0 ? (
-                    <tr>
-                      <td
-                        colSpan="8"
-                        style={{ textAlign: "center", padding: 20 }}
-                      >
-                        No scope added yet
-                      </td>
-                    </tr>
-                  ) : (
-                    scopeList.map((s, i) => (
-                      <tr
-                        key={i}
-                        style={{
-                          borderBottom: "1px solid #e2e8f0",
-                          background: i % 2 === 0 ? "#ffffff" : "#f8fafc",
-                          fontSize: "14px",
-                          color: "#334155"
-                        }}
-                      >
-                        <td style={{ padding: "15px 10px", fontWeight: "600" }}>{s.projectType}</td>
-                        <td style={{ padding: "15px 10px" }}>{s.workType}</td>
-                        <td style={{ padding: "15px 10px" }}>{s.area} sqft</td>
-                        <td style={{ padding: "15px 10px" }}>{s.floors}</td>
-                        <td style={{ padding: "15px 10px" }}>{s.timeline}</td>
+                        <Divider sx={{ my: 2, opacity: 0.1 }} />
 
-                        <td style={{ padding: "15px 10px", fontSize: "13px", color: "#1e293b", maxWidth: "200px" }}>
-                          {Object.keys(s)
-                            .filter((k) => s[k] === true)
-                            .join(", ")}
-                        </td>
-
-                        <td style={{ padding: "15px 10px", fontStyle: "italic", color: "#64748b" }}>{s.notes}</td>
-
-                        {/* ACTIONS */}
-                        <td style={{ padding: "15px 10px", textAlign: "center" }}>
-                          <Button
-                            size="small"
-                            variant="outlined"
-                            sx={{ mr: 1, color: "#1976d2", borderColor: "#1976d2", textTransform: "none", fontWeight: "bold" }}
-                            onClick={() => {
-                              setScopeData(s);
-                              setEditScopeId(s._id);
-                            }}
-                          >
-                            Edit
-                          </Button>
-
-                          <Button
-                            size="small"
-                            variant="contained"
-                            color="error"
-                            sx={{ color: "white", textTransform: "none", fontWeight: "bold" }}
-                            onClick={() => handleDeleteScope(s._id)}
-                          >
-                            Delete
-                          </Button>
-                        </td>
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
-            </Card>
+                        <Grid container spacing={3}>
+                          <Grid item xs={12} md={8}>
+                            <MDTypography variant="button" fontWeight="bold" display="block" mb={1} color="dark">Services & Deliverables</MDTypography>
+                            <MDBox display="flex" flexWrap="wrap" gap={1}>
+                              {[
+                                {label: "Concept Design", val: s.conceptDesign},
+                                {label: "2D Drawings", val: s.drawings2D},
+                                {label: "3D Elevation", val: s.elevation3D},
+                                {label: "Working Drawings", val: s.workingDrawings},
+                                {label: "Interior Layout", val: s.interiorLayout},
+                                {label: "Civil", val: s.civil},
+                                {label: "Electrical", val: s.electrical},
+                                {label: "Plumbing", val: s.plumbing}
+                              ].map((item, idx) => (
+                                <MDBox 
+                                  key={idx}
+                                  sx={{ 
+                                    px: 1.5, py: 0.5, borderRadius: "6px", 
+                                    bgcolor: item.val ? "#eff6ff" : "#f1f5f9",
+                                    color: item.val ? "#1d4ed8" : "#94a3b8",
+                                    fontSize: "11px", fontWeight: "bold",
+                                    border: `1px solid ${item.val ? "#dbeafe" : "#e2e8f0"}`,
+                                    textDecoration: item.val ? "none" : "line-through"
+                                  }}
+                                >
+                                  {item.label}
+                                </MDBox>
+                              ))}
+                            </MDBox>
+                          </Grid>
+                          <Grid item xs={12} md={4}>
+                            <MDBox sx={{ p: 2, bgcolor: "#f8fafc", borderRadius: "12px", border: "1px solid #e2e8f0" }}>
+                              <MDTypography variant="button" fontWeight="bold" display="block" color="info">Commercials</MDTypography>
+                              <MDTypography variant="h6" fontWeight="900" color="success">₹{s.lumpSum}</MDTypography>
+                              <MDTypography variant="caption" color="textSecondary" sx={{ display: "block" }}>
+                                {s.costPerSqft}/sqft • {s.timeline}
+                              </MDTypography>
+                            </MDBox>
+                          </Grid>
+                        </Grid>
+                        
+                        {s.notes && (
+                           <MDBox mt={2} p={1.5} sx={{ bgcolor: "#fffbeb", borderRadius: "8px", border: "1px solid #fef3c7" }}>
+                              <MDTypography variant="caption" sx={{ color: "#92400e", fontWeight: "bold" }}>Project Notes:</MDTypography>
+                              <MDTypography variant="body2" sx={{ color: "#b45309", fontSize: "13px" }}>{s.notes}</MDTypography>
+                           </MDBox>
+                        )}
+                      </Card>
+                    </Grid>
+                  ))}
+                </Grid>
+              )}
+            </MDBox>
           </MDBox>
         )}
       </MDBox>

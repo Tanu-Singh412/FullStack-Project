@@ -1,67 +1,43 @@
-/**
-=========================================================
-* Material Dashboard 2 React - v2.2.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/material-dashboard-react
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
-
-// @mui material components
 import Grid from "@mui/material/Grid";
-
-// Material Dashboard 2 React components
 import MDBox from "components/MDBox";
-
-// Material Dashboard 2 React example components
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
-import ReportsBarChart from "examples/Charts/BarCharts/ReportsBarChart";
-import ReportsLineChart from "examples/Charts/LineCharts/ReportsLineChart";
 import ComplexStatisticsCard from "examples/Cards/StatisticsCards/ComplexStatisticsCard";
-
-// Data
-import reportsBarChartData from "layouts/dashboard/data/reportsBarChartData";
-import reportsLineChartData from "layouts/dashboard/data/reportsLineChartData";
-
-// Dashboard components
-// import Projects from "layouts/dashboard/components/Projects";
-import OrdersOverview from "layouts/dashboard/components/OrdersOverview";
 import RecentClients from "./components/RecentClients/index.js";
+import OrdersOverview from "layouts/dashboard/components/OrdersOverview";
 import { useEffect, useState } from "react";
 
 function Dashboard() {
   const [totalClients, setTotalClients] = useState(0);
   const [totalProjects, setTotalProjects] = useState(0);
+  const [totalInvoices, setTotalInvoices] = useState(0);
+  const [totalVendors, setTotalVendors] = useState(0);
+
   useEffect(() => {
-    const loadClients = async () => {
-      const res = await fetch("https://fullstack-project-1-n510.onrender.com/api/clients");
+    // Clients
+    fetch("https://fullstack-project-1-n510.onrender.com/api/clients")
+      .then(res => res.json())
+      .then(data => setTotalClients(data.length))
+      .catch(err => console.log(err));
 
-      const data = await res.json();
+    // Projects
+    fetch("https://fullstack-project-1-n510.onrender.com/api/projects")
+      .then(res => res.json())
+      .then(data => setTotalProjects(data.length))
+      .catch(err => console.log(err));
 
-      setTotalClients(data.length);
-    };
+    // Invoices
+    fetch("https://fullstack-project-1-n510.onrender.com/api/invoices")
+      .then(res => res.json())
+      .then(data => setTotalInvoices(data.length || data.data?.length || 0))
+      .catch(err => console.log(err));
 
-    loadClients();
-  }, []);
-  useEffect(() => {
-    const loadProjects = async () => {
-      const res = await fetch("https://fullstack-project-1-n510.onrender.com/api/projects");
-
-      const data = await res.json();
-
-      // total projects
-      setTotalProjects(data.length);
-    };
-
-    loadProjects();
+    // Vendors
+    fetch("https://fullstack-project-1-n510.onrender.com/api/vendors")
+      .then(res => res.json())
+      .then(data => setTotalVendors(data.length || data.data?.length || 0))
+      .catch(err => console.log(err));
   }, []);
 
   return (
@@ -69,44 +45,30 @@ function Dashboard() {
       <DashboardNavbar />
       <MDBox py={3}>
         <Grid container spacing={3}>
-          <Grid item xs={12} md={6} lg={6}>
+          <Grid item xs={12} md={6} lg={3}>
             <MDBox mb={1.5}>
               <ComplexStatisticsCard
-                color="dark"
+                color="info"
                 icon="person_add"
                 title="Clients"
                 count={totalClients}
                 percentage={{
                   color: "success",
-                  amount: "All registered clients",
+                  amount: "Registered",
                 }}
               />
             </MDBox>
           </Grid>
-          <Grid item xs={12} md={6} lg={6}>
+          <Grid item xs={12} md={6} lg={3}>
             <MDBox mb={1.5}>
               <ComplexStatisticsCard
+                color="success"
                 icon="store"
                 title="Projects"
                 count={totalProjects}
                 percentage={{
                   color: "success",
-                  amount: "All Registered Projects",
-                }}
-              />
-            </MDBox>
-          </Grid>
-          {/* <Grid item xs={12} md={6} lg={3}>
-            <MDBox mb={1.5}>
-              <ComplexStatisticsCard
-                color="success"
-                icon="store"
-                title="Revenue"
-                count="34k"
-                percentage={{
-                  color: "success",
-                  amount: "+1%",
-                  label: "than yesterday",
+                  amount: "Active",
                 }}
               />
             </MDBox>
@@ -115,60 +77,33 @@ function Dashboard() {
             <MDBox mb={1.5}>
               <ComplexStatisticsCard
                 color="primary"
-                icon="person_add"
-                title="Followers"
-                count="+91"
+                icon="receipt_long"
+                title="Invoices"
+                count={totalInvoices}
                 percentage={{
                   color: "success",
-                  amount: "",
-                  label: "Just updated",
+                  amount: "Financials",
                 }}
               />
             </MDBox>
-          </Grid> */}
-        </Grid>
-        {/* <MDBox mt={4.5}>
-          <Grid container spacing={3}>
-            <Grid item xs={12} md={6} lg={4}>
-              <MDBox mb={3}>
-                <ReportsBarChart
-                  color="info"
-                  title="website views"
-                  description="Last Campaign Performance"
-                  date="campaign sent 2 days ago"
-                  chart={reportsBarChartData}
-                />
-              </MDBox>
-            </Grid>
-            <Grid item xs={12} md={6} lg={4}>
-              <MDBox mb={3}>
-                <ReportsLineChart
-                  color="success"
-                  title="daily sales"
-                  description={
-                    <>
-                      (<strong>+15%</strong>) increase in today sales.
-                    </>
-                  }
-                  date="updated 4 min ago"
-                  chart={sales}
-                />
-              </MDBox>
-            </Grid>
-            <Grid item xs={12} md={6} lg={4}>
-              <MDBox mb={3}>
-                <ReportsLineChart
-                  color="dark"
-                  title="completed tasks"
-                  description="Last Campaign Performance"
-                  date="just updated"
-                  chart={tasks}
-                />
-              </MDBox>
-            </Grid>
           </Grid>
-        </MDBox> */}
-        <MDBox>
+          <Grid item xs={12} md={6} lg={3}>
+            <MDBox mb={1.5}>
+              <ComplexStatisticsCard
+                color="dark"
+                icon="business"
+                title="Vendors"
+                count={totalVendors}
+                percentage={{
+                  color: "success",
+                  amount: "Verified",
+                }}
+              />
+            </MDBox>
+          </Grid>
+        </Grid>
+
+        <MDBox mt={4.5}>
           <Grid container spacing={3}>
             <Grid item xs={12} md={6} lg={8}>
               <RecentClients />
@@ -178,6 +113,28 @@ function Dashboard() {
             </Grid>
           </Grid>
         </MDBox>
+
+        {/* BOTTOM CONTAINER */}
+        <MDBox mt={4.5} p={3} borderRadius="lg" sx={{ bgcolor: "#fff", boxShadow: "0 4px 20px rgba(0,0,0,0.05)" }}>
+            <MDBox display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+                <MDBox>
+                    <ComplexStatisticsCard 
+                        color="success" 
+                        icon="trending_up" 
+                        title="Growth Overview" 
+                        count="Active System" 
+                        percentage={{ color: "success", amount: "Operational" }} 
+                    />
+                </MDBox>
+                <MDBox sx={{ flex: 1, ml: 4 }}>
+                    <MDBox variant="gradient" bgColor="info" borderRadius="lg" coloredShadow="info" p={2}>
+                        <MDBox color="white" fontWeight="bold">Architectural Management System v2.0</MDBox>
+                        <MDBox color="white" variant="caption">System is running at peak performance. All modules are synchronized with the cloud backend.</MDBox>
+                    </MDBox>
+                </MDBox>
+            </MDBox>
+        </MDBox>
+
       </MDBox>
       <Footer />
     </DashboardLayout>

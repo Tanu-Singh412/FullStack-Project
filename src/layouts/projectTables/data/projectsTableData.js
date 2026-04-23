@@ -136,7 +136,7 @@ export default function useProjectData() {
 
       return {
         serial: <MDTypography variant="caption" fontWeight="bold" sx={{ color: "#3b82f6" }}>{i + 1}</MDTypography>,
-        
+
         project: (
           <MDBox display="flex" alignItems="center">
             <MDBox
@@ -184,14 +184,14 @@ export default function useProjectData() {
         ),
 
         date: (
-            <MDBox>
-                <MDTypography variant="caption" fontWeight="bold" display="block">
-                    {new Date(p.createdAt).toLocaleDateString("en-IN", { day: 'numeric', month: 'short' })}
-                </MDTypography>
-                <MDTypography variant="xxs" color="text">
-                    {new Date(p.createdAt).toLocaleTimeString("en-IN", { hour: '2-digit', minute: '2-digit' })}
-                </MDTypography>
-            </MDBox>
+          <MDBox>
+            <MDTypography variant="caption" fontWeight="bold" display="block">
+              {new Date(p.createdAt).toLocaleDateString("en-IN", { day: 'numeric', month: 'short' })}
+            </MDTypography>
+            <MDTypography variant="xxs" color="text">
+              {new Date(p.createdAt).toLocaleTimeString("en-IN", { hour: '2-digit', minute: '2-digit' })}
+            </MDTypography>
+          </MDBox>
         ),
 
         status: (
@@ -206,13 +206,13 @@ export default function useProjectData() {
               borderRadius: 2,
               fontWeight: "bold",
               bgcolor:
-                currentStatus === "Pending" ? "#fef2f2" : 
-                currentStatus === "Running" ? "#eff6ff" :
-                currentStatus === "Assigned" ? "#fff7ed" : "#f0fdf4",
+                currentStatus === "Pending" ? "#fef2f2" :
+                  currentStatus === "Running" ? "#eff6ff" :
+                    currentStatus === "Assigned" ? "#fff7ed" : "#f0fdf4",
               color:
-                currentStatus === "Pending" ? "#dc2626" : 
-                currentStatus === "Running" ? "#2563eb" :
-                currentStatus === "Assigned" ? "#ea580c" : "#16a34a",
+                currentStatus === "Pending" ? "#dc2626" :
+                  currentStatus === "Running" ? "#2563eb" :
+                    currentStatus === "Assigned" ? "#ea580c" : "#16a34a",
               "& fieldset": { border: "none" },
             }}
           >
@@ -234,27 +234,27 @@ export default function useProjectData() {
                 fontSize: "10px",
                 px: 1,
                 py: 0.3,
-                bgcolor: "#1e293b",
+                bgcolor: "#6366f1",
                 color: "#fff",
                 borderRadius: 1.5,
-                '&:hover': { bgcolor: "#0f172a" }
+                '&:hover': { bgcolor: "#6366f1" }
               }}
             >
               Details
             </Button>
-            
-            <IconButton 
-                size="small" 
-                onClick={() => editProject(p)}
-                sx={{ color: "#3b82f6", bgcolor: "#eff6ff", borderRadius: 1.5 }}
+
+            <IconButton
+              size="small"
+              onClick={() => editProject(p)}
+              sx={{ color: "#3b82f6", bgcolor: "#eff6ff", borderRadius: 1.5 }}
             >
               <EditIcon fontSize="inherit" />
             </IconButton>
-            
-            <IconButton 
-                size="small" 
-                onClick={() => setDeleteId(p._id)}
-                sx={{ color: "#ef4444", bgcolor: "#fef2f2", borderRadius: 1.5 }}
+
+            <IconButton
+              size="small"
+              onClick={() => setDeleteId(p._id)}
+              sx={{ color: "#ef4444", bgcolor: "#fef2f2", borderRadius: 1.5 }}
             >
               <DeleteIcon fontSize="inherit" />
             </IconButton>
@@ -278,28 +278,28 @@ export default function useProjectData() {
     columns,
     rows,
     dialog: (
-        <>
-            {/* Delete Confirmation */}
-            <Dialog open={!!deleteId} onClose={() => setDeleteId(null)} PaperProps={{ sx: { borderRadius: 3 } }}>
-                <DialogTitle sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                    <WarningAmberIcon color="error" /> Delete Project
-                </DialogTitle>
-                <DialogContent>
-                    Are you sure you want to delete this project? All associated data will be lost.
-                </DialogContent>
-                <DialogActions sx={{ p: 2 }}>
-                    <Button onClick={() => setDeleteId(null)}>Cancel</Button>
-                    <Button 
-                        variant="contained" 
-                        color="error" 
-                        onClick={() => { deleteProject(deleteId); setDeleteId(null); }}
-                        sx={{ borderRadius: 2, color: "#fff" }}
-                    >
-                        Delete
-                    </Button>
-                </DialogActions>
-            </Dialog>
-        </>
+      <>
+        {/* Delete Confirmation */}
+        <Dialog open={!!deleteId} onClose={() => setDeleteId(null)} PaperProps={{ sx: { borderRadius: 3 } }}>
+          <DialogTitle sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+            <WarningAmberIcon color="error" /> Delete Project
+          </DialogTitle>
+          <DialogContent>
+            Are you sure you want to delete this project? All associated data will be lost.
+          </DialogContent>
+          <DialogActions sx={{ p: 2 }}>
+            <Button onClick={() => setDeleteId(null)}>Cancel</Button>
+            <Button
+              variant="contained"
+              color="error"
+              onClick={() => { deleteProject(deleteId); setDeleteId(null); }}
+              sx={{ borderRadius: 2, color: "#fff" }}
+            >
+              Delete
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </>
     )
   };
 }

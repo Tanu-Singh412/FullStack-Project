@@ -60,20 +60,62 @@ const routes = [
 
   {
     type: "collapse",
-    name: "Manage Projects",
-    key: "projectTables",
+    name: "Project Management",
+    key: "projectManagement",
     icon: <Icon fontSize="small">receipt_long</Icon>,
-    route: "/projectTables",
-    component: <ProjectTables />,
+    children: [
+      {
+        name: "Projects Overview",
+        key: "projectTables",
+        route: "/projectTables",
+        component: <ProjectTables />,
+        icon: <Icon fontSize="small">table_view</Icon>,
+      },
+      {
+        name: "Drawing Records",
+        key: "project-details-drawings",
+        route: "/projectTables", // Redirect to table for selection
+        component: <ProjectTables />,
+        icon: <Icon fontSize="small">image</Icon>,
+      },
+      {
+        name: "Scope of Work",
+        key: "project-details-scope",
+        route: "/projectTables", // Redirect to table for selection
+        component: <ProjectTables />,
+        icon: <Icon fontSize="small">assignment</Icon>,
+      },
+      {
+        name: "Register Project",
+        key: "projects",
+        route: "/projects",
+        component: <Projects />,
+        icon: <Icon fontSize="small">add_circle</Icon>,
+      },
+    ],
   },
 
   {
     type: "collapse",
-    name: "Invoice",
-    key: "billing",
-    icon: <Icon fontSize="small">assignment</Icon>,
-    route: "/billing",
-    component: <Billing />,
+    name: "Accounts",
+    key: "accounts",
+    icon: <Icon fontSize="small">account_balance</Icon>,
+    children: [
+      {
+        name: "Issued Invoices",
+        key: "billing",
+        route: "/billing",
+        component: <Billing />,
+        icon: <Icon fontSize="small">receipt</Icon>,
+      },
+      {
+        name: "Project Financials",
+        key: "project-financials",
+        route: "/projectTables",
+        component: <ProjectTables />,
+        icon: <Icon fontSize="small">payments</Icon>,
+      },
+    ],
   },
 
 

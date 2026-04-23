@@ -35,6 +35,7 @@ function VendorDetail() {
   const [vendor, setVendor] = useState(null);
   const [editMode, setEditMode] = useState(false);
   const [clients, setClients] = useState([]);
+  const [allVendors, setAllVendors] = useState([]);
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState("");
 
@@ -54,6 +55,11 @@ function VendorDetail() {
     fetch("https://fullstack-project-1-n510.onrender.com/api/clients")
       .then((res) => res.json())
       .then((data) => setClients(data))
+      .catch((err) => console.log(err));
+
+    fetch("https://fullstack-project-1-n510.onrender.com/api/vendors")
+      .then((res) => res.json())
+      .then((data) => setAllVendors(data.data || data))
       .catch((err) => console.log(err));
   }, [id]);
 
@@ -94,6 +100,20 @@ function VendorDetail() {
     } else {
       updated[index][field] = value;
     }
+
+    // AUTO-FETCH LOGIC for Material Name
+    if (field === "materialName" && value) {
+      const previousMat = allVendors
+        .flatMap(v => v.materials || [])
+        .find(m => m.materialName?.toLowerCase() === value.toLowerCase());
+
+      if (previousMat) {
+        updated[index].rate = previousMat.rate || "";
+        updated[index].clientId = previousMat.clientId || "";
+        updated[index].clientName = previousMat.clientName || "";
+      }
+    }
+
     setVendor({ ...vendor, materials: updated });
   };
 
@@ -112,16 +132,23 @@ function VendorDetail() {
       <DashboardNavbar />
 
       <MDBox p={4}>
-        <MDBox display="flex" alignItems="center" mb={4} gap={2}>
+        <MDBox display="flex" justifyContent="space-between" alignItems="center" mb={4}>
+            <MDTypography variant="h4" fontWeight="bold" sx={{ color: "#1e293b" }}>Vendor Profile</MDTypography>
             <Button 
                 variant="contained" 
                 startIcon={<ArrowBackIcon />} 
                 onClick={() => navigate(-1)}
-                sx={{ bgcolor: "#1e293b", color: "#fff", '&:hover': {bgcolor: "#000"} }}
+                sx={{ 
+                    bgcolor: "#3b82f6", 
+                    color: "#fff", 
+                    '&:hover': {bgcolor: "#2563eb"},
+                    borderRadius: 2,
+                    textTransform: "none",
+                    fontWeight: "bold"
+                }}
             >
-                Back
+                Back to Directory
             </Button>
-            <MDTypography variant="h4" fontWeight="bold">Vendor Profile</MDTypography>
         </MDBox>
         <Grid container spacing={4}>
           {/* PROFILE SIDEBAR */}

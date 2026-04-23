@@ -41,16 +41,23 @@ function VendorList() {
       <DashboardNavbar />
 
       <MDBox sx={{ pt: 6, pb: 3, px: 3 }}>
-        <MDBox display="flex" alignItems="center" mb={4} gap={2}>
+        <MDBox display="flex" justifyContent="space-between" alignItems="center" mb={4}>
+            <MDTypography variant="h4" fontWeight="bold" sx={{ color: "#1e293b" }}>Vendors Directory</MDTypography>
             <Button 
                 variant="contained" 
                 startIcon={<ArrowBackIcon />} 
                 onClick={() => navigate(-1)}
-                sx={{ bgcolor: "#1e293b", color: "#fff", '&:hover': {bgcolor: "#000"} }}
+                sx={{ 
+                    bgcolor: "#6366f1", 
+                    color: "#fff", 
+                    '&:hover': {bgcolor: "#4f46e5"},
+                    borderRadius: 2,
+                    textTransform: "none",
+                    fontWeight: "bold"
+                }}
             >
-                Back
+                Back to Categories
             </Button>
-            <MDTypography variant="h4" fontWeight="bold">Vendors Directory</MDTypography>
         </MDBox>
         {/* HERO SECTION */}
         <Box
@@ -61,9 +68,9 @@ function VendorList() {
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
-            background: "linear-gradient(135deg, #1e293b, #3b82f6)",
+            background: "linear-gradient(135deg, #4f46e5, #0ea5e9)", // Indigo to Sapphire
             color: "white",
-            boxShadow: "0 20px 40px rgba(59, 130, 246, 0.2)",
+            boxShadow: "0 20px 40px rgba(79, 70, 229, 0.2)",
             position: "relative",
             overflow: "hidden",
           }}
@@ -180,7 +187,9 @@ function VendorList() {
                             <BusinessIcon sx={{ fontSize: 12 }} /> ID: {v._id?.slice(-8).toUpperCase()}
                         </Typography>
                         <Typography variant="xxs" sx={{ color: "#94a3b8", fontWeight: "bold" }}>
-                            • {new Date(v.createdAt).toLocaleTimeString("en-IN", { hour: '2-digit', minute: '2-digit' })}
+                            • {new Date(v.createdAt).toLocaleDateString("en-IN", { day: 'numeric', month: 'short', year: 'numeric' })} 
+                            {" • "}
+                            {new Date(v.createdAt).toLocaleTimeString("en-IN", { hour: '2-digit', minute: '2-digit' })}
                         </Typography>
                       </Box>
                     </Box>

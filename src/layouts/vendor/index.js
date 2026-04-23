@@ -112,17 +112,17 @@ function VendorHome() {
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
-            background: "linear-gradient(135deg, #1e293b, #334155)",
+            background: "linear-gradient(135deg, #0284c7, #0d9488)", // Sapphire to Teal
             color: "white",
-            boxShadow: "0 10px 30px rgba(0,0,0,0.2)",
+            boxShadow: "0 10px 40px rgba(13, 148, 136, 0.2)",
           }}
         >
           <Box>
-            <Typography variant="h4" fontWeight="bold" color="#fff">
-              Vendor Management
+            <Typography variant="h4" fontWeight="bold" color="#fff" sx={{ textShadow: "0 2px 4px rgba(0,0,0,0.1)" }}>
+              Supplier Ecosystem
             </Typography>
-            <Typography variant="body2" sx={{ opacity: 0.8, mt: 1 }}>
-              Manage your materials and suppliers by category
+            <Typography variant="body2" sx={{ opacity: 0.9, mt: 0.5, fontWeight: "medium" }}>
+              Categorized procurement and resource tracking
             </Typography>
           </Box>
 
@@ -130,18 +130,20 @@ function VendorHome() {
             variant="contained"
             onClick={() => handleOpen()}
             sx={{
-              background: "linear-gradient(135deg, #3b82f6, #2563eb)",
-              color: "#fff",
-              fontWeight: "bold",
-              borderRadius: 2,
+              background: "#fff",
+              color: "#0d9488",
+              fontWeight: "900",
+              borderRadius: "12px",
               px: 4,
               py: 1.5,
-              fontSize: "0.95rem",
-              '&:hover': { background: 'linear-gradient(135deg, #2563eb, #1d4ed8)' },
-              boxShadow: "0 4px 15px rgba(59, 130, 246, 0.4)",
+              fontSize: "0.9rem",
+              textTransform: "uppercase",
+              letterSpacing: 1,
+              '&:hover': { background: '#f0fdfa', transform: 'scale(1.02)' },
+              boxShadow: "0 8px 20px rgba(0,0,0,0.1)",
             }}
           >
-            + New Category
+            + Create Category
           </Button>
         </Box>
 

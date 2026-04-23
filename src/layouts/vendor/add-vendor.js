@@ -192,21 +192,30 @@ function AddVendor() {
 
               <MDBox display="flex" justifyContent="space-between" alignItems="center" mb={3}>
                 <MDBox display="flex" alignItems="center" gap={2}>
-                    <Button 
-                        variant="contained" 
-                        startIcon={<ArrowBackIcon />} 
-                        onClick={() => navigate(-1)}
-                        sx={{ bgcolor: "#1e293b", color: "#fff", '&:hover': {bgcolor: "#000"} }}
-                    >
-                        Back
-                    </Button>
                     <MDTypography variant="h4" fontWeight="bold">
                         Vendor Registration
                     </MDTypography>
                 </MDBox>
-                <MDTypography variant="button" fontWeight="medium" color="text">
-                  Section: <span style={{color: "#3b82f6", textTransform: "capitalize"}}>{category || form.category}</span>
-                </MDTypography>
+                <MDBox display="flex" alignItems="center" gap={2}>
+                    <MDTypography variant="button" fontWeight="medium" color="text">
+                        Section: <span style={{color: "#3b82f6", textTransform: "capitalize"}}>{category || form.category}</span>
+                    </MDTypography>
+                    <Button 
+                        variant="contained" 
+                        startIcon={<ArrowBackIcon />} 
+                        onClick={() => navigate(-1)}
+                        sx={{ 
+                            bgcolor: "#3b82f6", 
+                            color: "#fff", 
+                            '&:hover': {bgcolor: "#2563eb"},
+                            borderRadius: 2,
+                            textTransform: "none",
+                            fontWeight: "bold"
+                        }}
+                    >
+                        Back
+                    </Button>
+                </MDBox>
               </MDBox>
 
               <Divider sx={{ mb: 4 }} />
