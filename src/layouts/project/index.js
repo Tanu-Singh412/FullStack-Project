@@ -205,27 +205,43 @@ function AddProject() {
                     <Select
                       fullWidth
                       value={form.clientId || ""}
-                      displayEmpty // ✅ IMPORTANT
+                      displayEmpty
                       onChange={(e) => {
                         const selected = clients.find((c) => c.clientId === e.target.value);
-
                         if (!selected) return;
-
                         setForm({
                           ...form,
                           clientId: selected.clientId,
                           clientName: selected.name,
                         });
                       }}
+                      sx={{
+                        height: 45,
+                        borderRadius: "10px",
+                        bgcolor: "#f8fafc",
+                        "& .MuiSelect-select": {
+                          py: 1.5,
+                          fontSize: "0.875rem",
+                          fontWeight: "500"
+                        },
+                        "& fieldset": {
+                          borderColor: "#e2e8f0",
+                        },
+                        "&:hover fieldset": {
+                          borderColor: "#3b82f6 !important"
+                        },
+                        "&.Mui-focused fieldset": {
+                          borderColor: "#3b82f6 !important",
+                          borderWidth: "1px"
+                        }
+                      }}
                     >
-                      {/* ✅ Placeholder */}
                       <MenuItem value="" disabled>
-                        Select Client
+                        <span style={{ color: "#94a3b8" }}>Select Associated Client</span>
                       </MenuItem>
-
                       {clients.map((c) => (
-                        <MenuItem key={c._id} value={c.clientId}>
-                          {c.name} ({c.clientId})
+                        <MenuItem key={c._id} value={c.clientId} sx={{ py: 1.2, borderRadius: 1.5, mx: 1, my: 0.5 }}>
+                          {c.name} <span style={{ marginLeft: 8, color: "#64748b", fontSize: "0.75rem" }}>({c.clientId})</span>
                         </MenuItem>
                       ))}
                     </Select>

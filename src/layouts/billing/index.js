@@ -292,6 +292,8 @@ export default function InvoicePage() {
     sgst: 9,
     cgst: 9,
     items: [{ name: "", hsn: "", qty: 1, price: 0 }],
+    photo: null,
+    photoName: "",
   });
 
   // Calculate Totals
@@ -539,38 +541,39 @@ Thank you.`;
               />
             </Grid>
             <Grid item xs={12} sm={6}>
-              <Button
-                variant="contained"
-                component="label"
-                fullWidth
-                sx={{
-                  height: "100%",
-                  background:
-                    "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-                  color: "#fff",
-                  fontWeight: "bold",
-                  "&:hover": {
-                    background:
-                      "linear-gradient(135deg, #764ba2 0%, #667eea 100%)",
-                  },
+              <Box 
+                sx={{ 
+                  border: "2px dashed #e2e8f0", 
+                  borderRadius: 2, 
+                  p: 1.5, 
+                  textAlign: "center",
+                  bgcolor: "#f8fafc",
+                  '&:hover': { bgcolor: "#f1f5f9" }
                 }}
               >
-                Upload Logo
-                <input
-                  type="file"
-                  hidden
-                  accept="image/*"
-                  onChange={(e) => {
-                    const file = e.target.files[0];
-                    if (file) {
-                      const reader = new FileReader();
-                      reader.onloadend = () =>
-                        handleInputChange("logo", reader.result);
-                      reader.readAsDataURL(file);
-                    }
-                  }}
-                />
-              </Button>
+                <Button
+                  variant="text"
+                  component="label"
+                  fullWidth
+                  sx={{ textTransform: "none", color: "#334155", fontWeight: "bold" }}
+                >
+                  {data.photoName ? `✅ ${data.photoName}` : "➕ Upload Bill Photo"}
+                  <input
+                    type="file"
+                    hidden
+                    accept="image/*"
+                    onChange={(e) => {
+                      const file = e.target.files[0];
+                      if (file) {
+                        handleInputChange("photoName", file.name);
+                        const reader = new FileReader();
+                        reader.onloadend = () => handleInputChange("photo", reader.result);
+                        reader.readAsDataURL(file);
+                      }
+                    }}
+                  />
+                </Button>
+              </Box>
             </Grid>
 
             {/* Client Info */}
@@ -791,8 +794,10 @@ Thank you.`;
         <Card
           sx={{
             p: 4,
-            borderRadius: 3,
-            boxShadow: "0px 4px 20px rgba(0,0,0,0.05)",
+            borderRadius: 4,
+            boxShadow: "0px 10px 40px rgba(0,0,0,0.08)",
+            border: "1px solid #f1f5f9",
+            overflow: "hidden"
           }}
         >
           <Box
@@ -803,110 +808,87 @@ Thank you.`;
             flexWrap="wrap"
             gap={2}
           >
-            <Typography variant="h5" fontWeight="900" sx={{ color: "#2c3e50" }}>
-              Saved Invoices
-            </Typography>
+            <Box>
+                <Typography variant="h5" fontWeight="900" sx={{ color: "#1e293b", letterSpacing: -0.5 }}>
+                Financial Archives
+                </Typography>
+                <Typography variant="caption" color="text">Manage and track your issued invoices</Typography>
+            </Box>
 
             {/* Search and Filters */}
             <Box display="flex" gap={2} flexWrap="wrap" alignItems="center">
               <TextField
                 variant="outlined"
                 size="small"
-                placeholder="Search Billing Name or Inv No"
+                placeholder="Quick search..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
+                sx={{ 
+                    bgcolor: "#f8fafc", 
+                    borderRadius: 2, 
+                    "& fieldset": { border: "none" },
+                    boxShadow: "inset 0 2px 4px rgba(0,0,0,0.05)"
+                }}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <SearchIcon />
+                      <SearchIcon fontSize="small" color="disabled" />
                     </InputAdornment>
                   ),
                 }}
               />
 
-              <FormControl size="small" sx={{ minWidth: 120 }}>
-                <InputLabel>Filter By</InputLabel>
+              <FormControl size="small" sx={{ minWidth: 140 }}>
                 <Select
                   value={filter}
-                  label="Filter By"
                   onChange={(e) => setFilter(e.target.value)}
+                  sx={{ borderRadius: 2, bgcolor: "#f1f5f9", fontWeight: "bold", fontSize: 13, "& fieldset": {border: "none"} }}
                 >
-                  <MenuItem value="all">All Time</MenuItem>
+                  <MenuItem value="all">All Records</MenuItem>
                   <MenuItem value="day">Today</MenuItem>
                   <MenuItem value="month">This Month</MenuItem>
                   <MenuItem value="year">This Year</MenuItem>
-                  <MenuItem value="custom">Custom Date</MenuItem>
+                  <MenuItem value="custom">Custom Range</MenuItem>
                 </Select>
               </FormControl>
-
-              {filter === "custom" && (
-                <>
-                  <TextField
-                    type="date"
-                    size="small"
-                    label="Start"
-                    InputLabelProps={{ shrink: true }}
-                    value={startDate}
-                    onChange={(e) => setStartDate(e.target.value)}
-                  />
-                  <TextField
-                    type="date"
-                    size="small"
-                    label="End"
-                    InputLabelProps={{ shrink: true }}
-                    value={endDate}
-                    onChange={(e) => setEndDate(e.target.value)}
-                  />
-                </>
-              )}
             </Box>
           </Box>
 
           {loading ? (
-            <Box display="flex" justifyContent="center" p={4}>
-              <CircularProgress />
+            <Box display="flex" justifyContent="center" py={10}>
+              <CircularProgress size={30} thickness={5} />
             </Box>
           ) : (
-            <Box
-              sx={{
-                border: "1px solid #e5e7eb",
-                borderRadius: "16px",
-                p: 3,
-                background: "#fff",
-                boxShadow: "0 6px 20px rgba(0,0,0,0.05)",
-              }}
-            >
-              {/* HEADER (LEFT SIDE ONLY) */}
+            <Box>
+              {/* TABLE HEADER */}
               <Box
                 sx={{
                   display: "grid",
-                  gridTemplateColumns: "1.2fr 1.2fr 1fr 1fr 1fr",
-                  background: "linear-gradient(135deg, #2b6cb0, #4299e1)",
+                  gridTemplateColumns: "1.5fr 2fr 1fr 1fr 1fr",
+                  background: "linear-gradient(90deg, #1e293b, #334155)",
                   color: "#fff",
                   px: 3,
                   py: 2,
-                  borderRadius: "10px",
-                  width: "100%",
-                  fontWeight: 600,
-                  fontSize: "13px",
-
+                  borderRadius: 3,
+                  fontWeight: "bold",
+                  fontSize: "0.75rem",
+                  textTransform: "uppercase",
+                  letterSpacing: 1,
+                  mb: 2
                 }}
               >
-                <span>Invoice No</span>
-                <span>Billing Name</span>
-                <span>Date</span>
-                <span>Total</span>
-                <span>Actions</span>
+                <span>Reference</span>
+                <span>Recipient</span>
+                <span>Issue Date</span>
+                <span>Amount</span>
+                <span style={{ textAlign: "right" }}>Actions</span>
               </Box>
 
-              {/* LOADING */}
-              {loading ? (
-                <Box display="flex" justifyContent="center" p={4}>
-                  <CircularProgress />
-                </Box>
-              ) : invoices.length === 0 ? (
-                <Box textAlign="center" py={4}>
-                  No invoices found
+              {invoices.length === 0 ? (
+                <Box textAlign="center" py={10} sx={{ bgcolor: "#f8fafc", borderRadius: 3, border: "1px dashed #e2e8f0" }}>
+                  <Typography variant="body2" color="textSecondary" fontWeight="medium">
+                    No matching invoices found in your records.
+                  </Typography>
                 </Box>
               ) : (
                 invoices.map((inv) => (
@@ -914,45 +896,55 @@ Thank you.`;
                     key={inv._id}
                     sx={{
                       display: "grid",
-                      gridTemplateColumns: "1.2fr 1.2fr 1fr 1fr auto",
+                      gridTemplateColumns: "1.5fr 2fr 1fr 1fr 1fr",
                       alignItems: "center",
                       px: 3,
-                      py: 2.5,
-                      mt: 2,
-                      borderRadius: "12px",
-                      background: "#f9fafb",
-                      boxShadow: "0 4px 10px rgba(0,0,0,0.04)",
+                      py: 2.2,
+                      mb: 1.5,
+                      borderRadius: 3,
+                      background: "#fff",
+                      border: "1px solid #f1f5f9",
+                      transition: "0.3s",
+                      "&:hover": {
+                        borderColor: "#3b82f6",
+                        transform: "scale(1.01)",
+                        boxShadow: "0 10px 20px rgba(0,0,0,0.04)"
+                      },
                     }}
                   >
                     {/* Invoice No */}
-                    <Typography fontWeight={700} fontSize={14}>
+                    <Typography fontWeight="bold" color="dark" fontSize={14}>
                       {inv.invoiceNo}
                     </Typography>
 
-                    {/* Billing */}
-                    <Typography color="#475569" fontSize={14}>
-                      {inv.invoiceName || inv.clientName}
-                    </Typography>
+                    {/* Recipient */}
+                    <Box display="flex" alignItems="center">
+                        <Avatar sx={{ bgcolor: "#eff6ff", color: "#3b82f6", width: 30, height: 30, fontSize: 13, mr: 1.5, fontWeight: "bold" }}>
+                            {(inv.invoiceName || inv.clientName || "?").charAt(0)}
+                        </Avatar>
+                        <Typography color="#334155" fontWeight="medium" fontSize={14}>
+                        {inv.invoiceName || inv.clientName}
+                        </Typography>
+                    </Box>
 
                     {/* Date */}
-                    <Typography color="#64748b" fontSize={14}>
-                      {new Date(inv.date || inv.createdAt).toLocaleDateString("en-IN")}
+                    <Typography color="#64748b" fontSize={13} fontWeight="medium">
+                      {new Date(inv.date || inv.createdAt).toLocaleDateString("en-IN", { day: '2-digit', month: 'short', year: 'numeric' })}
                     </Typography>
 
                     {/* Amount */}
-                    <Typography fontWeight={700} color="#16a34a" fontSize={14}>
+                    <Typography fontWeight="bold" color="#16a34a" fontSize={15}>
                       ₹{inv.total.toLocaleString("en-IN")}
                     </Typography>
 
                     {/* Actions */}
-                    <Box display="flex" justifyContent="flex-end" gap={1}>
-
-                      {/* Preview */}
+                    <Box display="flex" justifyContent="flex-end" gap={1.5}>
                       <IconButton
                         size="small"
                         sx={{
-                          bgcolor: "#e0f2fe",
+                          bgcolor: "#f0f9ff",
                           color: "#0284c7",
+                          borderRadius: 2,
                           "&:hover": { bgcolor: "#0284c7", color: "#fff" },
                         }}
                         onClick={() => {
@@ -971,12 +963,12 @@ Thank you.`;
                         <VisibilityIcon fontSize="small" />
                       </IconButton>
 
-                      {/* Download */}
                       <IconButton
                         size="small"
                         sx={{
-                          bgcolor: "#dcfce7",
+                          bgcolor: "#f0fdf4",
                           color: "#16a34a",
+                          borderRadius: 2,
                           "&:hover": { bgcolor: "#16a34a", color: "#fff" },
                         }}
                         onClick={() => handleDownloadExisting(inv)}
@@ -984,25 +976,23 @@ Thank you.`;
                         <DownloadIcon fontSize="small" />
                       </IconButton>
 
-                      {/* Delete */}
                       <IconButton
                         size="small"
                         sx={{
-                          bgcolor: "#fee2e2",
+                          bgcolor: "#fef2f2",
                           color: "#dc2626",
+                          borderRadius: 2,
                           "&:hover": { bgcolor: "#dc2626", color: "#fff" },
                         }}
                         onClick={() => setDeleteId(inv._id)}
                       >
                         <DeleteIcon fontSize="small" />
                       </IconButton>
-
                     </Box>
                   </Box>
                 ))
               )}
             </Box>
-
           )}
         </Card>
 
