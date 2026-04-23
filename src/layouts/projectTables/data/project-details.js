@@ -17,11 +17,10 @@ import {
   TextField,
   CircularProgress,
   IconButton,
-  VisibilityIcon,
   DeleteIcon,
   Divider,
 } from "@mui/material";
-
+import VisibilityIcon from "@mui/icons-material/Visibility";
 const Base_API = "https://fullstack-project-1-n510.onrender.com/api";
 
 function ProjectDetails() {
