@@ -62,35 +62,33 @@ const routes = [
     type: "collapse",
     name: "Project Management",
     key: "projectManagement",
-    icon: <Icon fontSize="small">receipt_long</Icon>,
+    icon: <Icon fontSize="small">business_center</Icon>,
     children: [
       {
-        name: "Projects Overview",
+        name: "Projects List",
         key: "projectTables",
         route: "/projectTables",
         component: <ProjectTables />,
-        icon: <Icon fontSize="small">table_view</Icon>,
+        icon: <Icon fontSize="small">list_alt</Icon>,
+      },
+      {
+        name: "Add New Project",
+        key: "add-projects",
+        route: "/projects",
+        component: <Projects />,
+        icon: <Icon fontSize="small">add_circle</Icon>,
       },
       {
         name: "Drawing Records",
-        key: "project-details-drawings",
-        route: "/projectTables", // Redirect to table for selection
-        component: <ProjectTables />,
+        key: "drawing-records",
+        route: "/projectTables",
         icon: <Icon fontSize="small">image</Icon>,
       },
       {
         name: "Scope of Work",
-        key: "project-details-scope",
-        route: "/projectTables", // Redirect to table for selection
-        component: <ProjectTables />,
+        key: "scope-of-work",
+        route: "/projectTables",
         icon: <Icon fontSize="small">assignment</Icon>,
-      },
-      {
-        name: "Register Project",
-        key: "projects",
-        route: "/projects",
-        component: <Projects />,
-        icon: <Icon fontSize="small">add_circle</Icon>,
       },
     ],
   },
@@ -102,17 +100,16 @@ const routes = [
     icon: <Icon fontSize="small">account_balance</Icon>,
     children: [
       {
-        name: "Issued Invoices",
+        name: "Invoices",
         key: "billing",
         route: "/billing",
         component: <Billing />,
         icon: <Icon fontSize="small">receipt</Icon>,
       },
       {
-        name: "Project Financials",
+        name: "Financial Overview",
         key: "project-financials",
         route: "/projectTables",
-        component: <ProjectTables />,
         icon: <Icon fontSize="small">payments</Icon>,
       },
     ],
@@ -124,7 +121,7 @@ const routes = [
     type: "route",
     name: "Project Details",
     key: "project-details",
-    route: "/project-details",
+    route: "/project-details/:id",
     component: <ProjectDetails />,
   },
 

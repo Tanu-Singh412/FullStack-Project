@@ -1,4 +1,4 @@
-import { useLocation } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 
 import MDBox from "components/MDBox";
@@ -25,11 +25,9 @@ const Base_API = "https://fullstack-project-1-n510.onrender.com/api";
 
 function ProjectDetails() {
   const { state } = useLocation();
+  const { id } = useParams();
 
-  const [project, setProject] = useState({
-    ...state,
-    totalAmount: Number(state?.totalAmount || 0),
-  });
+  const [project, setProject] = useState(state || null);
 
   const [scopeData, setScopeData] = useState({
     projectType: "",
@@ -67,7 +65,21 @@ function ProjectDetails() {
     const params = new URLSearchParams(window.location.search);
     const t = params.get("tab");
     if (t) setTab(parseInt(t));
-  }, []);
+
+    if (!project && id) {
+      fetchProjectById(id);
+    }
+  }, [id]);
+
+  const fetchProjectById = async (projectId) => {
+    try {
+      const res = await fetch(`${Base_API}/projects/${projectId}`);
+      const data = await res.json();
+      setProject(data);
+    } catch (err) {
+      console.error("Failed to fetch project", err);
+    }
+  };
 
   const [drawingType, setDrawingType] = useState(null);
   const [openUpload, setOpenUpload] = useState(false);
@@ -406,6 +418,17 @@ function ProjectDetails() {
       notes: "",
     });
   };
+  if (!project) {
+    return (
+      <DashboardLayout>
+        <DashboardNavbar />
+        <MDBox display="flex" justifyContent="center" alignItems="center" minHeight="80vh">
+          <CircularProgress color="info" />
+        </MDBox>
+      </DashboardLayout>
+    );
+  }
+
   return (
     <DashboardLayout>
       <DashboardNavbar />

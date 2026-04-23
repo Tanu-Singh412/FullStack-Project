@@ -228,7 +228,7 @@ export default function useProjectData() {
             <Button
               variant="contained"
               size="small"
-              onClick={() => navigate("/project-details", { state: p })}
+              onClick={() => navigate(`/project-details/${p._id}`, { state: p })}
               sx={{
                 textTransform: "none",
                 fontSize: "10px",

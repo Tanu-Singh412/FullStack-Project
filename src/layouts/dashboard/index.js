@@ -7,8 +7,10 @@ import ComplexStatisticsCard from "examples/Cards/StatisticsCards/ComplexStatist
 import RecentClients from "./components/RecentClients/index.js";
 import OrdersOverview from "layouts/dashboard/components/OrdersOverview";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function Dashboard() {
+  const navigate = useNavigate();
   const [totalClients, setTotalClients] = useState(0);
   const [totalProjects, setTotalProjects] = useState(0);
   const [totalInvoices, setTotalInvoices] = useState(0);
@@ -46,7 +48,7 @@ function Dashboard() {
       <MDBox py={3}>
         <Grid container spacing={3}>
           <Grid item xs={12} md={6} lg={3}>
-            <MDBox mb={1.5}>
+            <MDBox mb={1.5} sx={{ cursor: "pointer" }} onClick={() => navigate("/tables")}>
               <ComplexStatisticsCard
                 color="info"
                 icon="person_add"
@@ -60,7 +62,7 @@ function Dashboard() {
             </MDBox>
           </Grid>
           <Grid item xs={12} md={6} lg={3}>
-            <MDBox mb={1.5}>
+            <MDBox mb={1.5} sx={{ cursor: "pointer" }} onClick={() => navigate("/projectTables")}>
               <ComplexStatisticsCard
                 color="success"
                 icon="store"
@@ -74,7 +76,7 @@ function Dashboard() {
             </MDBox>
           </Grid>
           <Grid item xs={12} md={6} lg={3}>
-            <MDBox mb={1.5}>
+            <MDBox mb={1.5} sx={{ cursor: "pointer" }} onClick={() => navigate("/billing")}>
               <ComplexStatisticsCard
                 color="primary"
                 icon="receipt_long"
@@ -88,7 +90,7 @@ function Dashboard() {
             </MDBox>
           </Grid>
           <Grid item xs={12} md={6} lg={3}>
-            <MDBox mb={1.5}>
+            <MDBox mb={1.5} sx={{ cursor: "pointer" }} onClick={() => navigate("/vendor")}>
               <ComplexStatisticsCard
                 color="dark"
                 icon="business"

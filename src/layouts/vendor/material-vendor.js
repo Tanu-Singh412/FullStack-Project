@@ -42,51 +42,61 @@ function VendorList() {
 
       <MDBox sx={{ pt: 6, pb: 3, px: 3 }}>
         <MDBox display="flex" justifyContent="space-between" alignItems="center" mb={4}>
-            <MDTypography variant="h4" fontWeight="bold" sx={{ color: "#1e293b" }}>Vendors Directory</MDTypography>
-            <Button 
-                variant="contained" 
-                startIcon={<ArrowBackIcon />} 
-                onClick={() => navigate(-1)}
-                sx={{ 
-                    bgcolor: "#6366f1", 
-                    color: "#fff", 
-                    '&:hover': {bgcolor: "#4f46e5"},
-                    borderRadius: 2,
-                    textTransform: "none",
-                    fontWeight: "bold"
-                }}
-            >
-                Back to Categories
-            </Button>
+          <MDBox>
+            <MDTypography variant="h4" fontWeight="bold" sx={{ color: "#1e293b", letterSpacing: -0.5 }}>Vendors Directory</MDTypography>
+            <MDTypography variant="caption" sx={{ color: "#64748b", fontWeight: "bold" }}>Verified suppliers for {categoryId}</MDTypography>
+          </MDBox>
+          <Button
+            variant="contained"
+            startIcon={<ArrowBackIcon />}
+            onClick={() => navigate(-1)}
+            sx={{
+              bgcolor: "#1e293b",
+              color: "#fff",
+              '&:hover': { bgcolor: "#0f172a" },
+              borderRadius: 2,
+              px: 3,
+              textTransform: "none",
+              fontWeight: "bold",
+              boxShadow: "0 4px 12px rgba(0,0,0,0.1)"
+            }}
+          >
+            Back to Categories
+          </Button>
         </MDBox>
+
         {/* HERO SECTION */}
         <Box
           sx={{
             mb: 5,
             p: 5,
-            borderRadius: 5,
+            borderRadius: 6,
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
-            background: "linear-gradient(135deg, #4f46e5, #0ea5e9)", // Indigo to Sapphire
+            background: "linear-gradient(135deg, #3b82f6, #1d4ed8)", // Sapphire to Deep Blue
             color: "white",
-            boxShadow: "0 20px 40px rgba(79, 70, 229, 0.2)",
+            boxShadow: "0 20px 50px rgba(59, 130, 246, 0.25)",
             position: "relative",
             overflow: "hidden",
           }}
         >
-          {/* Decorative Circle */}
+          {/* Decorative Elements */}
           <Box sx={{ 
-            position: "absolute", top: -50, right: -50, width: 200, height: 200, 
-            borderRadius: "50%", background: "rgba(59, 130, 246, 0.1)", zIndex: 0 
+            position: "absolute", top: -80, right: -80, width: 250, height: 250, 
+            borderRadius: "50%", background: "rgba(255, 255, 255, 0.1)", zIndex: 0 
+          }} />
+          <Box sx={{ 
+            position: "absolute", bottom: -40, left: "20%", width: 120, height: 120, 
+            borderRadius: "50%", background: "rgba(255, 255, 255, 0.05)", zIndex: 0 
           }} />
 
-          <Box sx={{ position: "relative", zIndex: 1, color:"#fff" }}>
-            <Typography variant="h3" fontWeight="900" sx={{ mb: 1, textTransform: "capitalize", letterSpacing: -1 }}>
-              {categoryId} 
+          <Box sx={{ position: "relative", zIndex: 1, color: "#fff" }}>
+            <Typography variant="h2" fontWeight="900" sx={{ mb: 1, textTransform: "capitalize", letterSpacing: -2, color: "#fff" }}>
+              {categoryId}
             </Typography>
-            <Typography variant="h6" sx={{ opacity: 0.7, fontWeight: 400 }}>
-              Discover & manage {vendors.length} certified suppliers
+            <Typography variant="h5" sx={{ opacity: 0.9, fontWeight: 500, color: "#fff" }}>
+              Managing {vendors.length} Premium Suppliers
             </Typography>
           </Box>
 
@@ -97,16 +107,18 @@ function VendorList() {
               position: "relative",
               zIndex: 1,
               background: "#fff",
-              color: "#0f172a",
-              fontWeight: "bold",
+              color: "#1d4ed8",
+              fontWeight: "900",
               borderRadius: 3,
-              px: 4,
+              px: 5,
               py: 2,
-              boxShadow: "0 10px 20px rgba(0,0,0,0.1)",
-              '&:hover': { background: '#f8fafc', transform: "translateY(-2px)" },
+              fontSize: "1rem",
+              boxShadow: "0 10px 30px rgba(0,0,0,0.15)",
+              '&:hover': { background: '#f8fafc', transform: "translateY(-3px)", boxShadow: "0 15px 35px rgba(0,0,0,0.2)" },
+              transition: "all 0.3s"
             }}
           >
-            + Register Vendor
+            + Register Supplier
           </Button>
         </Box>
 
@@ -144,7 +156,7 @@ function VendorList() {
                   <Box
                     sx={{
                       height: 160,
-                      background: v.image 
+                      background: v.image
                         ? `url(${v.image}) center/cover`
                         : "linear-gradient(135deg, #f1f5f9, #e2e8f0)",
                       position: "relative",
@@ -154,9 +166,9 @@ function VendorList() {
                     }}
                   >
                     {!v.image && (
-                       <BusinessIcon sx={{ fontSize: 60, color: "#cbd5e1", opacity: 0.5 }} />
+                      <BusinessIcon sx={{ fontSize: 60, color: "#cbd5e1", opacity: 0.5 }} />
                     )}
-                    
+
                     {/* Floating Avatar */}
                     <Avatar
                       sx={{
@@ -179,28 +191,32 @@ function VendorList() {
 
                   <CardContent sx={{ pt: 5, pb: 3, px: 3 }}>
                     <Box sx={{ mb: 3 }}>
-                      <Typography variant="h5" fontWeight="bold" sx={{ mb: 0.5 }}>
+                      <Typography variant="h4" fontWeight="bold" sx={{ mb: 0.5, color: "#1e293b" }}>
                         {v.vendorName}
                       </Typography>
                       <Box display="flex" gap={1} alignItems="center">
-                        <Typography variant="xxs" sx={{ color: "#64748b", display: "flex", alignItems: "center", gap: 0.5 }}>
-                            <BusinessIcon sx={{ fontSize: 12 }} /> ID: {v._id?.slice(-8).toUpperCase()}
+                        <Typography variant="caption" sx={{ color: "#64748b", display: "flex", alignItems: "center", gap: 0.5, fontWeight: "bold" }}>
+                          <BusinessIcon sx={{ fontSize: 14 }} /> ID: {v._id?.slice(-8).toUpperCase()}
                         </Typography>
-                        <Typography variant="xxs" sx={{ color: "#94a3b8", fontWeight: "bold" }}>
-                            • {new Date(v.createdAt).toLocaleDateString("en-IN", { day: 'numeric', month: 'short', year: 'numeric' })} 
-                            {" • "}
-                            {new Date(v.createdAt).toLocaleTimeString("en-IN", { hour: '2-digit', minute: '2-digit' })}
+                        <Typography variant="caption" sx={{ color: "#94a3b8", fontWeight: "bold" }}>
+                          • {v.createdAt && !isNaN(new Date(v.createdAt)) 
+                              ? new Date(v.createdAt).toLocaleDateString("en-IN", { day: 'numeric', month: 'short', year: 'numeric' }) 
+                              : "Recently Added"}
+                          {" • "}
+                          {v.createdAt && !isNaN(new Date(v.createdAt)) 
+                              ? new Date(v.createdAt).toLocaleTimeString("en-IN", { hour: '2-digit', minute: '2-digit' }) 
+                              : ""}
                         </Typography>
                       </Box>
                     </Box>
 
                     <Box sx={{ mb: 3 }}>
-                      <Typography variant="body2" sx={{ color: "#334155", display: "flex", alignItems: "center", mb: 1, gap: 1.5 }}>
-                        <PhoneIcon sx={{ fontSize: 18, color: "#3b82f6" }} /> 
-                        <span style={{ fontWeight: 600 }}>{v.phone}</span>
+                      <Typography variant="h6" sx={{ color: "#334155", display: "flex", alignItems: "center", mb: 1.5, gap: 1.5 }}>
+                        <PhoneIcon sx={{ fontSize: 20, color: "#3b82f6" }} />
+                        <span style={{ fontWeight: 700 }}>{v.phone}</span>
                       </Typography>
-                      <Typography variant="body2" sx={{ color: "#64748b", display: "flex", alignItems: "center", gap: 1.5 }}>
-                        <BusinessIcon sx={{ fontSize: 18, color: "#3b82f6" }} />
+                      <Typography variant="body1" sx={{ color: "#64748b", display: "flex", alignItems: "center", gap: 1.5, fontWeight: "medium" }}>
+                        <BusinessIcon sx={{ fontSize: 20, color: "#3b82f6" }} />
                         {v.company || "No company specified"}
                       </Typography>
                     </Box>
@@ -212,25 +228,33 @@ function VendorList() {
                       sx={{ pt: 2, borderTop: "1px solid #f1f5f9" }}
                     >
                       <Chip
-                        label="Verified Supplier"
+                        label="Verified Premium"
                         size="small"
-                        sx={{ 
-                          bgcolor: "#f0fdf4", 
-                          color: "#16a34a", 
-                          fontWeight: "bold",
-                          borderRadius: 2,
-                          fontSize: "0.7rem",
-                          border: "1px solid #dcfce7"
+                        sx={{
+                          bgcolor: "#dcfce7",
+                          color: "#166534",
+                          fontWeight: "900",
+                          borderRadius: "6px",
+                          fontSize: "0.65rem",
+                          textTransform: "uppercase",
+                          letterSpacing: 0.5,
+                          px: 1
                         }}
                       />
 
-                      <Button 
-                        size="small" 
-                        endIcon={<ArrowForwardIcon />}
-                        sx={{ fontWeight: 'bold', color: "#3b82f6" }}
+                      <Typography
+                        variant="button"
+                        sx={{
+                          fontWeight: '900',
+                          color: "#3b82f6",
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 0.5,
+                          fontSize: "0.75rem"
+                        }}
                       >
-                        Profile
-                      </Button>
+                        VIEW PROFILE <ArrowForwardIcon sx={{ fontSize: 16 }} />
+                      </Typography>
                     </Box>
                   </CardContent>
                 </Card>

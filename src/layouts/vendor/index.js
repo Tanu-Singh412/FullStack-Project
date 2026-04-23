@@ -61,10 +61,10 @@ function VendorHome() {
       formData.append("image", image);
     }
 
-    const url = editId 
+    const url = editId
       ? `https://fullstack-project-1-n510.onrender.com/api/vendor-categories/${editId}`
       : "https://fullstack-project-1-n510.onrender.com/api/vendor-categories";
-    
+
     const method = editId ? "PUT" : "POST";
 
     const res = await fetch(url, {
@@ -121,7 +121,7 @@ function VendorHome() {
             <Typography variant="h4" fontWeight="bold" color="#fff" sx={{ textShadow: "0 2px 4px rgba(0,0,0,0.1)" }}>
               Supplier Ecosystem
             </Typography>
-            <Typography variant="body2" sx={{ opacity: 0.9, mt: 0.5, fontWeight: "medium" }}>
+            <Typography variant="body2" sx={{ opacity: 0.9, mt: 0.5, fontWeight: "medium", color: "#fff" }}>
               Categorized procurement and resource tracking
             </Typography>
           </Box>
@@ -171,7 +171,7 @@ function VendorHome() {
                   onClick={() => navigate(`/vendor/category/${c.name}`)}
                   sx={{
                     height: 180,
-                    background: c.image 
+                    background: c.image
                       ? `url(${c.image}) center/cover`
                       : `linear-gradient(135deg, ${["#3b82f6", "#10b981", "#8b5cf6", "#f59e0b", "#ef4444"][categories.indexOf(c) % 5]}, ${["#2563eb", "#059669", "#7c3aed", "#d97706", "#dc2626"][categories.indexOf(c) % 5]})`,
                     display: "flex",
@@ -197,7 +197,7 @@ function VendorHome() {
                   </Typography>
 
                   {/* Actions Overlay */}
-                  <Box 
+                  <Box
                     className="category-actions"
                     sx={{
                       position: "absolute",
@@ -210,16 +210,16 @@ function VendorHome() {
                       transition: "0.3s",
                     }}
                   >
-                    <IconButton 
-                      size="small" 
-                      sx={{ bgcolor: "rgba(255,255,255,0.9)", '&:hover': {bgcolor: "#fff"} }}
+                    <IconButton
+                      size="small"
+                      sx={{ bgcolor: "rgba(255,255,255,0.9)", '&:hover': { bgcolor: "#fff" } }}
                       onClick={(e) => { e.stopPropagation(); handleOpen(c); }}
                     >
                       <EditIcon fontSize="small" color="info" />
                     </IconButton>
-                    <IconButton 
-                      size="small" 
-                      sx={{ bgcolor: "rgba(255,255,255,0.9)", '&:hover': {bgcolor: "#fff"} }}
+                    <IconButton
+                      size="small"
+                      sx={{ bgcolor: "rgba(255,255,255,0.9)", '&:hover': { bgcolor: "#fff" } }}
                       onClick={(e) => { e.stopPropagation(); handleDelete(c._id); }}
                     >
                       <DeleteIcon fontSize="small" color="error" />
@@ -302,9 +302,9 @@ function VendorHome() {
               fullWidth
               variant="contained"
               onClick={handleSave}
-              sx={{ 
-                py: 1.5, 
-                borderRadius: 2, 
+              sx={{
+                py: 1.5,
+                borderRadius: 2,
                 background: "linear-gradient(135deg, #3b82f6, #2563eb)",
                 color: "#fff",
                 '&:hover': { background: "linear-gradient(135deg, #2563eb, #1d4ed8)" }
