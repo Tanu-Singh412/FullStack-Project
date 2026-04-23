@@ -15,6 +15,10 @@ const vendorSchema = new mongoose.Schema({
 
   note: String,
 
+  // ✅ CLIENT ASSOCIATION
+  clientId: String,
+  clientName: String,
+
   // ✅ SIMPLE CATEGORY (NO OBJECTID)
   category: {
     type: String,
@@ -26,6 +30,7 @@ const vendorSchema = new mongoose.Schema({
     {
       materialName: String,
       rate: Number,
+      quantity: Number,
     },
   ],
 });
