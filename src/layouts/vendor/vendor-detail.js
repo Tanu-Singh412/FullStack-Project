@@ -13,6 +13,8 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Avatar from "@mui/material/Avatar";
 import Divider from "@mui/material/Divider";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
 
 function VendorDetail() {
   const { id } = useParams();
@@ -20,12 +22,18 @@ function VendorDetail() {
 
   const [vendor, setVendor] = useState(null);
   const [editMode, setEditMode] = useState(false);
+  const [clients, setClients] = useState([]);
 
   useEffect(() => {
     fetch(`https://fullstack-project-1-n510.onrender.com/api/vendors/${id}`)
       .then((res) => res.json())
       .then((res) => setVendor(res.data))
       .catch((err) => console.error(err));
+
+    fetch("https://fullstack-project-1-n510.onrender.com/api/clients")
+      .then((res) => res.json())
+      .then((data) => setClients(data))
+      .catch((err) => console.log(err));
   }, [id]);
 
   const handleChange = (e) => {
@@ -110,6 +118,9 @@ function VendorDetail() {
                     <Typography>🏢 {vendor.company}</Typography>
                     <Typography>📂 {vendor.category}</Typography>
                   </Grid>
+                  <Grid item xs={12}>
+                    <Typography fontWeight="bold">👤 Client: {vendor.clientName} ({vendor.clientId})</Typography>
+                  </Grid>
                 </Grid>
               ) : (
                 <Grid container spacing={2}>
@@ -122,8 +133,33 @@ function VendorDetail() {
                   <Grid item xs={12} md={6}>
                     <TextField fullWidth label="Email" name="email" value={vendor.email} onChange={handleChange} />
                   </Grid>
-                  <Grid item xs={12} md={6}>
+                   <Grid item xs={12} md={6}>
                     <TextField fullWidth label="Company" name="company" value={vendor.company} onChange={handleChange} />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Typography variant="button" fontWeight="bold">Client</Typography>
+                    <Select
+                      fullWidth
+                      value={vendor.clientId || ""}
+                      displayEmpty
+                      onChange={(e) => {
+                        const selected = clients.find((c) => c.clientId === e.target.value);
+                        if (!selected) return;
+                        setVendor({
+                          ...vendor,
+                          clientId: selected.clientId,
+                          clientName: selected.name,
+                        });
+                      }}
+                      sx={{ height: "45px", mt: 1 }}
+                    >
+                      <MenuItem value="" disabled>Select Client</MenuItem>
+                      {clients.map((c) => (
+                        <MenuItem key={c._id} value={c.clientId}>
+                          {c.name} ({c.clientId})
+                        </MenuItem>
+                      ))}
+                    </Select>
                   </Grid>
                 </Grid>
               )}
@@ -140,9 +176,12 @@ function VendorDetail() {
               {!editMode ? (
                 vendor.materials?.length ? (
                   vendor.materials.map((m, i) => (
-                    <Box key={i} display="flex" justifyContent="space-between" p={1} sx={{ borderBottom: '1px solid #eee' }}>
+                   <Box key={i} display="flex" justifyContent="space-between" p={1} sx={{ borderBottom: '1px solid #eee' }}>
                       <Typography>{m.materialName}</Typography>
-                      <Typography fontWeight="bold">₹{m.rate}</Typography>
+                      <Box display="flex" gap={4}>
+                        <Typography>Qty: {m.quantity || 0}</Typography>
+                        <Typography fontWeight="bold">₹{m.rate}</Typography>
+                      </Box>
                     </Box>
                   ))
                 ) : (
@@ -152,7 +191,7 @@ function VendorDetail() {
                 <>
                   {vendor.materials?.map((m, index) => (
                     <Grid container spacing={2} key={index} sx={{ mb: 1 }}>
-                      <Grid item xs={5}>
+                       <Grid item xs={4}>
                         <TextField fullWidth label="Material" value={m.materialName} onChange={(e) => {
                           const updated = [...vendor.materials];
                           updated[index].materialName = e.target.value;
@@ -160,10 +199,18 @@ function VendorDetail() {
                         }} />
                       </Grid>
 
-                      <Grid item xs={5}>
+                      <Grid item xs={3}>
                         <TextField fullWidth type="number" label="Rate" value={m.rate} onChange={(e) => {
                           const updated = [...vendor.materials];
                           updated[index].rate = e.target.value;
+                          setVendor({ ...vendor, materials: updated });
+                        }} />
+                      </Grid>
+
+                      <Grid item xs={3}>
+                        <TextField fullWidth type="number" label="Qty" value={m.quantity} onChange={(e) => {
+                          const updated = [...vendor.materials];
+                          updated[index].quantity = e.target.value;
                           setVendor({ ...vendor, materials: updated });
                         }} />
                       </Grid>
@@ -177,9 +224,9 @@ function VendorDetail() {
                     </Grid>
                   ))}
 
-                  <Button variant="contained" sx={{ mt: 2 }} onClick={() => setVendor({
+                   <Button variant="contained" sx={{ mt: 2 }} onClick={() => setVendor({
                     ...vendor,
-                    materials: [...(vendor.materials || []), { materialName: "", rate: "" }]
+                    materials: [...(vendor.materials || []), { materialName: "", rate: "", quantity: "" }]
                   })}>
                     + Add Material
                   </Button>

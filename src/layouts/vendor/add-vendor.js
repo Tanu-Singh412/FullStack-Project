@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom"; // ✅ ADD THIS
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
 
 // MUI
 import Grid from "@mui/material/Grid";
@@ -36,6 +38,8 @@ function AddVendor() {
     status: "Active",
     note: "",
     category: "",
+    clientId: "",
+    clientName: "",
     materials: [],
   });
 
@@ -55,11 +59,17 @@ useEffect(() => {
   // FETCH CATEGORIES
   // =====================
   const [categories, setCategories] = useState([]);
+  const [clients, setClients] = useState([]);
 
   useEffect(() => {
     fetch("https://fullstack-project-1-n510.onrender.com/api/vendor-categories")
       .then((res) => res.json())
       .then((data) => setCategories(data.data || data))
+      .catch((err) => console.log(err));
+
+    fetch("https://fullstack-project-1-n510.onrender.com/api/clients")
+      .then((res) => res.json())
+      .then((data) => setClients(data))
       .catch((err) => console.log(err));
   }, []);
 
@@ -76,7 +86,7 @@ useEffect(() => {
   const addMaterial = () => {
     setForm({
       ...form,
-      materials: [...form.materials, { materialName: "", rate: "" }],
+      materials: [...form.materials, { materialName: "", rate: "", quantity: "" }],
     });
   };
 
@@ -86,6 +96,22 @@ useEffect(() => {
   const updateMaterial = (index, field, value) => {
     const updated = [...form.materials];
     updated[index][field] = value;
+
+    // ✅ AUTO-CATEGORY LOGIC
+    if (field === "materialName" && value) {
+      const matchedCat = categories.find(
+        (cat) => cat.name.toLowerCase() === value.toLowerCase()
+      );
+      if (matchedCat) {
+        setForm((prev) => ({
+          ...prev,
+          category: matchedCat.name.toLowerCase(),
+          materials: updated,
+        }));
+        return;
+      }
+    }
+
     setForm({ ...form, materials: updated });
   };
 
@@ -114,6 +140,7 @@ useEffect(() => {
         .map((m) => ({
           materialName: m.materialName,
           rate: Number(m.rate) || 0,
+          quantity: Number(m.quantity) || 0,
         })),
     };
 
@@ -154,6 +181,36 @@ navigate(`/vendor/category/${form.category}`);
               <Divider sx={{ mb: 3 }} />
 
               <Grid container spacing={2}>
+                {/* CLIENT SELECT */}
+                <Grid item xs={12}>
+                  <MDTypography variant="button" fontWeight="bold" textTransform="capitalize">
+                    Select Client
+                  </MDTypography>
+                  <Select
+                    fullWidth
+                    value={form.clientId || ""}
+                    displayEmpty
+                    onChange={(e) => {
+                      const selected = clients.find((c) => c.clientId === e.target.value);
+                      if (!selected) return;
+                      setForm({
+                        ...form,
+                        clientId: selected.clientId,
+                        clientName: selected.name,
+                      });
+                    }}
+                    sx={{ height: "45px", mt: 1 }}
+                  >
+                    <MenuItem value="" disabled>
+                      Select Client
+                    </MenuItem>
+                    {clients.map((c) => (
+                      <MenuItem key={c._id} value={c.clientId}>
+                        {c.name} ({c.clientId})
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </Grid>
 
                 <Grid item xs={12} md={6}>
                   <TextField
@@ -254,7 +311,7 @@ navigate(`/vendor/category/${form.category}`);
 
                 {form.materials.map((mat, index) => (
                   <Grid container spacing={2} key={index} sx={{ mt: 1 }}>
-                    <Grid item xs={6}>
+                    <Grid item xs={5}>
                       <TextField
                         fullWidth
                         label="Material Name"
@@ -265,7 +322,7 @@ navigate(`/vendor/category/${form.category}`);
                       />
                     </Grid>
 
-                    <Grid item xs={4}>
+                    <Grid item xs={3}>
                       <TextField
                         fullWidth
                         label="Rate"
@@ -277,7 +334,19 @@ navigate(`/vendor/category/${form.category}`);
                       />
                     </Grid>
 
-                    <Grid item xs={2}>
+                    <Grid item xs={3}>
+                      <TextField
+                        fullWidth
+                        label="Qty"
+                        type="number"
+                        value={mat.quantity}
+                        onChange={(e) =>
+                          updateMaterial(index, "quantity", e.target.value)
+                        }
+                      />
+                    </Grid>
+
+                    <Grid item xs={1}>
                       <IconButton
                         onClick={() => removeMaterial(index)}
                         sx={{ color: "red" }}
