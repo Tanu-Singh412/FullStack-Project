@@ -284,23 +284,27 @@ export default function InvoicePage() {
   const itemsPerPage = 5;
 
   // Form State
-  const [data, setData] = useState({
-    _id: null,
-    logo: "",
-    billingName: "",
-    email: "",
-    company: "Satya Group",
-    address: "Architectural & Interior Design",
-    gstin: "",
-    phone: "",
-    invoiceNo: "",
-    date: new Date().toISOString().split("T")[0],
-    billingGstin: "",
-    sgst: 9,
-    cgst: 9,
-    items: [{ name: "", hsn: "", qty: 1, price: 0 }],
-    photo: null,
-    photoName: "",
+  const [data, setData] = useState(() => {
+    const saved = localStorage.getItem("invoice_defaults");
+    const defaults = saved ? JSON.parse(saved) : {};
+    return {
+      _id: null,
+      logo: defaults.logo || "",
+      billingName: "",
+      email: "",
+      company: defaults.company || "Satya Group",
+      address: defaults.address || "Architectural & Interior Design",
+      gstin: defaults.gstin || "27AAACS1234A1Z1",
+      phone: defaults.phone || "9876543210",
+      invoiceNo: "",
+      date: new Date().toISOString().split("T")[0],
+      billingGstin: "",
+      sgst: 9,
+      cgst: 9,
+      items: [{ name: "", hsn: "", qty: 1, price: 0 }],
+      photo: null,
+      photoName: defaults.photoName || "",
+    };
   });
 
   // Calculate Totals
@@ -360,6 +364,12 @@ export default function InvoicePage() {
   }, [search, filter, startDate, endDate]);
 
   // Form Handlers
+  // Persist defaults to localStorage
+  useEffect(() => {
+    const { company, address, gstin, phone, logo, photoName } = data;
+    localStorage.setItem("invoice_defaults", JSON.stringify({ company, address, gstin, phone, logo, photoName }));
+  }, [data.company, data.address, data.gstin, data.phone, data.logo, data.photoName]);
+
   const handleInputChange = (field, value) => {
     setData((prev) => ({ ...prev, [field]: value }));
   };
@@ -456,15 +466,16 @@ Thank you.`;
         loadInvoices(); // Refresh list
         downloadPDF(pdfRef.current);
         // Reset form
-        setData({
-          ...data,
+        setData((prev) => ({
+          ...prev,
           _id: null,
           billingName: "",
           email: "",
           invoiceNo: `INV-${Date.now().toString().slice(-6)}`,
           date: new Date().toISOString().split("T")[0],
+          billingGstin: "",
           items: [{ name: "", hsn: "", qty: 1, price: 0 }],
-        });
+        }));
       } else {
         alert(
           "Failed to save invoice: " +
