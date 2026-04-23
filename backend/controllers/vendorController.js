@@ -3,11 +3,19 @@ const Vendor = require("../models/vendor");
 // ================= ADD VENDOR =================
 exports.addVendor = async (req, res) => {
   try {
-    const data = req.body;
+    const data = { ...req.body };
 
-    // optional cleanup
+    if (req.file) {
+      data.image = "https://fullstack-project-1-n510.onrender.com/uploads/" + req.file.filename;
+    }
+
     if (data.category) {
       data.category = data.category.trim();
+    }
+
+    // Parse materials if sent as string (from FormData)
+    if (typeof data.materials === "string") {
+      data.materials = JSON.parse(data.materials);
     }
 
     const vendor = new Vendor(data);
@@ -15,6 +23,7 @@ exports.addVendor = async (req, res) => {
 
     res.json({ data: vendor });
   } catch (err) {
+    console.error("ADD VENDOR ERROR:", err);
     res.status(500).json({ error: err.message });
   }
 };
@@ -54,10 +63,18 @@ exports.getVendorById = async (req, res) => {
 // ================= UPDATE VENDOR =================
 exports.updateVendor = async (req, res) => {
   try {
-    const updatedData = req.body;
+    const updatedData = { ...req.body };
+
+    if (req.file) {
+      updatedData.image = "https://fullstack-project-1-n510.onrender.com/uploads/" + req.file.filename;
+    }
 
     if (updatedData.category) {
       updatedData.category = updatedData.category.trim();
+    }
+
+    if (typeof updatedData.materials === "string") {
+      updatedData.materials = JSON.parse(updatedData.materials);
     }
 
     const updated = await Vendor.findByIdAndUpdate(
