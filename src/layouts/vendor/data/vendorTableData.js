@@ -16,38 +16,38 @@ function useVendorTableData() {
     fetch(`${Base_API}/vendors`)
       .then((res) => res.json())
       .then((data) => {
-        const vendors = data.data || data;
-
-        const formattedRows = vendors.map((v) => ({
+        const formattedRows = (data.data || data).map((v, i) => ({
+          serial: (
+            <Typography variant="caption" fontWeight="bold" sx={{ color: "#3b82f6" }}>
+              {i + 1}
+            </Typography>
+          ),
           vendorName: (
             <Box display="flex" alignItems="center">
-              <Avatar sx={{ mr: 1, bgcolor: '#1976d2', color: "#fff" }}>
-                {v.vendorName?.charAt(0)}
+              <Avatar sx={{ bgcolor: "#3b82f6", width: 24, height: 24, fontSize: 11, mr: 1 }}>
+                {v.vendorName?.charAt(0).toUpperCase()}
               </Avatar>
-              <Typography fontWeight="medium">{v.vendorName}</Typography>
+              <Typography variant="caption" fontWeight="bold">
+                {v.vendorName}
+              </Typography>
             </Box>
           ),
-
-          phone: <Typography>📞 {v.phone}</Typography>,
-
-          email: (
-            <Typography color="text.secondary">{v.email}</Typography>
-          ),
-
+          phone: <Typography variant="caption">📞 {v.phone}</Typography>,
+          email: <Typography variant="caption" color="text.secondary">{v.email}</Typography>,
           company: (
             <Chip
-              label={v.company}
+              label={v.company || "N/A"}
+              size="small"
               variant="outlined"
-              sx={{ borderRadius: 2 }}
+              sx={{ borderRadius: 1.5, fontSize: "10px", height: "20px" }}
             />
           ),
-
           action: (
             <Button
               variant="contained"
               size="small"
               onClick={() => navigate(`/vendor/${v._id}`)}
-              sx={{ borderRadius: 2 }}
+              sx={{ borderRadius: 1.5, textTransform: "none", py: 0.5, minHeight: 0, fontSize: "10px" }}
             >
               View
             </Button>
@@ -63,11 +63,12 @@ function useVendorTableData() {
   }, []);
 
   const columns = [
-    { Header: "Vendor", accessor: "vendorName" },
-    { Header: "Phone", accessor: "phone" },
-    { Header: "Email", accessor: "email" },
-    { Header: "Company", accessor: "company" },
-    { Header: "Action", accessor: "action" },
+    { Header: "S.No.", accessor: "serial", width: "5%" },
+    { Header: "Vendor", accessor: "vendorName", width: "30%" },
+    { Header: "Phone", accessor: "phone", width: "20%" },
+    { Header: "Email", accessor: "email", width: "20%" },
+    { Header: "Company", accessor: "company", width: "25%" },
+    { Header: "Action", accessor: "action", width: "10%" },
   ];
 
   return {

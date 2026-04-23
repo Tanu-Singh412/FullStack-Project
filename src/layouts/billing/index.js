@@ -912,12 +912,12 @@ Thank you.`;
                 ) : (
                   invoices
                     .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
-                    .map((inv) => (
+                    .map((inv, i) => (
                       <Box
                         key={inv._id}
                         sx={{
                           display: "grid",
-                          gridTemplateColumns: "1.5fr 2fr 1fr 1fr 1fr",
+                          gridTemplateColumns: "0.4fr 1.2fr 2fr 1fr 1fr 1fr",
                           alignItems: "center",
                           px: 1.5,
                           py: 0.8,
@@ -933,27 +933,29 @@ Thank you.`;
                           },
                         }}
                       >
+                        {/* Serial No */}
+                        <Typography variant="caption" fontWeight="bold" sx={{ color: "#3b82f6" }}>
+                          {(currentPage - 1) * itemsPerPage + i + 1}
+                        </Typography>
+
                         {/* Invoice No */}
-                        <Typography fontWeight="bold" color="dark" fontSize={14}>
+                        <Typography fontWeight="bold" color="dark" fontSize={13}>
                           {inv.invoiceNo}
                         </Typography>
 
                         {/* Recipient */}
                         <Box display="flex" alignItems="center">
-                          <Avatar sx={{ bgcolor: "#eff6ff", color: "#3b82f6", width: 30, height: 30, fontSize: 13, mr: 1.5, fontWeight: "bold" }}>
+                          <Avatar sx={{ bgcolor: "#eff6ff", color: "#3b82f6", width: 24, height: 24, fontSize: 11, mr: 1, fontWeight: "bold" }}>
                             {(inv.invoiceName || inv.clientName || "?").charAt(0)}
                           </Avatar>
-                          <Typography color="#334155" fontWeight="medium" fontSize={14}>
+                          <Typography color="#334155" fontWeight="bold" fontSize={13}>
                             {inv.invoiceName || inv.clientName}
                           </Typography>
                         </Box>
 
                         {/* Date */}
-                        <Typography color="#64748b" fontSize={12} fontWeight="bold">
+                        <Typography color="#64748b" fontSize={11} fontWeight="bold">
                           {new Date(inv.date || inv.createdAt).toLocaleDateString("en-IN", { day: '2-digit', month: 'short', year: 'numeric' })}
-                          <span style={{ color: "#94a3b8", marginLeft: 6, fontWeight: "normal" }}>
-                            {new Date(inv.date || inv.createdAt).toLocaleTimeString("en-IN", { hour: '2-digit', minute: '2-digit' })}
-                          </span>
                         </Typography>
 
                         {/* Amount */}

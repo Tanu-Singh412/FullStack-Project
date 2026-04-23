@@ -65,13 +65,13 @@ export default function useProjectData() {
   };
 
   const columns = [
-    { Header: "S.No.", accessor: "serial" },
-    { Header: "Project", accessor: "project" },
-    { Header: "Client", accessor: "client" },
-    { Header: "Total", accessor: "total" },
-    { Header: "Date", accessor: "date" },
-    { Header: "Status", accessor: "status" },
-    { Header: "Actions", accessor: "actions" },
+    { Header: "S.No.", accessor: "serial", width: "5%" },
+    { Header: "Project", accessor: "project", width: "25%" },
+    { Header: "Client", accessor: "client", width: "20%" },
+    { Header: "Total", accessor: "total", width: "15%" },
+    { Header: "Date", accessor: "date", width: "15%" },
+    { Header: "Status", accessor: "status", width: "10%" },
+    { Header: "Actions", accessor: "actions", width: "10%" },
   ];
 
   // Edit project
