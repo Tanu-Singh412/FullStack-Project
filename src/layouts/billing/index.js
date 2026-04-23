@@ -583,7 +583,7 @@ Thank you.`;
               {/* Client Info */}
               <Grid item xs={12}>
                 <Divider>
-                  <Typography variant="body2" color="#000">
+                  <Typography variant="body2" sx={{ color: "#000" }}>
                     Billing Information
                   </Typography>
                 </Divider>
@@ -624,7 +624,7 @@ Thank you.`;
               {/* Invoice Details */}
               <Grid item xs={12}>
                 <Divider>
-                  <Typography variant="body2" color="#000">
+                  <Typography variant="body2" sx={{ color: "#000" }}>
                     Invoice Details
                   </Typography>
                 </Divider>
