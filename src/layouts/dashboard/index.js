@@ -72,16 +72,16 @@ function Dashboard() {
 
   useEffect(() => {
     fetch("https://fullstack-project-1-n510.onrender.com/api/clients")
-      .then(r => r.json()).then(d => setCounts(p => ({ ...p, clients: d.length }))).catch(() => {});
+      .then(r => r.json()).then(d => setCounts(p => ({ ...p, clients: d.length }))).catch(() => { });
 
     fetch("https://fullstack-project-1-n510.onrender.com/api/projects")
-      .then(r => r.json()).then(d => setCounts(p => ({ ...p, projects: d.length }))).catch(() => {});
+      .then(r => r.json()).then(d => setCounts(p => ({ ...p, projects: d.length }))).catch(() => { });
 
     fetch("https://fullstack-project-1-n510.onrender.com/api/invoices")
-      .then(r => r.json()).then(d => setCounts(p => ({ ...p, invoices: d.length || d.data?.length || 0 }))).catch(() => {});
+      .then(r => r.json()).then(d => setCounts(p => ({ ...p, invoices: d.length || d.data?.length || 0 }))).catch(() => { });
 
     fetch("https://fullstack-project-1-n510.onrender.com/api/vendors")
-      .then(r => r.json()).then(d => setCounts(p => ({ ...p, vendors: d.length || d.data?.length || 0 }))).catch(() => {});
+      .then(r => r.json()).then(d => setCounts(p => ({ ...p, vendors: d.length || d.data?.length || 0 }))).catch(() => { });
   }, []);
 
   return (
@@ -102,7 +102,7 @@ function Dashboard() {
           <Box sx={{ position: "absolute", bottom: -60, left: "20%", width: 200, height: 200, borderRadius: "50%", background: "rgba(255,255,255,0.05)" }} />
           <Box sx={{ position: "relative", zIndex: 1 }}>
             <Typography variant="h3" fontWeight="900" sx={{ color: "#fff", letterSpacing: -1, mb: 1 }}>
-              🏛️ D Design Architects Studio
+              🏛️ Architects CRM
             </Typography>
             <Typography variant="h6" sx={{ color: "rgba(255,255,255,0.85)", fontWeight: 400, mb: 2 }}>
               Architectural Management System · All modules synchronized
