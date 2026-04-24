@@ -10,7 +10,7 @@ import VendorDetail from "layouts/vendor/vendor-detail";
 import SignIn from "layouts/authentication/sign-in";
 import ProjectDetails from "layouts/projectTables/data/project-details";
 import MaterialVendor from "layouts/vendor/material-vendor";
-
+import EstimatePage from "layouts/estimate";
 import Icon from "@mui/material/Icon";
 
 const routes = [
@@ -143,7 +143,14 @@ const routes = [
     route: "/add-vendor/:category",
     component: <AddVendor />,
   },
-
+  {
+    type: "collapse",
+    name: "Estimate",
+    key: "estimate",
+    icon: <Icon fontSize="small">receipt</Icon>,
+    route: "/estimate",
+    component: <EstimatePage />,
+  },
 ];
 
 export default routes;
