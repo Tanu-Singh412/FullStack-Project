@@ -31,6 +31,7 @@ export default function EstimatePage() {
     location: "",
     plotArea: "",
     notes: "",
+    description: "",
   });
 
   const [items, setItems] = useState([
@@ -50,6 +51,7 @@ export default function EstimatePage() {
             location: latest.location || "",
             plotArea: latest.plotArea || "",
             notes: latest.notes || "",
+            description: latest.description || "",
           });
           setItems(latest.items || [{ sno: 1, desc: "", qty: "", unit: "", rate: "" }]);
         }
@@ -115,63 +117,87 @@ export default function EstimatePage() {
 
     // --- HEADER HELPER ---
     const addHeader = () => {
+      // Background Block for Studio Name
+      doc.setFillColor(44, 62, 80); // Dark Blue-Grey
+      doc.rect(0, 0, pageWidth, 40, "F");
+
       // Logo
       try {
-        doc.addImage("/logo.png", "PNG", 15, 10, 25, 25);
+        doc.addImage("/logo.png", "PNG", 15, 8, 24, 24);
       } catch (e) {
         console.error("Logo not found", e);
       }
 
       // Studio Info
       doc.setFont("helvetica", "bold");
-      doc.setFontSize(18);
-      doc.setTextColor(40, 40, 40);
-      doc.text("D DESIGN ARCHITECTS STUDIO", pageWidth / 2, 18, { align: "center" });
+      doc.setFontSize(22);
+      doc.setTextColor(255, 255, 255);
+      doc.text("D DESIGN ARCHITECTS STUDIO", pageWidth / 2 + 10, 18, { align: "center" });
 
       doc.setFont("helvetica", "normal");
       doc.setFontSize(10);
-      doc.setTextColor(100, 100, 100);
-      doc.text("Architects, Interior Designers, Planners", pageWidth / 2, 24, { align: "center" });
-      doc.text("Sanjay Place, Agra", pageWidth / 2, 29, { align: "center" });
+      doc.setTextColor(200, 200, 200);
+      doc.text("Architects, Interior Designers, Planners | Sanjay Place, Agra", pageWidth / 2 + 10, 25, { align: "center" });
 
-      // Architect Info
+      // Architect Block (Right Side)
+      doc.setFillColor(52, 73, 94);
+      doc.rect(pageWidth - 65, 0, 65, 40, "F");
+      
       doc.setFont("helvetica", "bold");
       doc.setFontSize(11);
-      doc.setTextColor(0, 0, 0);
+      doc.setTextColor(255, 255, 255);
       doc.text("AR. PREMVEER SINGH", pageWidth - 15, 18, { align: "right" });
       doc.setFont("helvetica", "normal");
       doc.setFontSize(9);
-      doc.text("CA/18/98236", pageWidth - 15, 23, { align: "right" });
-
-      doc.setDrawColor(200, 200, 200);
-      doc.line(15, 38, pageWidth - 15, 38);
+      doc.text("CA/18/98236", pageWidth - 15, 24, { align: "right" });
     };
 
     addHeader();
 
-    // --- PROJECT DETAILS TABLE ---
+    // --- TITLE ---
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(12);
-    doc.setTextColor(0, 0, 0);
-    doc.text("ESTIMATE / PROPOSAL", 15, 48);
+    doc.setFontSize(16);
+    doc.setTextColor(44, 62, 80);
+    doc.text("ESTIMATE / PROPOSAL", pageWidth / 2, 52, { align: "center" });
+    doc.setDrawColor(44, 62, 80);
+    doc.setLineWidth(0.5);
+    doc.line(pageWidth / 2 - 30, 54, pageWidth / 2 + 30, 54);
 
+    // --- PROJECT DETAILS TABLE ---
     doc.autoTable({
-      startY: 52,
+      startY: 62,
       theme: "grid",
-      head: [[{ content: "Project Details", colSpan: 4, styles: { halign: "center", fillColor: [44, 62, 80] } }]],
+      head: [[{ content: "Project Summary & Details", colSpan: 4, styles: { halign: "left", fillColor: [44, 62, 80], fontSize: 11 } }]],
       body: [
-        ["Project Title:", form.projectTitle || "-", "Owner Name:", form.ownerName || "-"],
+        ["Project Title:", { content: form.projectTitle || "-", styles: { fontStyle: "bold" } }, "Owner Name:", form.ownerName || "-"],
         ["Location:", form.location || "-", "Plot Area:", form.plotArea ? `${form.plotArea} Sq.Ft` : "-"],
+        ["Estimated Amount:", { content: `₹ ${total.toLocaleString("en-IN")}`, colSpan: 3, styles: { fontStyle: "bold", textColor: [183, 39, 106] } }],
       ],
-      styles: { fontSize: 10, cellPadding: 3 },
+      styles: { fontSize: 10, cellPadding: 4 },
       headStyles: { fillColor: [44, 62, 80], textColor: [255, 255, 255] },
       columnStyles: {
-        0: { fontStyle: "bold", cellWidth: 35 },
+        0: { fillColor: [245, 245, 245], cellWidth: 35 },
         1: { cellWidth: 60 },
-        2: { fontStyle: "bold", cellWidth: 35 },
+        2: { fillColor: [245, 245, 245], cellWidth: 35 },
         3: { cellWidth: 60 },
       },
     });
+
+    let currentY = doc.lastAutoTable.finalY + 10;
+
+    // --- OVERALL DESCRIPTION ---
+    if (form.description) {
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(11);
+      doc.setTextColor(0, 0, 0);
+      doc.text("Project Description:", 15, currentY);
+      
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(10);
+      const splitDesc = doc.splitTextToSize(form.description, pageWidth - 30);
+      doc.text(splitDesc, 15, currentY + 7);
+      currentY += (splitDesc.length * 5) + 12;
+    }
 
     // --- ITEMS TABLE ---
     const tableData = items.map((row) => [
@@ -184,11 +210,11 @@ export default function EstimatePage() {
     ]);
 
     doc.autoTable({
-      startY: doc.lastAutoTable.finalY + 10,
+      startY: currentY,
       theme: "striped",
       head: [["S.No", "Description", "Qty", "Unit", "Rate (₹)", "Amount (₹)"]],
       body: tableData,
-      headStyles: { fillColor: [52, 73, 94], textColor: [255, 255, 255], fontStyle: "bold" },
+      headStyles: { fillColor: [44, 62, 80], textColor: [255, 255, 255], fontStyle: "bold" },
       styles: { fontSize: 9, cellPadding: 4 },
       columnStyles: {
         0: { cellWidth: 15 },
@@ -205,22 +231,26 @@ export default function EstimatePage() {
       },
     });
 
-    // --- TOTAL ---
+    // --- SUMMARY ---
     const finalY = doc.lastAutoTable.finalY;
+    doc.setFillColor(245, 245, 245);
+    doc.rect(pageWidth - 85, finalY + 5, 70, 15, "F");
     doc.setFont("helvetica", "bold");
     doc.setFontSize(12);
+    doc.setTextColor(183, 39, 106);
     doc.text(`GRAND TOTAL:  ₹ ${total.toLocaleString("en-IN")}`, pageWidth - 15, finalY + 15, { align: "right" });
 
     // --- NOTES SECTION ---
     if (form.notes) {
       doc.setFont("helvetica", "bold");
       doc.setFontSize(11);
-      doc.text("Notes / Terms & Conditions:", 15, finalY + 25);
+      doc.setTextColor(0, 0, 0);
+      doc.text("Notes / Terms & Conditions:", 15, finalY + 30);
       
       doc.setFont("helvetica", "normal");
       doc.setFontSize(10);
       const splitNotes = doc.splitTextToSize(form.notes, pageWidth - 30);
-      doc.text(splitNotes, 15, finalY + 32);
+      doc.text(splitNotes, 15, finalY + 37);
     }
 
     // --- FOOTER ---
@@ -280,6 +310,18 @@ export default function EstimatePage() {
               <TextField label="Plot Area" fullWidth
                 value={form.plotArea}
                 onChange={(e) => setForm({ ...form, plotArea: e.target.value })}
+              />
+            </Grid>
+
+            <Grid item xs={12}>
+              <TextField 
+                label="Overall Project Detail / Introduction" 
+                fullWidth 
+                multiline 
+                rows={2}
+                placeholder="Briefly describe the project scope or introduction..."
+                value={form.description}
+                onChange={(e) => setForm({ ...form, description: e.target.value })}
               />
             </Grid>
           </Grid>
@@ -390,11 +432,25 @@ export default function EstimatePage() {
 
         {/* ================= ACTIONS ================= */}
         <MDBox mt={4} display="flex" flexDirection={{ xs: "column", sm: "row" }} gap={2}>
-          <Button variant="gradient" color="success" size="large" onClick={saveEstimate} fullWidth>
+          <Button 
+            variant="gradient" 
+            color="success" 
+            size="large" 
+            onClick={saveEstimate} 
+            fullWidth
+            sx={{ borderRadius: 2, py: 1.5, fontSize: "1rem" }}
+          >
             Save Estimate
           </Button>
 
-          <Button variant="gradient" color="dark" size="large" onClick={generatePDF} fullWidth>
+          <Button 
+            variant="gradient" 
+            color="info" 
+            size="large" 
+            onClick={generatePDF} 
+            fullWidth
+            sx={{ borderRadius: 2, py: 1.5, fontSize: "1rem" }}
+          >
             Generate PDF
           </Button>
         </MDBox>
