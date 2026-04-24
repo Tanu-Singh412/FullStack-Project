@@ -99,16 +99,17 @@ export default function EstimatePage() {
 
       {/* ================= HEADER ================= */}
       <Box
-        sx={{
-          position: "fixed",
-          top: 0,
-          width: "100%",
-          background: "#fff",
-          zIndex: 1000,
-          px: 4,
-          py: 2,
-          borderBottom: "2px solid #e2e8f0",
-        }}
+      sx={{
+  position: "fixed",
+  top: 0,
+  left: "260px",          // ✅ push after sidebar
+  width: "calc(100% - 260px)", // ✅ reduce width
+  background: "#fff",
+  zIndex: 1000,
+  px: 4,
+  py: 2,
+  borderBottom: "2px solid #e2e8f0",
+}}
       >
         <Grid container alignItems="center">
 
