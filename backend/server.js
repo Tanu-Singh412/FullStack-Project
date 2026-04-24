@@ -29,6 +29,7 @@ app.use("/api/projects", projectRoutes);
 app.use("/api/vendors", vendorRoutes);
 app.use("/api/vendor-categories", categoryRoutes);
 app.use("/api/invoices", invoiceRoutes);
+app.use("/api/estimate", require("./routes/estimateRoutes"));
 
 
 // Test route
