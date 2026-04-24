@@ -14,6 +14,7 @@ import {
   TableHead,
   TableRow,
   Paper,
+  Tooltip,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -22,12 +23,14 @@ import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import CloseIcon from "@mui/icons-material/Close";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import EditIcon from "@mui/icons-material/Edit";
+import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
+import MDButton from "components/MDButton";
 
 // Material Dashboard 2 React example components
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
@@ -158,6 +161,13 @@ export default function EstimatePage() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  /* ================= WHATSAPP ================= */
+  const handleWhatsApp = (est) => {
+    const text = `*Estimate Proposal*\n\nProject: ${est.projectTitle}\nOwner: ${est.ownerName}\nTotal Amount: Rs. ${est.totalEstimate.toLocaleString("en-IN")}\n\nThank you for choosing D DESIGN ARCHITECTS STUDIO.`;
+    const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
+    window.open(url, "_blank");
+  };
+
   /* ================= PDF ================= */
   const generatePDF = () => {
     const doc = new jsPDF();
@@ -275,7 +285,6 @@ export default function EstimatePage() {
     doc.setFont("helvetica", "bold");
     doc.setFontSize(11);
     doc.setTextColor(0, 0, 0);
-    // Adjusted alignment to be slightly away from the extreme right edge
     doc.text(`GRAND TOTAL: Rs. ${total.toLocaleString("en-IN")}`, pageWidth - 20, finalY + 12, { align: "right" });
 
     // --- NOTES SECTION ---
@@ -308,249 +317,245 @@ export default function EstimatePage() {
       <DashboardNavbar />
 
       <MDBox pt={6} pb={3} px={2}>
-        <MDBox mb={3} display="flex" justifyContent="space-between" alignItems="center">
-          <MDTypography variant="h3" fontWeight="bold" sx={{ color: "#344767" }}>
-            Create Project Estimate
-          </MDTypography>
-          <MDBox display="flex" gap={2}>
-            <Button variant="contained" color="dark" startIcon={<PictureAsPdfIcon />} onClick={generatePDF}>
-              Download PDF
-            </Button>
-            <Button variant="contained" color="info" startIcon={<SaveIcon />} onClick={saveEstimate}>
-              {editId ? "Update" : "Save"}
-            </Button>
-          </MDBox>
-        </MDBox>
-
-        {/* ================= PROJECT DETAILS ================= */}
-        <Card sx={{ mb: 3, boxShadow: "0px 10px 30px rgba(0,0,0,0.1)", borderRadius: "16px" }}>
-          <MDBox
-            variant="contained"
-            bgcolor="info"
-            borderRadius="lg"
-            coloredShadow="info"
-            mx={2}
-            mt={-3}
-            p={3}
-            mb={1}
-            sx={{ background: "linear-gradient(195deg, #49a3f1, #1A73E8)" }}
-          >
-            <MDTypography variant="h5" fontWeight="bold" color="white">
-              1. Project Details
-            </MDTypography>
-            <MDTypography variant="button" color="white" opacity={0.8}>
-              Enter project title, owner, and overall summary
-            </MDTypography>
-          </MDBox>
-          <MDBox p={4}>
-            <Grid container spacing={3}>
-              <Grid item xs={12}>
-                <TextField
-                  label="Project Introduction / Detailed Description"
-                  fullWidth
-                  multiline
-                  rows={4}
-                  placeholder="Explain the scope of the project here..."
-                  value={form.description}
-                  onChange={(e) => setForm({ ...form, description: e.target.value })}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6} md={3}>
-                <TextField label="Project Title" fullWidth variant="standard"
-                  value={form.projectTitle}
-                  onChange={(e) => setForm({ ...form, projectTitle: e.target.value })}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6} md={3}>
-                <TextField label="Owner Name" fullWidth variant="standard"
-                  value={form.ownerName}
-                  onChange={(e) => setForm({ ...form, ownerName: e.target.value })}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6} md={3}>
-                <TextField label="Project Location" fullWidth variant="standard"
-                  value={form.location}
-                  onChange={(e) => setForm({ ...form, location: e.target.value })}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6} md={3}>
-                <TextField label="Plot Area (Sq.Ft)" fullWidth variant="standard"
-                  value={form.plotArea}
-                  onChange={(e) => setForm({ ...form, plotArea: e.target.value })}
-                />
-              </Grid>
-            </Grid>
-          </MDBox>
-        </Card>
-
-        {/* ================= ESTIMATE ITEMS ================= */}
-        <Card sx={{ mb: 3, boxShadow: "0px 10px 30px rgba(0,0,0,0.1)", borderRadius: "16px" }}>
-          <MDBox
-            variant="contained"
-            bgcolor="success"
-            borderRadius="lg"
-            coloredShadow="success"
-            mx={2}
-            mt={-3}
-            p={3}
-            mb={1}
-            sx={{ background: "linear-gradient(195deg, #66BB6A, #43A047)" }}
-          >
-            <MDBox display="flex" justifyContent="space-between" alignItems="center">
+        <Grid container spacing={3}>
+          {/* ================= HEADER STATS ================= */}
+          <Grid item xs={12}>
+            <Card sx={{ 
+              background: "linear-gradient(135deg, #1A73E8 0%, #004BA0 100%)",
+              borderRadius: "20px",
+              p: 3,
+              boxShadow: "0 10px 30px rgba(26, 115, 232, 0.3)",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              flexWrap: "wrap",
+              gap: 2
+            }}>
               <Box>
-                <MDTypography variant="h5" fontWeight="bold" color="white">
-                  2. Estimate Items
+                <MDTypography variant="h3" fontWeight="bold" color="white">
+                  Estimate Builder
                 </MDTypography>
-                <MDTypography variant="button" color="white" opacity={0.8}>
-                  Add items, quantities, and rates for calculations
+                <MDTypography variant="button" color="white" opacity={0.8} sx={{ letterSpacing: 1 }}>
+                  Create & Manage Professional Architectural Proposals
                 </MDTypography>
               </Box>
-              <Button 
-                variant="contained" 
-                size="small" 
-                startIcon={<AddCircleIcon />} 
-                onClick={addRow}
-                sx={{ bgcolor: "white", color: "#43A047", "&:hover": { bgcolor: "#f0f0f0" } }}
+              <Box display="flex" gap={2}>
+                <MDButton variant="gradient" color="success" circular iconOnly onClick={addRow}>
+                  <Tooltip title="Quick Add Item"><AddIcon /></Tooltip>
+                </MDButton>
+                <MDButton variant="contained" color="white" startIcon={<PictureAsPdfIcon />} onClick={generatePDF}>
+                  Generate PDF
+                </MDButton>
+                <MDButton variant="contained" color="warning" startIcon={<SaveIcon />} onClick={saveEstimate}>
+                  {editId ? "Update Proposal" : "Save Proposal"}
+                </MDButton>
+              </Box>
+            </Card>
+          </Grid>
+
+          {/* ================= FORM CONTENT ================= */}
+          <Grid item xs={12} lg={4}>
+            <Card sx={{ height: "100%", borderRadius: "20px", boxShadow: "0 8px 24px rgba(0,0,0,0.05)" }}>
+              <MDBox p={3} borderBottom="1px solid #f0f2f5">
+                <MDTypography variant="h5" fontWeight="bold">Project Scope</MDTypography>
+              </MDBox>
+              <MDBox p={3}>
+                <Grid container spacing={2}>
+                  <Grid item xs={12}>
+                    <TextField label="Project Title" fullWidth variant="outlined"
+                      value={form.projectTitle}
+                      onChange={(e) => setForm({ ...form, projectTitle: e.target.value })}
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <TextField label="Owner Name" fullWidth variant="outlined"
+                      value={form.ownerName}
+                      onChange={(e) => setForm({ ...form, ownerName: e.target.value })}
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <TextField label="Location" fullWidth variant="outlined"
+                      value={form.location}
+                      onChange={(e) => setForm({ ...form, location: e.target.value })}
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <TextField label="Plot Area (Sq.Ft)" fullWidth variant="outlined"
+                      value={form.plotArea}
+                      onChange={(e) => setForm({ ...form, plotArea: e.target.value })}
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Divider sx={{ my: 2 }} />
+                    <TextField
+                      label="Brief Introduction"
+                      fullWidth
+                      multiline
+                      rows={4}
+                      placeholder="Introduction for the PDF proposal..."
+                      value={form.description}
+                      onChange={(e) => setForm({ ...form, description: e.target.value })}
+                    />
+                  </Grid>
+                </Grid>
+              </MDBox>
+            </Card>
+          </Grid>
+
+          <Grid item xs={12} lg={8}>
+            <Card sx={{ borderRadius: "20px", boxShadow: "0 8px 24px rgba(0,0,0,0.05)" }}>
+              <MDBox p={3} borderBottom="1px solid #f0f2f5" display="flex" justifyContent="space-between" alignItems="center">
+                <MDTypography variant="h5" fontWeight="bold">Itemized Breakdown</MDTypography>
+                <MDBox display="flex" alignItems="center" gap={1}>
+                  <MDTypography variant="button" color="text">Total Amount:</MDTypography>
+                  <MDTypography variant="h5" fontWeight="bold" sx={{ color: "#2e7d32" }}>
+                    Rs. {total.toLocaleString("en-IN")}
+                  </MDTypography>
+                </MDBox>
+              </MDBox>
+              <MDBox p={2}>
+                <TableContainer component={Paper} elevation={0} sx={{ border: "1px solid #f0f2f5", borderRadius: "12px", maxHeight: "450px" }}>
+                  <Table stickyHeader>
+                    <TableHead>
+                      <TableRow>
+                        <TableCell sx={{ bgcolor: "#f8f9fa", fontWeight: "bold", width: "60px" }}>#</TableCell>
+                        <TableCell sx={{ bgcolor: "#f8f9fa", fontWeight: "bold" }}>Description</TableCell>
+                        <TableCell sx={{ bgcolor: "#f8f9fa", fontWeight: "bold", textAlign: "center" }}>Qty</TableCell>
+                        <TableCell sx={{ bgcolor: "#f8f9fa", fontWeight: "bold", textAlign: "center" }}>Unit</TableCell>
+                        <TableCell sx={{ bgcolor: "#f8f9fa", fontWeight: "bold", textAlign: "right" }}>Rate</TableCell>
+                        <TableCell sx={{ bgcolor: "#f8f9fa", fontWeight: "bold", textAlign: "right" }}>Total</TableCell>
+                        <TableCell sx={{ bgcolor: "#f8f9fa" }}></TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {items.map((row, i) => (
+                        <TableRow key={i} sx={{ "&:hover": { bgcolor: "#fdfdfd" } }}>
+                          <TableCell sx={{ color: "#344767", fontWeight: "bold" }}>{row.sno}</TableCell>
+                          <TableCell>
+                            <TextField fullWidth size="small" variant="standard"
+                              value={row.desc}
+                              onChange={(e) => handleChange(i, "desc", e.target.value)}
+                              placeholder="Describe item..."
+                              InputProps={{ disableUnderline: true, sx: { fontSize: "14px" } }}
+                            />
+                          </TableCell>
+                          <TableCell>
+                            <TextField type="number" size="small" variant="standard" 
+                              sx={{ width: "50px", textAlign: "center" }}
+                              value={row.qty}
+                              onChange={(e) => handleChange(i, "qty", e.target.value)}
+                              InputProps={{ disableUnderline: true, sx: { fontSize: "14px", textAlign: "center" } }}
+                            />
+                          </TableCell>
+                          <TableCell>
+                            <TextField size="small" variant="standard" 
+                              sx={{ width: "50px" }}
+                              value={row.unit}
+                              onChange={(e) => handleChange(i, "unit", e.target.value)}
+                              placeholder="Unit"
+                              InputProps={{ disableUnderline: true, sx: { fontSize: "14px" } }}
+                            />
+                          </TableCell>
+                          <TableCell>
+                            <TextField type="number" size="small" variant="standard" 
+                              sx={{ width: "80px", textAlign: "right" }}
+                              value={row.rate}
+                              onChange={(e) => handleChange(i, "rate", e.target.value)}
+                              InputProps={{ disableUnderline: true, sx: { fontSize: "14px", textAlign: "right" } }}
+                            />
+                          </TableCell>
+                          <TableCell sx={{ fontWeight: "bold", textAlign: "right", color: "#43A047" }}>
+                            {(row.qty * row.rate || 0).toLocaleString("en-IN")}
+                          </TableCell>
+                          <TableCell align="right">
+                            <IconButton color="error" onClick={() => deleteRow(i)} size="small" sx={{ opacity: 0.6, "&:hover": { opacity: 1 } }}>
+                              <DeleteIcon fontSize="small" />
+                            </IconButton>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+                <MDBox mt={2} display="flex" justifyContent="center">
+                  <Button variant="text" color="info" startIcon={<AddIcon />} onClick={addRow} sx={{ fontWeight: "bold" }}>
+                    Add Another Line Item
+                  </Button>
+                </MDBox>
+              </MDBox>
+            </Card>
+
+            <Card sx={{ mt: 3, borderRadius: "20px", boxShadow: "0 8px 24px rgba(0,0,0,0.05)" }}>
+              <MDBox p={3}>
+                <MDTypography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>Terms & Conditions</MDTypography>
+                <TextField
+                  fullWidth
+                  multiline
+                  rows={2}
+                  placeholder="Additional terms for this specific proposal..."
+                  value={form.notes}
+                  onChange={(e) => setForm({ ...form, notes: e.target.value })}
+                  sx={{ bgcolor: "#fafafa", borderRadius: "12px" }}
+                />
+              </MDBox>
+            </Card>
+          </Grid>
+
+          {/* ================= SAVED RECORDS ================= */}
+          <Grid item xs={12}>
+            <Card sx={{ borderRadius: "20px", overflow: "visible", mt: 4, boxShadow: "0 10px 40px rgba(0,0,0,0.1)" }}>
+              <MDBox
+                variant="gradient"
+                bgcolor="info"
+                borderRadius="lg"
+                coloredShadow="info"
+                mx={2}
+                mt={-3}
+                p={3}
+                mb={1}
+                textAlign="center"
               >
-                Add Item
-              </Button>
-            </MDBox>
-          </MDBox>
-          <MDBox p={3}>
-            <TableContainer component={Paper} elevation={0} sx={{ border: "1px solid #e0e0e0", borderRadius: "12px" }}>
-              <Table>
-                <TableHead>
-                  <TableRow sx={{ bgcolor: "#f8f9fa" }}>
-                    <TableCell sx={{ fontWeight: "bold", color: "#7b809a" }}>S.No</TableCell>
-                    <TableCell sx={{ fontWeight: "bold", color: "#7b809a", width: "40%" }}>Description</TableCell>
-                    <TableCell sx={{ fontWeight: "bold", color: "#7b809a" }}>Qty</TableCell>
-                    <TableCell sx={{ fontWeight: "bold", color: "#7b809a" }}>Unit</TableCell>
-                    <TableCell sx={{ fontWeight: "bold", color: "#7b809a" }}>Rate</TableCell>
-                    <TableCell sx={{ fontWeight: "bold", color: "#7b809a" }}>Amount</TableCell>
-                    <TableCell align="right"></TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {items.map((row, i) => (
-                    <TableRow key={i} sx={{ "&:nth-of-type(odd)": { bgcolor: "#ffffff" }, "&:nth-of-type(even)": { bgcolor: "#fafafa" } }}>
-                      <TableCell sx={{ color: "#344767", fontWeight: "bold" }}>{row.sno}</TableCell>
-                      <TableCell>
-                        <TextField fullWidth size="small" variant="outlined"
-                          value={row.desc}
-                          onChange={(e) => handleChange(i, "desc", e.target.value)}
-                          placeholder="Item description..."
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <TextField type="number" size="small" variant="outlined" sx={{ width: "80px" }}
-                          value={row.qty}
-                          onChange={(e) => handleChange(i, "qty", e.target.value)}
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <TextField size="small" variant="outlined" sx={{ width: "80px" }}
-                          value={row.unit}
-                          onChange={(e) => handleChange(i, "unit", e.target.value)}
-                          placeholder="Unit"
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <TextField type="number" size="small" variant="outlined" sx={{ width: "100px" }}
-                          value={row.rate}
-                          onChange={(e) => handleChange(i, "rate", e.target.value)}
-                        />
-                      </TableCell>
-                      <TableCell sx={{ color: "#43A047", fontWeight: "bold" }}>
-                        Rs. {(row.qty * row.rate || 0).toLocaleString("en-IN")}
-                      </TableCell>
-                      <TableCell align="right">
-                        <IconButton color="error" onClick={() => deleteRow(i)} size="small">
-                          <DeleteIcon />
-                        </IconButton>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-
-            <MDBox textAlign="right" mt={4} p={3} sx={{ bgcolor: "#f0f2f5", borderRadius: "12px", border: "1px solid #e0e0e0" }}>
-              <MDTypography variant="h4" fontWeight="bold" sx={{ color: "#344767" }}>
-                Total Estimated Amount: <span style={{ color: "#43A047", marginLeft: "10px" }}>Rs. {total.toLocaleString("en-IN")}</span>
-              </MDTypography>
-            </MDBox>
-          </MDBox>
-        </Card>
-
-        {/* ================= NOTES ================= */}
-        <Card sx={{ mb: 3, boxShadow: "0px 10px 30px rgba(0,0,0,0.1)", borderRadius: "16px" }}>
-          <MDBox p={4}>
-            <MDTypography variant="h6" fontWeight="bold" sx={{ color: "#344767", mb: 2 }}>
-              Notes / Terms & Conditions
-            </MDTypography>
-            <TextField
-              fullWidth
-              multiline
-              rows={4}
-              placeholder="Enter additional terms or project specific notes..."
-              value={form.notes}
-              onChange={(e) => setForm({ ...form, notes: e.target.value })}
-              sx={{ bgcolor: "#fafafa", borderRadius: "8px" }}
-            />
-          </MDBox>
-        </Card>
-
-        {/* ================= SAVED ESTIMATES ================= */}
-        <MDBox mt={8}>
-          <Card sx={{ boxShadow: "0px 10px 30px rgba(0,0,0,0.1)", borderRadius: "16px" }}>
-            <MDBox
-              variant="contained"
-              bgcolor="dark"
-              borderRadius="lg"
-              mx={2}
-              mt={-3}
-              p={3}
-              mb={1}
-              textAlign="center"
-              sx={{ background: "linear-gradient(195deg, #42424a, #191919)" }}
-            >
-              <MDTypography variant="h5" fontWeight="bold" color="white">
-                Saved Estimates
-              </MDTypography>
-            </MDBox>
-            <MDBox pb={3}>
-              <DataTable
-                table={{
-                  columns: [
-                    { Header: "Project Title", accessor: "projectTitle", width: "30%" },
-                    { Header: "Owner", accessor: "ownerName", width: "20%" },
-                    { Header: "Amount", accessor: "totalEstimate", width: "15%", Cell: ({ value }) => `Rs. ${value?.toLocaleString("en-IN")}` },
-                    { Header: "Date", accessor: "createdAt", width: "15%", Cell: ({ value }) => new Date(value).toLocaleDateString() },
-                    {
-                      Header: "Actions",
-                      accessor: "actions",
-                      Cell: ({ row }) => (
-                        <MDBox display="flex" gap={1}>
-                          <IconButton color="info" onClick={() => handleEdit(row.original)} title="Edit" size="small">
-                            <EditIcon />
-                          </IconButton>
-                          <IconButton color="error" onClick={() => deleteEstimate(row.original._id)} title="Delete" size="small">
-                            <DeleteIcon />
-                          </IconButton>
-                        </MDBox>
-                      ),
-                    },
-                  ],
-                  rows: estimates,
-                }}
-                isSorted={false}
-                entriesPerPage={{ defaultValue: 5, entries: [5, 10, 15, 20, 25] }}
-                showTotalEntries={true}
-                noEndBorder
-              />
-            </MDBox>
-          </Card>
-        </MDBox>
+                <MDTypography variant="h5" fontWeight="bold" color="white">
+                  Proposal History & Records
+                </MDTypography>
+              </MDBox>
+              <MDBox pb={3}>
+                <DataTable
+                  table={{
+                    columns: [
+                      { Header: "Project Title", accessor: "projectTitle", width: "35%" },
+                      { Header: "Owner", accessor: "ownerName", width: "20%" },
+                      { Header: "Amount", accessor: "totalEstimate", width: "15%", Cell: ({ value }) => `Rs. ${value?.toLocaleString("en-IN")}` },
+                      { Header: "Date", accessor: "createdAt", width: "15%", Cell: ({ value }) => new Date(value).toLocaleDateString() },
+                      {
+                        Header: "Actions",
+                        accessor: "actions",
+                        Cell: ({ row }) => (
+                          <MDBox display="flex" gap={1}>
+                            <IconButton color="info" onClick={() => handleEdit(row.original)} size="small" title="Edit">
+                              <EditIcon />
+                            </IconButton>
+                            <IconButton color="success" onClick={() => handleWhatsApp(row.original)} size="small" title="Share">
+                              <WhatsAppIcon />
+                            </IconButton>
+                            <IconButton color="error" onClick={() => deleteEstimate(row.original._id)} size="small" title="Delete">
+                              <DeleteIcon />
+                            </IconButton>
+                          </MDBox>
+                        ),
+                      },
+                    ],
+                    rows: estimates,
+                  }}
+                  isSorted={true}
+                  entriesPerPage={{ defaultValue: 5, entries: [5, 10, 15, 20, 25] }}
+                  showTotalEntries={true}
+                  noEndBorder
+                />
+              </MDBox>
+            </Card>
+          </Grid>
+        </Grid>
       </MDBox>
       <Footer />
     </DashboardLayout>

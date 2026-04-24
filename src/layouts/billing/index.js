@@ -45,7 +45,6 @@ import MDTypography from "components/MDTypography";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
-import DataTable from "examples/Tables/DataTable";
 import brandWhite from "assets/images/logo-ct.png";
 import brandDark from "assets/images/logo-ct-dark.png";
 import go2webLogo from "assets/images/logo.png";
@@ -231,10 +230,10 @@ const Invoice = React.forwardRef(({ data, totals }, ref) => {
               )}
               <td style={{ ...styles.td, textAlign: "center" }}>{item.qty}</td>
               <td style={{ ...styles.td, textAlign: "right" }}>
-                Rs. {item.price}
+                ₹{item.price}
               </td>
               <td style={{ ...styles.td, textAlign: "right" }}>
-                Rs. {item.qty * item.price}
+                ₹{item.qty * item.price}
               </td>
             </tr>
           ))}
@@ -244,23 +243,23 @@ const Invoice = React.forwardRef(({ data, totals }, ref) => {
       <div style={styles.totalBox}>
         <div style={styles.totalRow}>
           <span>Subtotal:</span>
-          <span>Rs. {totals.subtotal}</span>
+          <span>₹{totals.subtotal}</span>
         </div>
         {data.sgst > 0 && (
           <div style={styles.totalRow}>
             <span>SGST ({data.sgst}%):</span>
-            <span>Rs. {totals.sgst}</span>
+            <span>₹{totals.sgst}</span>
           </div>
         )}
         {data.cgst > 0 && (
           <div style={styles.totalRow}>
             <span>CGST ({data.cgst}%):</span>
-            <span>Rs. {totals.cgst}</span>
+            <span>₹{totals.cgst}</span>
           </div>
         )}
         <div style={styles.finalTotal}>
           <span>Total:</span>
-          <span>Rs. {totals.total}</span>
+          <span>₹{totals.total}</span>
         </div>
       </div>
 
@@ -291,6 +290,10 @@ export default function InvoicePage() {
   const [filter, setFilter] = useState("all"); // all, day, month, year, custom
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+
+  // Pagination State
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
 
   // Form State
   const [data, setData] = useState({
@@ -364,6 +367,7 @@ export default function InvoicePage() {
   };
 
   useEffect(() => {
+    setCurrentPage(1); // Reset pagination on search/filter change
     loadInvoices();
   }, [search, filter, startDate, endDate]);
 
@@ -397,60 +401,102 @@ export default function InvoicePage() {
       );
       const clients = await response.json();
 
-      const matchedClient = clients.find(
-        (c) =>
-          c.clientName?.toLowerCase() === (inv.invoiceName || inv.clientName)?.toLowerCase(),
-      );
-
-      if (matchedClient?.phone) {
-        const message = `Hello ${matchedClient.clientName}, your invoice ${inv.invoiceNo} for Rs. ${inv.total} is ready. View it here: [Invoice Link]`;
-        const whatsappUrl = `https://wa.me/${matchedClient.phone}?text=${encodeURIComponent(message)}`;
-        window.open(whatsappUrl, "_blank");
-      } else {
-        alert("Client phone number not found in database.");
+      const clientName = inv.invoiceName || inv.clientName;
+      if (!clientName) {
+        alert("Invoice does not have a valid Billing Name.");
+        return;
       }
-    } catch (err) {
-      console.error("WhatsApp error:", err);
-      alert("Error fetching client details.");
+
+      const client = clients.find(
+        (c) => c.name && c.name.toLowerCase() === clientName.toLowerCase(),
+      );
+      const phone = client?.phone;
+
+      if (!phone) {
+        alert(
+          `Could not find a phone number for client "${clientName}" in the Client Database. Please update the client record.`,
+        );
+        return;
+      }
+
+      let cleanPhone = phone.toString().replace(/\D/g, "");
+      if (cleanPhone.length === 10) cleanPhone = "91" + cleanPhone;
+
+      const formattedDate = inv.date
+        ? new Date(inv.date).toLocaleDateString("en-IN")
+        : new Date(inv.createdAt).toLocaleDateString("en-IN");
+      const text = `Dear ${clientName},
+
+Please find the details for Invoice No: ${inv.invoiceNo} dated ${formattedDate} for a total amount of ₹${inv.total.toLocaleString("en-IN")}.
+
+Kindly review the same and let us know if any clarification is required.
+
+Thank you.`;
+      const encodedText = encodeURIComponent(text);
+      window.open(`https://wa.me/${cleanPhone}?text=${encodedText}`, "_blank");
+    } catch (error) {
+      console.error("Error sending WhatsApp", error);
+      alert("Failed to send WhatsApp message. Please check your connection.");
     }
   };
 
   const handleSaveAndDownload = async () => {
     try {
-      setLoading(true);
-      const invoiceData = {
+      const payload = {
         ...data,
-        invoiceName: data.billingName,
-        clientGstin: data.billingGstin,
-        total: totals.total,
+        clientName: data.billingName, // Backwards compatibility with old schema
+        invoiceName: data.billingName, // New schema
+        clientGstin: data.billingGstin, // backend uses clientGstin or we should keep it billingGstin
+        subtotal: Number(totals.subtotal),
+        total: Number(totals.total),
       };
 
-      const res = data._id
-        ? await updateInvoice(data._id, invoiceData)
-        : await createInvoice(invoiceData);
+      // Ensure we don't send immutable MongoDB fields when creating/updating
+      delete payload._id;
+      delete payload.createdAt;
+      delete payload.updatedAt;
+      delete payload.__v;
+
+      let res;
+      if (data._id) {
+        res = await updateInvoice(data._id, payload);
+      } else {
+        res = await createInvoice(payload);
+      }
 
       if (res.success) {
-        alert(data._id ? "Invoice Updated" : "Invoice Created");
+        loadInvoices(); // Refresh list
         downloadPDF(pdfRef.current);
-        loadInvoices();
+        // Reset form
+        setData((prev) => ({
+          ...prev,
+          _id: null,
+          billingName: "",
+          email: "",
+          invoiceNo: `INV-${Date.now().toString().slice(-6)}`,
+          date: new Date().toISOString().split("T")[0],
+          billingGstin: "",
+          items: [{ name: "", hsn: "", qty: 1, price: 0 }],
+        }));
+      } else {
+        alert(
+          "Failed to save invoice: " +
+          (res.message || "Please check required fields."),
+        );
       }
     } catch (err) {
-      console.error("Save failed", err);
-    } finally {
-      setLoading(false);
+      console.error("Failed to save invoice", err);
+      alert("Network error or failed to save. Is the backend running?");
     }
   };
 
   const handleDelete = async () => {
-    if (!deleteId) return;
     try {
-      const res = await apiDeleteInvoice(deleteId);
-      if (res.success) {
-        setInvoices(invoices.filter((inv) => inv._id !== deleteId));
-        setDeleteId(null);
-      }
+      await apiDeleteInvoice(deleteId);
+      setDeleteId(null);
+      loadInvoices();
     } catch (err) {
-      console.error("Delete failed", err);
+      console.error("Failed to delete", err);
     }
   };
 
@@ -528,23 +574,47 @@ export default function InvoicePage() {
                       </MDTypography>
                     </Box>
                   </MDBox>
+                  <MDTypography variant="caption" sx={{ color: "#3498db", fontWeight: "900", textTransform: "uppercase" }}>
+                    Fixed Branding Enabled
+                  </MDTypography>
                 </MDBox>
               </Grid>
 
               {/* Client Info */}
+              <Grid item xs={12}>
+                <MDBox
+                  sx={{
+                    bgcolor: "#1e293b",
+                    py: 1,
+                    px: 3,
+                    borderRadius: "10px",
+                    mb: 2,
+                    display: "flex",
+                    alignItems: "center",
+                    boxShadow: "0 4px 12px rgba(0,0,0,0.1)"
+                  }}
+                >
+                  <MDTypography variant="button" fontWeight="bold" color="white" sx={{ letterSpacing: 1, textTransform: "uppercase" }}>
+                    Billing Information
+                  </MDTypography>
+                </MDBox>
+              </Grid>
               <Grid item xs={12} sm={4}>
                 <TextField
                   fullWidth
-                  label="Billing Name"
+                  label="Billing Name *"
                   variant="outlined"
                   value={data.billingName}
-                  onChange={(e) => handleInputChange("billingName", e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange("billingName", e.target.value)
+                  }
+                  required
                 />
               </Grid>
               <Grid item xs={12} sm={4}>
                 <TextField
                   fullWidth
-                  label="Billing Email (Optional)"
+                  label="Billing Email"
                   variant="outlined"
                   value={data.email}
                   onChange={(e) => handleInputChange("email", e.target.value)}
@@ -556,143 +626,244 @@ export default function InvoicePage() {
                   label="Billing GSTIN"
                   variant="outlined"
                   value={data.billingGstin}
-                  onChange={(e) => handleInputChange("billingGstin", e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange("billingGstin", e.target.value)
+                  }
                 />
               </Grid>
 
               {/* Invoice Details */}
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12}>
+                <MDBox
+                  sx={{
+                    bgcolor: "#1e293b",
+                    py: 1,
+                    px: 3,
+                    borderRadius: "10px",
+                    mt: 3,
+                    mb: 2,
+                    display: "flex",
+                    alignItems: "center",
+                    boxShadow: "0 4px 12px rgba(0,0,0,0.1)"
+                  }}
+                >
+                  <MDTypography variant="button" fontWeight="bold" color="white" sx={{ letterSpacing: 1, textTransform: "uppercase" }}>
+                    Invoice Details
+                  </MDTypography>
+                </MDBox>
+              </Grid>
+              <Grid item xs={12} sm={3}>
                 <TextField
                   fullWidth
-                  label="Invoice Number"
+                  label="Invoice Number *"
                   variant="outlined"
                   value={data.invoiceNo}
                   onChange={(e) => handleInputChange("invoiceNo", e.target.value)}
+                  required
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12} sm={3}>
                 <TextField
                   fullWidth
-                  label="Date"
+                  label="Date *"
                   type="date"
-                  variant="outlined"
+                  InputLabelProps={{ shrink: true }}
                   value={data.date}
                   onChange={(e) => handleInputChange("date", e.target.value)}
-                  InputLabelProps={{ shrink: true }}
+                  required
+                />
+              </Grid>
+              <Grid item xs={12} sm={3}>
+                <TextField
+                  fullWidth
+                  label="SGST %"
+                  type="number"
+                  variant="outlined"
+                  value={data.sgst}
+                  onChange={(e) =>
+                    handleInputChange("sgst", Number(e.target.value))
+                  }
+                />
+              </Grid>
+              <Grid item xs={12} sm={3}>
+                <TextField
+                  fullWidth
+                  label="CGST %"
+                  type="number"
+                  variant="outlined"
+                  value={data.cgst}
+                  onChange={(e) =>
+                    handleInputChange("cgst", Number(e.target.value))
+                  }
                 />
               </Grid>
 
-              {/* Items Section */}
+              {/* Items */}
               <Grid item xs={12}>
-                <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-                  <MDTypography variant="h6" fontWeight="bold">Invoice Items</MDTypography>
-                  <Button variant="gradient" color="info" startIcon={<AddIcon />} onClick={addItem}>Add Item</Button>
-                </Box>
-                <TableContainer component={Paper} elevation={0} sx={{ border: "1px solid #e2e8f0" }}>
-                  <Table>
-                    <TableHead>
-                      <TableRow sx={{ bgcolor: "#f1f5f9" }}>
-                        <TableCell sx={{ fontWeight: "bold" }}>Description</TableCell>
-                        <TableCell sx={{ fontWeight: "bold" }}>HSN/SAC</TableCell>
-                        <TableCell sx={{ fontWeight: "bold" }}>Qty</TableCell>
-                        <TableCell sx={{ fontWeight: "bold" }}>Rate</TableCell>
-                        <TableCell sx={{ fontWeight: "bold" }}>Amount</TableCell>
-                        <TableCell></TableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {data.items.map((item, i) => (
-                        <TableRow key={i}>
-                          <TableCell sx={{ width: "40%" }}>
-                            <TextField fullWidth size="small" value={item.name} onChange={(e) => updateItem(i, "name", e.target.value)} />
-                          </TableCell>
-                          <TableCell>
-                            <TextField fullWidth size="small" value={item.hsn} onChange={(e) => updateItem(i, "hsn", e.target.value)} />
-                          </TableCell>
-                          <TableCell>
-                            <TextField fullWidth size="small" type="number" value={item.qty} onChange={(e) => updateItem(i, "qty", e.target.value)} />
-                          </TableCell>
-                          <TableCell>
-                            <TextField fullWidth size="small" type="number" value={item.price} onChange={(e) => updateItem(i, "price", e.target.value)} />
-                          </TableCell>
-                          <TableCell>Rs. {item.qty * item.price}</TableCell>
-                          <TableCell>
-                            <IconButton color="error" size="small" onClick={() => removeItem(i)}><DeleteIcon /></IconButton>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </TableContainer>
-              </Grid>
-
-              {/* Totals Section */}
-              <Grid item xs={12} md={6}></Grid>
-              <Grid item xs={12} md={6}>
-                <Box bgcolor="#f8fafc" p={3} borderRadius={2} border="1px solid #e2e8f0">
-                  <Box display="flex" justifyContent="space-between" mb={1}>
-                    <Typography variant="body2" color="textSecondary">Subtotal:</Typography>
-                    <Typography variant="body2" fontWeight="bold">Rs. {totals.subtotal}</Typography>
-                  </Box>
-                  <Box display="flex" justifyContent="space-between" mb={1} gap={2}>
-                    <Box display="flex" alignItems="center" gap={1}>
-                      <Typography variant="body2" color="textSecondary">SGST:</Typography>
-                      <TextField size="small" sx={{ width: 60 }} type="number" value={data.sgst} onChange={(e) => handleInputChange("sgst", e.target.value)} />
-                      <Typography variant="caption">%</Typography>
-                    </Box>
-                    <Typography variant="body2" fontWeight="bold">Rs. {totals.sgst}</Typography>
-                  </Box>
-                  <Box display="flex" justifyContent="space-between" mb={2} gap={2}>
-                    <Box display="flex" alignItems="center" gap={1}>
-                      <Typography variant="body2" color="textSecondary">CGST:</Typography>
-                      <TextField size="small" sx={{ width: 60 }} type="number" value={data.cgst} onChange={(e) => handleInputChange("cgst", e.target.value)} />
-                      <Typography variant="caption">%</Typography>
-                    </Box>
-                    <Typography variant="body2" fontWeight="bold">Rs. {totals.cgst}</Typography>
-                  </Box>
-                  <Divider />
-                  <Box display="flex" justifyContent="space-between" mt={2}>
-                    <Typography variant="h5" fontWeight="bold" color="dark">Grand Total:</Typography>
-                    <Typography variant="h5" fontWeight="bold" color="success">Rs. {totals.total}</Typography>
-                  </Box>
-                </Box>
-              </Grid>
-
-              {/* Action Buttons */}
-              <Grid item xs={12}>
-                <Box display="flex" justifyContent="flex-end" gap={2} mt={2}>
-                  <Button variant="outlined" color="info" onClick={() => setPreviewOpen(true)}>Preview</Button>
-                  <Button variant="contained" color="success" onClick={handleSaveAndDownload} startIcon={<DownloadIcon />} sx={{ color: "white" }}>Save & Download PDF</Button>
-                </Box>
+                <Typography variant="subtitle1" fontWeight="bold" mt={2} mb={1}>
+                  Items
+                </Typography>
+                {data.items.map((item, i) => (
+                  <Grid
+                    container
+                    spacing={2}
+                    key={i}
+                    sx={{ mb: 2, alignItems: "center" }}
+                  >
+                    <Grid item xs={12} sm={4}>
+                      <TextField
+                        fullWidth
+                        label="Item Name"
+                        variant="outlined"
+                        size="small"
+                        value={item.name}
+                        onChange={(e) => updateItem(i, "name", e.target.value)}
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={2}>
+                      <TextField
+                        fullWidth
+                        label="HSN"
+                        variant="outlined"
+                        size="small"
+                        value={item.hsn}
+                        onChange={(e) => updateItem(i, "hsn", e.target.value)}
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={2}>
+                      <TextField
+                        fullWidth
+                        label="Qty"
+                        type="number"
+                        variant="outlined"
+                        size="small"
+                        value={item.qty}
+                        onChange={(e) =>
+                          updateItem(i, "qty", Number(e.target.value))
+                        }
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={2}>
+                      <TextField
+                        fullWidth
+                        label="Price"
+                        type="number"
+                        variant="outlined"
+                        size="small"
+                        value={item.price}
+                        onChange={(e) =>
+                          updateItem(i, "price", Number(e.target.value))
+                        }
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={2}>
+                      <IconButton
+                        color="error"
+                        onClick={() => removeItem(i)}
+                        disabled={data.items.length === 1}
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    </Grid>
+                  </Grid>
+                ))}
+                <Button
+                  startIcon={<AddIcon />}
+                  onClick={addItem}
+                  variant="text"
+                  color="primary"
+                >
+                  Add Another Item
+                </Button>
               </Grid>
             </Grid>
+
+            <Box
+              mt={4}
+              display="flex"
+              justifyContent="space-between"
+              alignItems="center"
+            >
+              <Typography variant="h6" fontWeight="bold">
+                Total Amount: ₹{totals.total}
+              </Typography>
+              <Box display="flex" gap={2}>
+                <Button
+                  variant="outlined"
+                  onClick={() => setPreviewOpen(true)}
+                  startIcon={<VisibilityIcon />}
+                  sx={{
+                    color: "#000",
+                    borderColor: "#000",
+                    textTransform: "none",
+                    "&:hover": {
+                      borderColor: "#000",
+                      backgroundColor: "#f5f5f5",
+                    },
+                  }}
+                >
+                  Preview
+                </Button>
+                <Button
+                  variant="contained"
+                  color="success"
+                  onClick={handleSaveAndDownload}
+                  startIcon={<DownloadIcon />}
+                  sx={{ color: "white" }}
+                >
+                  Save & Download PDF
+                </Button>
+              </Box>
+            </Box>
           </Card>
 
           {/* ================= SAVED INVOICES ================= */}
           <Card
             sx={{
-              mt: 4,
               p: 4,
-              borderRadius: 3,
-              boxShadow: "0px 4px 20px rgba(0,0,0,0.05)",
+              borderRadius: 4,
+              boxShadow: "0px 10px 40px rgba(0,0,0,0.08)",
+              border: "1px solid #f1f5f9",
+              overflow: "hidden"
             }}
           >
-            <MDBox display="flex" justifyContent="space-between" alignItems="center" mb={3}>
-              <MDTypography variant="h5" fontWeight="bold">Saved Invoices Records</MDTypography>
-            </MDBox>
-            <Box p={0}>
+            <Box
+              display="flex"
+              justifyContent="space-between"
+              alignItems="center"
+              mb={4}
+              flexWrap="wrap"
+              gap={2}
+            >
+              <Box>
+                <Typography variant="h5" fontWeight="900" sx={{ color: "#c2268eff", letterSpacing: -0.5 }}>
+                  All Invoices
+                </Typography>
+                <Typography variant="caption" color="text" fontWeight="600">Manage and track your issued invoices</Typography>
+              </Box>
+
               {/* Search and Filters */}
-              <Box display="flex" gap={2} flexWrap="wrap" alignItems="center" mb={4}>
+              <Box display="flex" gap={2} flexWrap="wrap" alignItems="center">
                 <TextField
                   variant="outlined"
                   size="small"
-                  placeholder="Search..."
+                  placeholder="Quick search..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
+                  sx={{
+                    bgcolor: "#fff",
+                    borderRadius: 2,
+                    "& .MuiOutlinedInput-root": {
+                      "& fieldset": { borderColor: "#3b82f6", borderWidth: "2px" },
+                      "&:hover fieldset": { borderColor: "#2563eb" },
+                      "&.Mui-focused fieldset": { borderColor: "#2563eb" },
+                    },
+                    boxShadow: "0 4px 12px rgba(59, 130, 246, 0.1)"
+                  }}
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
-                        <SearchIcon fontSize="small" />
+                        <SearchIcon fontSize="small" sx={{ color: "#3b82f6" }} />
                       </InputAdornment>
                     ),
                   }}
@@ -702,114 +873,202 @@ export default function InvoicePage() {
                   <Select
                     value={filter}
                     onChange={(e) => setFilter(e.target.value)}
+                    sx={{
+                      borderRadius: 2,
+                      bgcolor: "#f8fafc",
+                      fontWeight: "bold",
+                      fontSize: 13,
+                      color: "#1e293b",
+                      px: 1.5,
+                      py: 0.8,
+                      "& fieldset": { border: "2px solid #e2e8f0" },
+                      "&:hover fieldset": { borderColor: "#3b82f6" },
+                      "& .MuiSelect-icon": { color: "#3b82f6" }
+                    }}
                   >
-                    <MenuItem value="all">All Records</MenuItem>
-                    <MenuItem value="day">Today</MenuItem>
-                    <MenuItem value="month">This Month</MenuItem>
-                    <MenuItem value="year">This Year</MenuItem>
-                    <MenuItem value="custom">Custom Range</MenuItem>
+                    <MenuItem value="all">📁 All Records</MenuItem>
+                    <MenuItem value="day">📅 Today</MenuItem>
+                    <MenuItem value="month">🗓️ This Month</MenuItem>
+                    <MenuItem value="year">📊 This Year</MenuItem>
+                    <MenuItem value="custom">🔍 Custom Range</MenuItem>
                   </Select>
                 </FormControl>
               </Box>
-
-              {loading ? (
-                <Box display="flex" justifyContent="center" py={10}>
-                  <CircularProgress size={30} thickness={5} />
-                </Box>
-              ) : (
-                <Box>
-                  {invoices.length === 0 ? (
-                    <Box textAlign="center" py={10}>
-                      <MDTypography variant="body2" color="textSecondary" fontWeight="medium">
-                        No matching invoices found.
-                      </MDTypography>
-                    </Box>
-                  ) : (
-                    <DataTable
-                      table={{
-                        columns: [
-                          { Header: "Invoice No", accessor: "invoiceNo", width: "15%" },
-                          { 
-                            Header: "Recipient", 
-                            accessor: "invoiceName", 
-                            width: "30%",
-                          },
-                          { 
-                            Header: "Date", 
-                            accessor: "date", 
-                            width: "15%",
-                            Cell: ({ value, row }) => (
-                              <Typography fontSize={13}>
-                                {new Date(value || row.original.createdAt).toLocaleDateString()}
-                              </Typography>
-                            )
-                          },
-                          { 
-                            Header: "Amount", 
-                            accessor: "total", 
-                            width: "15%",
-                            Cell: ({ value }) => (
-                              <Typography fontWeight="bold" fontSize={14}>
-                                Rs. {value?.toLocaleString("en-IN")}
-                              </Typography>
-                            )
-                          },
-                          {
-                            Header: "Actions",
-                            accessor: "actions",
-                            width: "25%",
-                            Cell: ({ row }) => (
-                              <Box display="flex" gap={1}>
-                                <IconButton
-                                  size="small"
-                                  color="info"
-                                  onClick={() => {
-                                    const inv = row.original;
-                                    setData({
-                                      ...data,
-                                      ...inv,
-                                      billingName: inv.invoiceName || inv.clientName,
-                                      billingGstin: inv.clientGstin || inv.billingGstin,
-                                      date: new Date(inv.date || inv.createdAt)
-                                        .toISOString()
-                                        .split("T")[0],
-                                    });
-                                    setPreviewOpen(true);
-                                  }}
-                                >
-                                  <VisibilityIcon fontSize="small" />
-                                </IconButton>
-                                <IconButton
-                                  size="small"
-                                  color="success"
-                                  onClick={() => handleDownloadExisting(row.original)}
-                                >
-                                  <DownloadIcon fontSize="small" />
-                                </IconButton>
-                                <IconButton
-                                  size="small"
-                                  color="error"
-                                  onClick={() => setDeleteId(row.original._id)}
-                                >
-                                  <DeleteIcon fontSize="small" />
-                                </IconButton>
-                              </Box>
-                            ),
-                          },
-                        ],
-                        rows: invoices,
-                      }}
-                      isSorted={true}
-                      entriesPerPage={{ defaultValue: 5, entries: [5, 10, 15, 20, 25] }}
-                      showTotalEntries={true}
-                      noEndBorder
-                    />
-                  )}
-                </Box>
-              )}
             </Box>
-          </Card>
 
+            {loading ? (
+              <Box display="flex" justifyContent="center" py={10}>
+                <CircularProgress size={30} thickness={5} />
+              </Box>
+            ) : (
+              <Box>
+                {/* TABLE HEADER */}
+                <Box
+                  sx={{
+                    display: "grid",
+                    gridTemplateColumns: "1.5fr 2fr 1fr 1fr 1fr",
+                    background: "linear-gradient(90deg, #1e293b, #334155)",
+                    color: "#fff",
+                    px: 3,
+                    py: 2,
+                    borderRadius: 3,
+                    fontWeight: "bold",
+                    fontSize: "0.75rem",
+                    textTransform: "uppercase",
+                    letterSpacing: 1,
+                    mb: 2
+                  }}
+                >
+                  <span>Reference</span>
+                  <span>Recipient</span>
+                  <span>Issue Date</span>
+                  <span>Amount</span>
+                  <span style={{ textAlign: "right" }}>Actions</span>
+                </Box>
+
+                {invoices.length === 0 ? (
+                  <Box textAlign="center" py={10} sx={{ bgcolor: "#f8fafc", borderRadius: 3, border: "1px dashed #e2e8f0" }}>
+                    <Typography variant="body2" color="textSecondary" fontWeight="medium">
+                      No matching invoices found in your records.
+                    </Typography>
+                  </Box>
+                ) : (
+                  invoices
+                    .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+                    .map((inv, i) => (
+                      <Box
+                        key={inv._id}
+                        sx={{
+                          display: "grid",
+                          gridTemplateColumns: "0.4fr 1.2fr 2fr 1fr 1fr 1fr",
+                          alignItems: "center",
+                          px: 1.5,
+                          py: 0.8,
+                          mb: 0.5,
+                          borderRadius: 1.5,
+                          background: "#fff",
+                          border: "1px solid #f1f5f9",
+                          transition: "0.3s",
+                          "&:hover": {
+                            borderColor: "#3b82f6",
+                            transform: "scale(1.002)",
+                            boxShadow: "0 4px 8px rgba(0,0,0,0.02)"
+                          },
+                        }}
+                      >
+                        {/* Serial No */}
+                        <Typography variant="caption" fontWeight="bold" sx={{ color: "#3b82f6" }}>
+                          {(currentPage - 1) * itemsPerPage + i + 1}
+                        </Typography>
+
+                        {/* Invoice No */}
+                        <Typography fontWeight="bold" color="dark" fontSize={13}>
+                          {inv.invoiceNo}
+                        </Typography>
+
+                        {/* Recipient */}
+                        <Box display="flex" alignItems="center">
+                          <Avatar sx={{ bgcolor: "#eff6ff", color: "#3b82f6", width: 24, height: 24, fontSize: 11, mr: 1, fontWeight: "bold" }}>
+                            {(inv.invoiceName || inv.clientName || "?").charAt(0)}
+                          </Avatar>
+                          <Typography color="#334155" fontWeight="bold" fontSize={13}>
+                            {inv.invoiceName || inv.clientName}
+                          </Typography>
+                        </Box>
+
+                        {/* Date */}
+                        <Typography color="#64748b" fontSize={11} fontWeight="bold">
+                          {new Date(inv.date || inv.createdAt).toLocaleDateString("en-IN", { day: '2-digit', month: 'short', year: 'numeric' })}
+                        </Typography>
+
+                        {/* Amount */}
+                        <Typography fontWeight="bold" color="#16a34a" fontSize={15}>
+                          ₹{inv.total.toLocaleString("en-IN")}
+                        </Typography>
+
+                        {/* Actions */}
+                        <Box display="flex" justifyContent="flex-end" gap={1.5}>
+                          <IconButton
+                            size="small"
+                            sx={{
+                              bgcolor: "#f0f9ff",
+                              color: "#0284c7",
+                              borderRadius: 2,
+                              "&:hover": { bgcolor: "#0284c7", color: "#fff" },
+                            }}
+                            onClick={() => {
+                              setData({
+                                ...data,
+                                ...inv,
+                                billingName: inv.invoiceName || inv.clientName,
+                                billingGstin: inv.clientGstin || inv.billingGstin,
+                                date: new Date(inv.date || inv.createdAt)
+                                  .toISOString()
+                                  .split("T")[0],
+                              });
+                              setPreviewOpen(true);
+                            }}
+                          >
+                            <VisibilityIcon fontSize="small" />
+                          </IconButton>
+
+                          <IconButton
+                            size="small"
+                            sx={{
+                              bgcolor: "#f0fdf4",
+                              color: "#16a34a",
+                              borderRadius: 2,
+                              "&:hover": { bgcolor: "#16a34a", color: "#fff" },
+                            }}
+                            onClick={() => handleDownloadExisting(inv)}
+                          >
+                            <DownloadIcon fontSize="small" />
+                          </IconButton>
+
+                          <IconButton
+                            size="small"
+                            sx={{
+                              bgcolor: "#fef2f2",
+                              color: "#dc2626",
+                              borderRadius: 2,
+                              "&:hover": { bgcolor: "#dc2626", color: "#fff" },
+                            }}
+                            onClick={() => setDeleteId(inv._id)}
+                          >
+                            <DeleteIcon fontSize="small" />
+                          </IconButton>
+                        </Box>
+                      </Box>
+                    ))
+                )}
+
+                {/* PAGINATION CONTROLS */}
+                {invoices.length > itemsPerPage && (
+                  <Box display="flex" justifyContent="center" alignItems="center" mt={4} gap={2}>
+                    <Button
+                      variant="outlined"
+                      disabled={currentPage === 1}
+                      onClick={() => setCurrentPage(prev => prev - 1)}
+                      sx={{ borderRadius: 2, textTransform: "none" }}
+                    >
+                      Previous
+                    </Button>
+                    <Typography variant="button" fontWeight="bold">
+                      Page {currentPage} of {Math.ceil(invoices.length / itemsPerPage)}
+                    </Typography>
+                    <Button
+                      variant="outlined"
+                      disabled={currentPage === Math.ceil(invoices.length / itemsPerPage)}
+                      onClick={() => setCurrentPage(prev => prev + 1)}
+                      sx={{ borderRadius: 2, textTransform: "none" }}
+                    >
+                      Next
+                    </Button>
+                  </Box>
+                )}
+              </Box>
+            )}
+          </Card>
           {/* Hidden PDF Component */}
           <div style={{ position: "absolute", left: "-9999px", top: 0 }}>
             <Invoice ref={pdfRef} data={data} totals={totals} />
@@ -826,28 +1085,97 @@ export default function InvoicePage() {
         fullWidth
         PaperProps={{ sx: { borderRadius: "16px", p: 1 } }}
       >
-        <DialogTitle sx={{ textAlign: "center", fontWeight: "bold", fontSize: "18px", display: "flex", flexDirection: "column", alignItems: "center", gap: 1 }}>
+        <DialogTitle
+          sx={{
+            textAlign: "center",
+            fontWeight: "bold",
+            fontSize: "18px",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: 1,
+          }}
+        >
           <WarningAmberIcon sx={{ color: "#f44336", fontSize: 40 }} />
           Confirm Delete
         </DialogTitle>
-        <DialogContent sx={{ textAlign: "center", fontSize: "14px", color: "#555" }}>
-          Are you sure you want to delete this invoice?<br /><b style={{ color: "#f44336" }}>This action cannot be undone.</b>
+        <DialogContent
+          sx={{ textAlign: "center", fontSize: "14px", color: "#555" }}
+        >
+          Are you sure you want to delete this invoice?
+          <br />
+          <b style={{ color: "#f44336" }}>This action cannot be undone.</b>
         </DialogContent>
         <DialogActions sx={{ justifyContent: "center", pb: 2, gap: 1 }}>
-          <Button onClick={() => setDeleteId(null)} sx={{ borderRadius: "8px", textTransform: "none", px: 3, border: "1px solid black", color: "#000" }}>Cancel</Button>
-          <Button variant="contained" color="error" onClick={handleDelete} sx={{ borderRadius: "8px", textTransform: "none", px: 3, background: "#f44336", color: "#fff", "&:hover": { background: "#d32f2f" } }}>Delete</Button>
+          <Button
+            onClick={() => setDeleteId(null)}
+            sx={{
+              borderRadius: "8px",
+              textTransform: "none",
+              px: 3,
+              border: "1px solid black",
+              color: "#000",
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            color="error"
+            onClick={handleDelete}
+            sx={{
+              borderRadius: "8px",
+              textTransform: "none",
+              px: 3,
+              background: "#f44336",
+              color: "#fff",
+              "&:hover": { background: "#d32f2f" },
+            }}
+          >
+            Delete
+          </Button>
         </DialogActions>
       </Dialog>
 
       {/* Preview Dialog */}
-      <Dialog open={previewOpen} onClose={() => setPreviewOpen(false)} maxWidth="md" fullWidth>
+      <Dialog
+        open={previewOpen}
+        onClose={() => setPreviewOpen(false)}
+        maxWidth="md"
+        fullWidth
+      >
         <DialogTitle>Invoice Preview</DialogTitle>
-        <DialogContent dividers sx={{ backgroundColor: "#f5f5f5", display: "flex", justifyContent: "center", p: 4 }}>
-          <Paper elevation={3}><Invoice data={data} totals={totals} /></Paper>
+        <DialogContent
+          dividers
+          sx={{
+            backgroundColor: "#f5f5f5",
+            display: "flex",
+            justifyContent: "center",
+            p: 4,
+          }}
+        >
+          <Paper elevation={3}>
+            <Invoice data={data} totals={totals} />
+          </Paper>
         </DialogContent>
-        <DialogActions sx={{ padding: "20px 24px", justifyContent: "flex-end" }}>
-          <Button onClick={() => setPreviewOpen(false)} color="inherit">Close</Button>
-          <Button onClick={() => { handleSaveAndDownload(); setPreviewOpen(false); }} variant="contained" color="success" sx={{ color: "white" }} startIcon={<DownloadIcon />}>Save & Download PDF</Button>
+        <DialogActions
+          sx={{ padding: "20px 24px", justifyContent: "flex-end" }}
+        >
+          <Button onClick={() => setPreviewOpen(false)} color="inherit">
+            Close
+          </Button>
+          <Button
+            onClick={() => {
+              handleSaveAndDownload();
+              setPreviewOpen(false);
+            }}
+            variant="contained"
+            color="success"
+            sx={{ color: "white" }}
+            startIcon={<DownloadIcon />}
+          >
+            Save & Download PDF
+          </Button>
         </DialogActions>
       </Dialog>
     </DashboardLayout>
