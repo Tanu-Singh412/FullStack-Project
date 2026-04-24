@@ -102,8 +102,8 @@ export default function EstimatePage() {
       sx={{
   position: "fixed",
   top: 0,
-  left: "260px",          // ✅ push after sidebar
-  width: "calc(100% - 260px)", // ✅ reduce width
+  left: "280px",          // ✅ push after sidebar
+  width: "calc(100% - 280px)", // ✅ reduce width
   background: "#fff",
   zIndex: 1000,
   px: 4,
@@ -136,7 +136,9 @@ export default function EstimatePage() {
       </Box>
 
       {/* ================= CONTENT ================= */}
-      <Box sx={{ pt: 12, px: 4 }}>
+      <Box sx={{ pt: 12, px: 4,   top: 0,
+  left: "280px",          // ✅ push after sidebar
+  width: "calc(100% - 280px )",  }}>
 
         {/* TITLE */}
         <Card sx={{ p: 3, mb: 3 }}>
