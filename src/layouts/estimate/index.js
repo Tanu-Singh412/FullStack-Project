@@ -7,60 +7,50 @@ import {
   Button,
   IconButton,
   Divider,
+  Typography,
 } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
+import DeleteIcon from "@mui/icons-material/Delete";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 
-// Dummy Typography (replace with your MDTypography)
-const Text = ({ children, ...props }) => (
-  <div style={{ fontSize: props.size || 14, fontWeight: props.bold ? "bold" : "normal", marginBottom: 4 }}>
-    {children}
-  </div>
-);
+const SIDEBAR_WIDTH = 260;
 
 export default function EstimatePage() {
-  const [item, setItem] = useState({
-    sno: "",
-    desc: "",
-    qty: "",
-    unit: "",
-    rate: "",
-  });
+  const [items, setItems] = useState([
+    { sno: 1, desc: "", qty: "", unit: "", rate: "" },
+  ]);
 
-  const [items, setItems] = useState([]);
-  const [editIndex, setEditIndex] = useState(null);
-
-  // ================= ADD =================
-  const handleAddItem = () => {
-    if (!item.desc || !item.qty || !item.rate) return;
-
-    if (editIndex !== null) {
-      const updated = [...items];
-      updated[editIndex] = item;
-      setItems(updated);
-      setEditIndex(null);
-    } else {
-      setItems([...items, item]);
-    }
-
-    setItem({ sno: "", desc: "", qty: "", unit: "", rate: "" });
+  // ================= HANDLE CHANGE =================
+  const handleChange = (index, field, value) => {
+    const updated = [...items];
+    updated[index][field] = value;
+    setItems(updated);
   };
 
-  // ================= EDIT =================
-  const handleEdit = (i) => {
-    setItem(items[i]);
-    setEditIndex(i);
+  // ================= ADD ROW =================
+  const addRow = () => {
+    setItems([
+      ...items,
+      {
+        sno: items.length + 1,
+        desc: "",
+        qty: "",
+        unit: "",
+        rate: "",
+      },
+    ]);
   };
 
   // ================= DELETE =================
-  const handleDelete = (i) => {
-    const updated = items.filter((_, index) => index !== i);
+  const deleteRow = (index) => {
+    const updated = items.filter((_, i) => i !== index);
     setItems(updated);
   };
 
   // ================= TOTAL =================
   const total = items.reduce(
-    (sum, i) => sum + Number(i.qty) * Number(i.rate),
+    (sum, i) => sum + Number(i.qty || 0) * Number(i.rate || 0),
     0
   );
 
@@ -70,9 +60,6 @@ export default function EstimatePage() {
 
     doc.setFontSize(14);
     doc.text("D DESIGN ARCHITECTS STUDIO", 105, 10, { align: "center" });
-
-    doc.setFontSize(10);
-    doc.text("Boundary Wall Estimate - Agra", 105, 16, { align: "center" });
 
     const tableData = items.map((row) => [
       row.sno,
@@ -86,159 +73,186 @@ export default function EstimatePage() {
     doc.autoTable({
       head: [["S.No", "Description", "Qty", "Unit", "Rate", "Amount"]],
       body: tableData,
-      startY: 25,
+      startY: 20,
     });
 
     doc.text(`Total: ₹ ${total}`, 140, doc.lastAutoTable.finalY + 10);
-
     doc.save("estimate.pdf");
   };
 
   return (
-    <Box sx={{ minHeight: "100vh", background: "#f1f5f9" }}>
+    <Box sx={{ display: "flex" }}>
+      
+      {/* ================= SIDEBAR SPACE ================= */}
+      <Box sx={{ width: SIDEBAR_WIDTH }} />
 
-      {/* ================= HEADER ================= */}
-      <Box
-      sx={{
-  position: "fixed",
-  top: 0,
-  left: "280px",          // ✅ push after sidebar
-  width: "calc(100% - 280px)", // ✅ reduce width
-  background: "#fff",
-  zIndex: 1000,
-  px: 4,
-  py: 2,
-  borderBottom: "2px solid #e2e8f0",
-}}
-      >
-        <Grid container alignItems="center">
-
-          {/* LOGO */}
-          <Grid item xs={3}>
-            <img src="/logo.png" alt="logo" style={{ height: 50 }} />
-          </Grid>
-
-          {/* CENTER */}
-          <Grid item xs={6} textAlign="center">
-            <Text bold>D DESIGN ARCHITECTS STUDIO</Text>
-            <Text size={12}>Architects, Interior Designers, Planners</Text>
-            <Text size={12}>Sanjay Place, Agra - 282002</Text>
-          </Grid>
-
-          {/* RIGHT */}
-          <Grid item xs={3} textAlign="right">
-            <Text bold>AR. PREMVEER SINGH</Text>
-            <Text size={12}>(B.Arch)</Text>
-            <Text size={12}>CA/18/98236</Text>
-          </Grid>
-
-        </Grid>
-      </Box>
-
-      {/* ================= CONTENT ================= */}
-      <Box sx={{ pt: 12, px: 4,   top: 0,
-  left: "280px",          // ✅ push after sidebar
-  width: "calc(100% - 280px )",  }}>
-
-        {/* TITLE */}
-        <Card sx={{ p: 3, mb: 3 }}>
-          <Text bold>Detailed Estimate - Boundary Wall Construction</Text>
-          <Divider sx={{ my: 2 }} />
-          <Text>Total Plot Area: 1425.55 SQFT</Text>
-          <Text>Estimated Amount: ₹31,51,000</Text>
-        </Card>
-
-        {/* FORM */}
-        <Card sx={{ p: 3, mb: 3 }}>
-          <Text bold>Add Item</Text>
-
-          <Grid container spacing={2}>
-            <Grid item xs={2}>
-              <TextField label="S.No" fullWidth value={item.sno}
-                onChange={(e) => setItem({ ...item, sno: e.target.value })}
-              />
+      {/* ================= MAIN ================= */}
+      <Box sx={{ flex: 1, background: "#f1f5f9" }}>
+        
+        {/* ================= HEADER ================= */}
+        <Box
+          sx={{
+            position: "sticky",
+            top: 0,
+            background: "#fff",
+            px: 4,
+            py: 2,
+            boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
+            zIndex: 10,
+          }}
+        >
+          <Grid container alignItems="center">
+            <Grid item xs={3}>
+              <img src="/logo.png" style={{ height: 50 }} />
             </Grid>
 
-            <Grid item xs={4}>
-              <TextField label="Description" fullWidth value={item.desc}
-                onChange={(e) => setItem({ ...item, desc: e.target.value })}
-              />
+            <Grid item xs={6} textAlign="center">
+              <Typography fontWeight="bold">
+                D DESIGN ARCHITECTS STUDIO
+              </Typography>
+              <Typography variant="caption">
+                Architects, Interior Designers, Planners
+              </Typography>
             </Grid>
 
-            <Grid item xs={2}>
-              <TextField label="Qty" type="number" fullWidth value={item.qty}
-                onChange={(e) => setItem({ ...item, qty: e.target.value })}
-              />
-            </Grid>
-
-            <Grid item xs={1.5}>
-              <TextField label="Unit" fullWidth value={item.unit}
-                onChange={(e) => setItem({ ...item, unit: e.target.value })}
-              />
-            </Grid>
-
-            <Grid item xs={1.5}>
-              <TextField label="Rate" type="number" fullWidth value={item.rate}
-                onChange={(e) => setItem({ ...item, rate: e.target.value })}
-              />
-            </Grid>
-
-            <Grid item xs={12}>
-              <Button variant="contained" onClick={handleAddItem}>
-                {editIndex !== null ? "Update Item" : "Add Item"}
-              </Button>
+            <Grid item xs={3} textAlign="right">
+              <Typography fontWeight="bold">
+                AR. PREMVEER SINGH
+              </Typography>
+              <Typography variant="caption">
+                CA/18/98236
+              </Typography>
             </Grid>
           </Grid>
-        </Card>
-
-        {/* TABLE */}
-        <Card sx={{ p: 3 }}>
-          <Text bold>DETAILS OF ESTIMATE</Text>
-
-          <table style={{ width: "100%", marginTop: 10 }}>
-            <thead>
-              <tr style={{ background: "#1e293b", color: "#fff" }}>
-                <th>S.No</th>
-                <th>Description</th>
-                <th>Qty</th>
-                <th>Unit</th>
-                <th>Rate</th>
-                <th>Amount</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {items.map((row, i) => (
-                <tr key={i}>
-                  <td>{row.sno}</td>
-                  <td>{row.desc}</td>
-                  <td>{row.qty}</td>
-                  <td>{row.unit}</td>
-                  <td>{row.rate}</td>
-                  <td>{row.qty * row.rate}</td>
-                  <td>
-                    <IconButton onClick={() => handleEdit(i)}>✏️</IconButton>
-                    <IconButton onClick={() => handleDelete(i)}>❌</IconButton>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-
-          <Box mt={2} textAlign="right">
-            <Text bold>Total: ₹ {total}</Text>
-          </Box>
-        </Card>
-
-        {/* ACTIONS */}
-        <Box mt={3}>
-          <Button variant="contained" color="success" onClick={generatePDF}>
-            Generate PDF
-          </Button>
         </Box>
 
+        {/* ================= CONTENT ================= */}
+        <Box sx={{ p: 4 }}>
+          
+          {/* TITLE */}
+          <Card sx={{ p: 3, mb: 3, borderRadius: 3 }}>
+            <Typography fontWeight="bold">
+              Boundary Wall Construction Estimate
+            </Typography>
+            <Divider sx={{ my: 2 }} />
+            <Typography>Total Area: 1425 SQFT</Typography>
+          </Card>
+
+          {/* ================= TABLE ================= */}
+          <Card sx={{ p: 3, borderRadius: 3 }}>
+            <Typography fontWeight="bold" mb={2}>
+              Estimate Table
+            </Typography>
+
+            {/* HEADER */}
+            <Grid container spacing={2} mb={1}>
+              <Grid item xs={1}><b>S.No</b></Grid>
+              <Grid item xs={3}><b>Description</b></Grid>
+              <Grid item xs={1}><b>Qty</b></Grid>
+              <Grid item xs={1}><b>Unit</b></Grid>
+              <Grid item xs={2}><b>Rate</b></Grid>
+              <Grid item xs={2}><b>Amount</b></Grid>
+              <Grid item xs={2}><b>Action</b></Grid>
+            </Grid>
+
+            {/* ROWS */}
+            {items.map((row, i) => (
+              <Grid container spacing={2} key={i} mb={1}>
+                
+                <Grid item xs={1}>
+                  <TextField value={row.sno} disabled size="small" />
+                </Grid>
+
+                <Grid item xs={3}>
+                  <TextField
+                    fullWidth
+                    size="small"
+                    value={row.desc}
+                    onChange={(e) =>
+                      handleChange(i, "desc", e.target.value)
+                    }
+                  />
+                </Grid>
+
+                <Grid item xs={1}>
+                  <TextField
+                    size="small"
+                    type="number"
+                    value={row.qty}
+                    onChange={(e) =>
+                      handleChange(i, "qty", e.target.value)
+                    }
+                  />
+                </Grid>
+
+                <Grid item xs={1}>
+                  <TextField
+                    size="small"
+                    value={row.unit}
+                    onChange={(e) =>
+                      handleChange(i, "unit", e.target.value)
+                    }
+                  />
+                </Grid>
+
+                <Grid item xs={2}>
+                  <TextField
+                    size="small"
+                    type="number"
+                    value={row.rate}
+                    onChange={(e) =>
+                      handleChange(i, "rate", e.target.value)
+                    }
+                  />
+                </Grid>
+
+                <Grid item xs={2}>
+                  <TextField
+                    size="small"
+                    value={row.qty * row.rate || ""}
+                    disabled
+                  />
+                </Grid>
+
+                <Grid item xs={2}>
+                  <IconButton onClick={() => deleteRow(i)}>
+                    <DeleteIcon />
+                  </IconButton>
+                </Grid>
+              </Grid>
+            ))}
+
+            {/* ADD ROW BUTTON */}
+            <Button
+              startIcon={<AddIcon />}
+              onClick={addRow}
+              sx={{ mt: 2 }}
+            >
+              Add Row
+            </Button>
+
+            {/* TOTAL */}
+            <Box textAlign="right" mt={3}>
+              <Typography fontWeight="bold">
+                Total: ₹ {total}
+              </Typography>
+            </Box>
+          </Card>
+
+          {/* ACTION */}
+          <Box mt={3}>
+            <Button
+              variant="contained"
+              color="success"
+              onClick={generatePDF}
+            >
+              Generate PDF
+            </Button>
+          </Box>
+
+        </Box>
       </Box>
     </Box>
   );
 }
+
