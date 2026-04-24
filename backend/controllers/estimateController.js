@@ -3,7 +3,19 @@ const Estimate = require("../models/estimateModel");
 /* ================= CREATE ================= */
 exports.createEstimate = async (req, res) => {
   try {
-    const estimate = await Estimate.create(req.body);
+    const { items } = req.body;
+
+    // ✅ auto calculate total
+    const totalEstimate = items.reduce(
+      (sum, i) => sum + (i.qty * i.rate),
+      0
+    );
+
+    const estimate = await Estimate.create({
+      ...req.body,
+      totalEstimate,
+    });
+
     res.status(201).json(estimate);
   } catch (err) {
     res.status(500).json({ error: err.message });
