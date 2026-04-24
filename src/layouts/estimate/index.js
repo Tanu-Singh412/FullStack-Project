@@ -178,11 +178,12 @@ export default function EstimatePage() {
 
       doc.setFont("helvetica", "bold");
       doc.setFontSize(14);
-      doc.setTextColor(0, 0, 0);
+      doc.setTextColor(0, 0, 0); // Explicit black
       doc.text("D DESIGN ARCHITECTS STUDIO", pageWidth / 2, 15, { align: "center" });
 
       doc.setFont("helvetica", "normal");
       doc.setFontSize(9);
+      doc.setTextColor(0, 0, 0);
       doc.text("Architects, Interior Designers, Planners.", pageWidth / 2, 20, { align: "center" });
       doc.text("Block No.C-12, Shop No. F-6, Sanjay Place, Agra. 282002", pageWidth / 2, 24, { align: "center" });
 
@@ -202,6 +203,7 @@ export default function EstimatePage() {
 
     doc.setFont("helvetica", "bold");
     doc.setFontSize(12);
+    doc.setTextColor(0, 0, 0);
     doc.text("ESTIMATE / PROPOSAL", pageWidth / 2, 45, { align: "center" });
 
     autoTable(doc, {
@@ -213,7 +215,7 @@ export default function EstimatePage() {
         ["Location:", form.location || "-", "Plot Area:", form.plotArea ? `${form.plotArea} Sq.Ft` : "-"],
         ["Total Estimated Amount:", { content: `Rs. ${total.toLocaleString("en-IN")}`, colSpan: 3, styles: { fontStyle: "bold" } }],
       ],
-      styles: { fontSize: 9, textColor: [0, 0, 0] },
+      styles: { fontSize: 9, textColor: [0, 0, 0], lineColor: [200, 200, 200] },
     });
 
     let currentY = doc.lastAutoTable.finalY + 10;
@@ -221,6 +223,7 @@ export default function EstimatePage() {
     if (form.description) {
       doc.setFont("helvetica", "bold");
       doc.setFontSize(10);
+      doc.setTextColor(0, 0, 0);
       doc.text("Introduction:", 15, currentY);
       doc.setFont("helvetica", "normal");
       doc.setFontSize(9);
@@ -243,12 +246,13 @@ export default function EstimatePage() {
       theme: "grid",
       head: [["No.", "Description", "Qty", "Unit", "Rate (Rs)", "Amount (Rs)"]],
       body: tableData,
-      headStyles: { fillColor: [240, 240, 240], textColor: [0, 0, 0], fontStyle: "bold" },
-      styles: { fontSize: 8.5, textColor: [0, 0, 0] },
+      headStyles: { fillColor: [50, 50, 50], textColor: [255, 255, 255], fontStyle: "bold" },
+      styles: { fontSize: 8.5, textColor: [0, 0, 0], lineColor: [200, 200, 200] },
     });
 
     const finalY = doc.lastAutoTable.finalY;
     doc.setFont("helvetica", "bold");
+    doc.setTextColor(0, 0, 0);
     doc.text(`GRAND TOTAL: Rs. ${total.toLocaleString("en-IN")}`, pageWidth - 20, finalY + 12, { align: "right" });
 
     if (form.notes) {
@@ -265,139 +269,143 @@ export default function EstimatePage() {
     <DashboardLayout>
       <DashboardNavbar />
 
-      <MDBox pt={4} pb={3} px={3} sx={{ backgroundColor: "#f8f9fa", minHeight: "100vh" }}>
+      <MDBox pt={4} pb={3} px={3} sx={{ backgroundColor: "#f0f2f5", minHeight: "100vh" }}>
         <Grid container spacing={3}>
-
-          {/* ================= QUICK STATS ================= */}
+          
+          {/* ================= QUICK STATS (COLORFUL) ================= */}
           <Grid item xs={12} md={4}>
-            <Card sx={{ p: 2, borderRadius: "12px", border: "1px solid #e0e0e0" }}>
+            <Card sx={{ p: 2, borderRadius: "16px", background: "linear-gradient(135deg, #1A73E8 0%, #0d47a1 100%)", boxShadow: "0 10px 20px rgba(26, 115, 232, 0.2)" }}>
               <MDBox display="flex" alignItems="center" gap={2}>
-                <MDBox variant="gradient" bgcolor="info" color="white" borderRadius="lg" p={2}>
+                <MDBox bgcolor="rgba(255,255,255,0.2)" color="white" borderRadius="lg" p={2}>
                   <AssignmentIcon fontSize="medium" />
                 </MDBox>
                 <Box>
-                  <MDTypography variant="caption" fontWeight="bold" color="dark" sx={{ textTransform: "uppercase" }}>Total Estimates</MDTypography>
-                  <MDTypography variant="h4" fontWeight="bold" color="dark">{estimates.length}</MDTypography>
+                  <MDTypography variant="caption" fontWeight="bold" color="white" sx={{ textTransform: "uppercase", opacity: 0.8 }}>Total Estimates</MDTypography>
+                  <MDTypography variant="h4" fontWeight="bold" color="white">{estimates.length}</MDTypography>
                 </Box>
               </MDBox>
             </Card>
           </Grid>
           <Grid item xs={12} md={4}>
-            <Card sx={{ p: 2, borderRadius: "12px", border: "1px solid #e0e0e0" }}>
+            <Card sx={{ p: 2, borderRadius: "16px", background: "linear-gradient(135deg, #4CAF50 0%, #1b5e20 100%)", boxShadow: "0 10px 20px rgba(76, 175, 80, 0.2)" }}>
               <MDBox display="flex" alignItems="center" gap={2}>
-                <MDBox variant="gradient" bgcolor="success" color="white" borderRadius="lg" p={2}>
+                <MDBox bgcolor="rgba(255,255,255,0.2)" color="white" borderRadius="lg" p={2}>
                   <BusinessIcon fontSize="medium" />
                 </MDBox>
                 <Box>
-                  <MDTypography variant="caption" fontWeight="bold" color="dark" sx={{ textTransform: "uppercase" }}>Pipeline Value</MDTypography>
-                  <MDTypography variant="h4" fontWeight="bold" color="dark">Rs. {total.toLocaleString("en-IN")}</MDTypography>
+                  <MDTypography variant="caption" fontWeight="bold" color="white" sx={{ textTransform: "uppercase", opacity: 0.8 }}>Pipeline Value</MDTypography>
+                  <MDTypography variant="h4" fontWeight="bold" color="white">Rs. {total.toLocaleString("en-IN")}</MDTypography>
                 </Box>
               </MDBox>
             </Card>
           </Grid>
           <Grid item xs={12} md={4}>
-            <Card sx={{ p: 2, borderRadius: "12px", border: "1px solid #e0e0e0" }}>
+            <Card sx={{ p: 2, borderRadius: "16px", background: "linear-gradient(135deg, #FF9800 0%, #e65100 100%)", boxShadow: "0 10px 20px rgba(255, 152, 0, 0.2)" }}>
               <MDBox display="flex" alignItems="center" gap={2}>
-                <MDBox variant="gradient" bgcolor="warning" color="white" borderRadius="lg" p={2}>
+                <MDBox bgcolor="rgba(255,255,255,0.2)" color="white" borderRadius="lg" p={2}>
                   <AspectRatioIcon fontSize="medium" />
                 </MDBox>
                 <Box>
-                  <MDTypography variant="caption" fontWeight="bold" color="dark" sx={{ textTransform: "uppercase" }}>Avg. Size</MDTypography>
-                  <MDTypography variant="h4" fontWeight="bold" color="dark">Rs. {estimates.length ? Math.round(estimates.reduce((s, e) => s + (e.totalEstimate || 0), 0) / estimates.length).toLocaleString("en-IN") : 0}</MDTypography>
+                  <MDTypography variant="caption" fontWeight="bold" color="white" sx={{ textTransform: "uppercase", opacity: 0.8 }}>Avg. Size</MDTypography>
+                  <MDTypography variant="h4" fontWeight="bold" color="white">Rs. {estimates.length ? Math.round(estimates.reduce((s, e) => s + (e.totalEstimate || 0), 0) / estimates.length).toLocaleString("en-IN") : 0}</MDTypography>
                 </Box>
               </MDBox>
             </Card>
           </Grid>
 
-          {/* ================= ACTION HEADER ================= */}
+          {/* ================= ACTION HEADER (COLORFUL) ================= */}
           <Grid item xs={12}>
-            <MDBox
-              display="flex"
-              justifyContent="space-between"
-              alignItems="center"
-              p={3}
-              sx={{ bgcolor: "#fff", borderRadius: "12px", border: "1px solid #e0e0e0", boxShadow: "0 2px 10px rgba(0,0,0,0.05)" }}
+            <MDBox 
+              display="flex" 
+              justifyContent="space-between" 
+              alignItems="center" 
+              p={3} 
+              sx={{ background: "linear-gradient(90deg, #1e293b 0%, #334155 100%)", borderRadius: "16px", boxShadow: "0 10px 30px rgba(0,0,0,0.1)" }}
             >
-              <MDTypography variant="h4" fontWeight="bold" color="dark">Estimate Builder</MDTypography>
+              <MDTypography variant="h4" fontWeight="bold" color="white">Estimate Studio</MDTypography>
               <MDBox display="flex" gap={2}>
-                <Button variant="outlined" color="dark" startIcon={<PictureAsPdfIcon />} onClick={generatePDF}>PDF</Button>
-                <Button variant="contained" color="dark" startIcon={<SaveIcon />} onClick={saveEstimate}>Save Proposal</Button>
+                <MDButton variant="gradient" color="light" startIcon={<PictureAsPdfIcon />} onClick={generatePDF}>Download PDF</MDButton>
+                <MDButton variant="gradient" color="info" startIcon={<SaveIcon />} onClick={saveEstimate}>Save Proposal</MDButton>
               </MDBox>
             </MDBox>
           </Grid>
 
           {/* ================= LEFT: PROJECT INFO ================= */}
           <Grid item xs={12} lg={4}>
-            <Card sx={{ borderRadius: "12px", border: "1px solid #e0e0e0" }}>
-              <MDBox p={3} borderBottom="1px solid #f0f0f0" bgcolor="#fcfcfc">
-                <MDTypography variant="h6" fontWeight="bold" color="dark">Project Scope</MDTypography>
+            <Card sx={{ borderRadius: "16px", overflow: "hidden" }}>
+              <MDBox p={3} sx={{ background: "#1e293b" }}>
+                <MDTypography variant="h6" fontWeight="bold" color="white">Project Scope</MDTypography>
               </MDBox>
-              <MDBox p={3} display="flex" flexDirection="column" gap={2}>
+              <MDBox p={3} display="flex" flexDirection="column" gap={3}>
                 <TextField label="Project Title" fullWidth value={form.projectTitle} onChange={(e) => setForm({ ...form, projectTitle: e.target.value })}
-                  InputLabelProps={{ style: { color: '#000' } }} inputProps={{ style: { color: '#000' } }} />
+                  inputProps={{ style: { color: '#000', fontWeight: 600 } }} />
                 <TextField label="Owner Name" fullWidth value={form.ownerName} onChange={(e) => setForm({ ...form, ownerName: e.target.value })}
-                  InputLabelProps={{ style: { color: '#000' } }} inputProps={{ style: { color: '#000' } }} />
+                  inputProps={{ style: { color: '#000', fontWeight: 600 } }} />
                 <TextField label="Location" fullWidth value={form.location} onChange={(e) => setForm({ ...form, location: e.target.value })}
-                  InputLabelProps={{ style: { color: '#000' } }} inputProps={{ style: { color: '#000' } }} />
+                  inputProps={{ style: { color: '#000', fontWeight: 600 } }} />
                 <TextField label="Plot Area (Sq.Ft)" fullWidth value={form.plotArea} onChange={(e) => setForm({ ...form, plotArea: e.target.value })}
-                  InputLabelProps={{ style: { color: '#000' } }} inputProps={{ style: { color: '#000' } }} />
+                  inputProps={{ style: { color: '#000', fontWeight: 600 } }} />
               </MDBox>
             </Card>
           </Grid>
 
           {/* ================= RIGHT: TABLE ================= */}
           <Grid item xs={12} lg={8}>
-            <Card sx={{ borderRadius: "12px", border: "1px solid #e0e0e0", mb: 3 }}>
+            <Card sx={{ borderRadius: "16px", mb: 3, overflow: "hidden" }}>
+              <MDBox p={2} sx={{ background: "#f8f9fa", borderBottom: "1px solid #eee" }}>
+                <MDTypography variant="h6" fontWeight="bold" color="dark">Introduction</MDTypography>
+              </MDBox>
               <MDBox p={3}>
-                <MDTypography variant="h6" fontWeight="bold" color="dark" mb={1}>Introduction</MDTypography>
-                <TextField fullWidth multiline rows={3} placeholder="Write something about this project..." value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })}
+                <TextField fullWidth multiline rows={3} placeholder="Describe the project overview..." value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })}
                   inputProps={{ style: { color: '#000' } }} />
               </MDBox>
             </Card>
 
-            <Card sx={{ borderRadius: "12px", border: "1px solid #e0e0e0" }}>
-              <MDBox p={3} display="flex" justifyContent="space-between" alignItems="center" borderBottom="1px solid #f0f0f0" bgcolor="#fcfcfc">
-                <MDTypography variant="h6" fontWeight="bold" color="dark">Itemized Breakdown</MDTypography>
-                <MDTypography variant="h5" fontWeight="bold" color="dark">Total: Rs. {total.toLocaleString("en-IN")}</MDTypography>
+            <Card sx={{ borderRadius: "16px", overflow: "hidden" }}>
+              <MDBox p={3} display="flex" justifyContent="space-between" alignItems="center" sx={{ background: "linear-gradient(90deg, #1A73E8, #0d47a1)", color: "#white" }}>
+                <MDTypography variant="h6" fontWeight="bold" color="white">Itemized Breakdown</MDTypography>
+                <MDBox sx={{ bgcolor: "rgba(255,255,255,0.2)", px: 2, py: 0.5, borderRadius: "10px" }}>
+                  <MDTypography variant="h5" fontWeight="bold" color="white">Total: Rs. {total.toLocaleString("en-IN")}</MDTypography>
+                </MDBox>
               </MDBox>
               <MDBox p={0}>
                 <TableContainer>
-                  <Table sx={{ minWidth: 650 }}>
-                    <TableHead sx={{ display: "table-header-group" }}>
+                  <Table>
+                    <TableHead>
                       <TableRow>
-                        <TableCell sx={{ border: "1px solid #e0e0e0", fontWeight: "bold", color: "#000", bgcolor: "#f5f5f5" }}>S.No</TableCell>
-                        <TableCell sx={{ border: "1px solid #e0e0e0", fontWeight: "bold", color: "#000", bgcolor: "#f5f5f5", width: "40%" }}>Description</TableCell>
-                        <TableCell sx={{ border: "1px solid #e0e0e0", fontWeight: "bold", color: "#000", bgcolor: "#f5f5f5", textAlign: "center" }}>Qty</TableCell>
-                        <TableCell sx={{ border: "1px solid #e0e0e0", fontWeight: "bold", color: "#000", bgcolor: "#f5f5f5", textAlign: "center" }}>Unit</TableCell>
-                        <TableCell sx={{ border: "1px solid #e0e0e0", fontWeight: "bold", color: "#000", bgcolor: "#f5f5f5", textAlign: "right" }}>Rate</TableCell>
-                        <TableCell sx={{ border: "1px solid #e0e0e0", fontWeight: "bold", color: "#000", bgcolor: "#f5f5f5", textAlign: "right" }}>Amount</TableCell>
-                        <TableCell sx={{ border: "1px solid #e0e0e0", bgcolor: "#f5f5f5" }}></TableCell>
+                        <TableCell sx={{ fontWeight: "bold", color: "#1e293b", bgcolor: "#f1f5f9" }}>S.No</TableCell>
+                        <TableCell sx={{ fontWeight: "bold", color: "#1e293b", bgcolor: "#f1f5f9", width: "40%" }}>Description</TableCell>
+                        <TableCell sx={{ fontWeight: "bold", color: "#1e293b", bgcolor: "#f1f5f9", textAlign: "center" }}>Qty</TableCell>
+                        <TableCell sx={{ fontWeight: "bold", color: "#1e293b", bgcolor: "#f1f5f9", textAlign: "center" }}>Unit</TableCell>
+                        <TableCell sx={{ fontWeight: "bold", color: "#1e293b", bgcolor: "#f1f5f9", textAlign: "right" }}>Rate</TableCell>
+                        <TableCell sx={{ fontWeight: "bold", color: "#1e293b", bgcolor: "#f1f5f9", textAlign: "right" }}>Amount</TableCell>
+                        <TableCell sx={{ bgcolor: "#f1f5f9" }}></TableCell>
                       </TableRow>
                     </TableHead>
                     <TableBody>
                       {items.map((row, i) => (
                         <TableRow key={i}>
-                          <TableCell sx={{ border: "1px solid #e0e0e0", color: "#000", textAlign: "center", fontWeight: "bold" }}>{row.sno}</TableCell>
-                          <TableCell sx={{ border: "1px solid #e0e0e0", p: 1 }}>
-                            <TextField fullWidth size="small" variant="outlined" value={row.desc} onChange={(e) => handleChange(i, "desc", e.target.value)}
+                          <TableCell sx={{ fontWeight: "bold", color: "#000" }}>{row.sno}</TableCell>
+                          <TableCell sx={{ p: 1 }}>
+                            <TextField fullWidth size="small" value={row.desc} onChange={(e) => handleChange(i, "desc", e.target.value)}
                               inputProps={{ style: { color: '#000', fontSize: '13px' } }} />
                           </TableCell>
-                          <TableCell sx={{ border: "1px solid #e0e0e0", p: 1 }}>
-                            <TextField type="number" size="small" variant="outlined" value={row.qty} onChange={(e) => handleChange(i, "qty", e.target.value)}
+                          <TableCell sx={{ p: 1 }}>
+                            <TextField type="number" size="small" value={row.qty} onChange={(e) => handleChange(i, "qty", e.target.value)}
                               inputProps={{ style: { color: '#000', fontSize: '13px', textAlign: 'center' } }} />
                           </TableCell>
-                          <TableCell sx={{ border: "1px solid #e0e0e0", p: 1 }}>
-                            <TextField size="small" variant="outlined" value={row.unit} onChange={(e) => handleChange(i, "unit", e.target.value)}
+                          <TableCell sx={{ p: 1 }}>
+                            <TextField size="small" value={row.unit} onChange={(e) => handleChange(i, "unit", e.target.value)}
                               inputProps={{ style: { color: '#000', fontSize: '13px', textAlign: 'center' } }} />
                           </TableCell>
-                          <TableCell sx={{ border: "1px solid #e0e0e0", p: 1 }}>
-                            <TextField type="number" size="small" variant="outlined" value={row.rate} onChange={(e) => handleChange(i, "rate", e.target.value)}
+                          <TableCell sx={{ p: 1 }}>
+                            <TextField type="number" size="small" value={row.rate} onChange={(e) => handleChange(i, "rate", e.target.value)}
                               inputProps={{ style: { color: '#000', fontSize: '13px', textAlign: 'right' } }} />
                           </TableCell>
-                          <TableCell sx={{ border: "1px solid #e0e0e0", textAlign: "right", color: "#000", fontWeight: "bold" }}>
+                          <TableCell sx={{ textAlign: "right", color: "#000", fontWeight: "bold" }}>
                             {(row.qty * row.rate || 0).toLocaleString("en-IN")}
                           </TableCell>
-                          <TableCell sx={{ border: "1px solid #e0e0e0", textAlign: "center" }}>
+                          <TableCell sx={{ textAlign: "center" }}>
                             <IconButton color="error" onClick={() => deleteRow(i)} size="small"><DeleteIcon fontSize="small" /></IconButton>
                           </TableCell>
                         </TableRow>
@@ -406,12 +414,12 @@ export default function EstimatePage() {
                   </Table>
                 </TableContainer>
                 <MDBox p={2} display="flex" justifyContent="center">
-                  <Button variant="outlined" color="dark" startIcon={<AddCircleIcon />} onClick={addRow} sx={{ textTransform: "none" }}>Add Item</Button>
+                  <MDButton variant="outlined" color="info" startIcon={<AddCircleIcon />} onClick={addRow} sx={{ textTransform: "none" }}>Add Item</MDButton>
                 </MDBox>
               </MDBox>
             </Card>
 
-            <Card sx={{ mt: 3, borderRadius: "12px", border: "1px solid #e0e0e0" }}>
+            <Card sx={{ mt: 3, borderRadius: "16px", borderLeft: "5px solid #1A73E8" }}>
               <MDBox p={3}>
                 <MDTypography variant="h6" fontWeight="bold" color="dark" mb={1}>Notes / T&C</MDTypography>
                 <TextField fullWidth multiline rows={2} value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })}
@@ -422,9 +430,9 @@ export default function EstimatePage() {
 
           {/* ================= HISTORY ================= */}
           <Grid item xs={12}>
-            <Card sx={{ mt: 4, borderRadius: "12px", border: "1px solid #e0e0e0" }}>
-              <MDBox p={3} borderBottom="1px solid #f0f0f0">
-                <MDTypography variant="h5" fontWeight="bold" color="dark">Saved Estimates</MDTypography>
+            <Card sx={{ mt: 4, borderRadius: "16px", overflow: "hidden" }}>
+              <MDBox p={3} sx={{ background: "linear-gradient(90deg, #1e293b, #334155)" }}>
+                <MDTypography variant="h5" fontWeight="bold" color="white">Saved Estimates</MDTypography>
               </MDBox>
               <MDBox pb={3}>
                 <DataTable
