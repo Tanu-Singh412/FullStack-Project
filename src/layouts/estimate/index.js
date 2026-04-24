@@ -10,6 +10,11 @@ import {
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
+import SaveIcon from "@mui/icons-material/Save";
+import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
+import CloseIcon from "@mui/icons-material/Close";
+import AddCircleIcon from "@mui/icons-material/AddCircle";
+import EditIcon from "@mui/icons-material/Edit";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
@@ -153,70 +158,62 @@ export default function EstimatePage() {
 
     // --- HEADER HELPER ---
     const addHeader = () => {
-      // Background Block for Studio Name
-      doc.setFillColor(44, 62, 80); // Dark Blue-Grey
-      doc.rect(0, 0, pageWidth, 40, "F");
-
-      // Logo
+      // Logo (Left)
       try {
-        doc.addImage("/logo.png", "PNG", 15, 8, 24, 24);
+        doc.addImage("/logo.png", "PNG", 15, 10, 22, 22);
       } catch (e) {
         console.error("Logo not found", e);
       }
 
-      // Studio Info
+      // Studio Info (Center)
       doc.setFont("helvetica", "bold");
-      doc.setFontSize(22);
-      doc.setTextColor(255, 255, 255);
-      doc.text("D DESIGN ARCHITECTS STUDIO", pageWidth / 2 + 10, 18, { align: "center" });
+      doc.setFontSize(14);
+      doc.setTextColor(0, 0, 0);
+      doc.text("D DESIGN ARCHITECTS STUDIO", pageWidth / 2, 15, { align: "center" });
 
-      doc.setFont("helvetica", "normal");
-      doc.setFontSize(10);
-      doc.setTextColor(200, 200, 200);
-      doc.text("Architects, Interior Designers, Planners | Sanjay Place, Agra", pageWidth / 2 + 10, 25, { align: "center" });
-
-      // Architect Block (Right Side)
-      doc.setFillColor(52, 73, 94);
-      doc.rect(pageWidth - 65, 0, 65, 40, "F");
-
-      doc.setFont("helvetica", "bold");
-      doc.setFontSize(11);
-      doc.setTextColor(255, 255, 255);
-      doc.text("AR. PREMVEER SINGH", pageWidth - 15, 18, { align: "right" });
       doc.setFont("helvetica", "normal");
       doc.setFontSize(9);
-      doc.text("CA/18/98236", pageWidth - 15, 24, { align: "right" });
+      doc.setTextColor(50, 50, 50);
+      doc.text("Architects, Interior Designers, Planners.", pageWidth / 2, 20, { align: "center" });
+      doc.text("Block No.C-12, Shop No. F-6,", pageWidth / 2, 24, { align: "center" });
+      doc.text("Near Max Malll, Sanjay Place, Agra. 282002", pageWidth / 2, 28, { align: "center" });
+
+      // Architect Info (Right)
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(10);
+      doc.setTextColor(0, 0, 0);
+      doc.text("AR. PREMVEER SINGH", pageWidth - 15, 15, { align: "right" });
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(8);
+      doc.text("(B.Arch)", pageWidth - 15, 19, { align: "right" });
+      doc.text("Regi. No.- CA/18/98236", pageWidth - 15, 23, { align: "right" });
+      doc.text("Email- premchak24@gmail.com", pageWidth - 15, 27, { align: "right" });
+
+      doc.setDrawColor(0, 0, 0);
+      doc.setLineWidth(0.2);
+      doc.line(15, 35, pageWidth - 15, 35);
     };
 
     addHeader();
 
     // --- TITLE ---
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(16);
-    doc.setTextColor(44, 62, 80);
-    doc.text("ESTIMATE / PROPOSAL", pageWidth / 2, 52, { align: "center" });
-    doc.setDrawColor(44, 62, 80);
-    doc.setLineWidth(0.5);
-    doc.line(pageWidth / 2 - 30, 54, pageWidth / 2 + 30, 54);
+    doc.setFontSize(12);
+    doc.setTextColor(0, 0, 0);
+    doc.text("ESTIMATE / PROPOSAL", pageWidth / 2, 45, { align: "center" });
 
     // --- PROJECT DETAILS TABLE ---
     autoTable(doc, {
-      startY: 62,
+      startY: 50,
       theme: "grid",
-      head: [[{ content: "Project Summary & Details", colSpan: 4, styles: { halign: "left", fillColor: [44, 62, 80], fontSize: 11 } }]],
+      head: [[{ content: "Project Details", colSpan: 4, styles: { halign: "left", fillColor: [240, 240, 240], textColor: [0, 0, 0], fontStyle: "bold" } }]],
       body: [
         ["Project Title:", { content: form.projectTitle || "-", styles: { fontStyle: "bold" } }, "Owner Name:", form.ownerName || "-"],
         ["Location:", form.location || "-", "Plot Area:", form.plotArea ? `${form.plotArea} Sq.Ft` : "-"],
-        ["Estimated Amount:", { content: `₹ ${total.toLocaleString("en-IN")}`, colSpan: 3, styles: { fontStyle: "bold", textColor: [183, 39, 106] } }],
+        ["Total Estimated Amount:", { content: `₹ ${total.toLocaleString("en-IN")}`, colSpan: 3, styles: { fontStyle: "bold" } }],
       ],
-      styles: { fontSize: 10, cellPadding: 4 },
-      headStyles: { fillColor: [44, 62, 80], textColor: [255, 255, 255] },
-      columnStyles: {
-        0: { fillColor: [245, 245, 245], cellWidth: 35 },
-        1: { cellWidth: 60 },
-        2: { fillColor: [245, 245, 245], cellWidth: 35 },
-        3: { cellWidth: 60 },
-      },
+      styles: { fontSize: 9, cellPadding: 3, textColor: [0, 0, 0] },
+      headStyles: { lineWidth: 0.1, lineColor: [0, 0, 0] },
     });
 
     let currentY = doc.lastAutoTable.finalY + 10;
@@ -224,15 +221,14 @@ export default function EstimatePage() {
     // --- OVERALL DESCRIPTION ---
     if (form.description) {
       doc.setFont("helvetica", "bold");
-      doc.setFontSize(11);
-      doc.setTextColor(0, 0, 0);
-      doc.text("Project Description:", 15, currentY);
-
-      doc.setFont("helvetica", "normal");
       doc.setFontSize(10);
+      doc.text("Project Description / Introduction:", 15, currentY);
+      
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(9);
       const splitDesc = doc.splitTextToSize(form.description, pageWidth - 30);
-      doc.text(splitDesc, 15, currentY + 7);
-      currentY += (splitDesc.length * 5) + 12;
+      doc.text(splitDesc, 15, currentY + 6);
+      currentY += (splitDesc.length * 4.5) + 10;
     }
 
     // --- ITEMS TABLE ---
@@ -247,18 +243,18 @@ export default function EstimatePage() {
 
     autoTable(doc, {
       startY: currentY,
-      theme: "striped",
+      theme: "grid",
       head: [["S.No", "Description", "Qty", "Unit", "Rate (₹)", "Amount (₹)"]],
       body: tableData,
-      headStyles: { fillColor: [44, 62, 80], textColor: [255, 255, 255], fontStyle: "bold" },
-      styles: { fontSize: 9, cellPadding: 4 },
+      headStyles: { fillColor: [240, 240, 240], textColor: [0, 0, 0], fontStyle: "bold", lineWidth: 0.1 },
+      styles: { fontSize: 8.5, cellPadding: 3, textColor: [0, 0, 0] },
       columnStyles: {
-        0: { cellWidth: 15 },
+        0: { cellWidth: 12 },
         1: { cellWidth: "auto" },
-        2: { cellWidth: 20, halign: "center" },
-        3: { cellWidth: 20, halign: "center" },
-        4: { cellWidth: 25, halign: "right" },
-        5: { cellWidth: 30, halign: "right" },
+        2: { cellWidth: 15, halign: "center" },
+        3: { cellWidth: 15, halign: "center" },
+        4: { cellWidth: 22, halign: "right" },
+        5: { cellWidth: 25, halign: "right" },
       },
       didDrawPage: (data) => {
         if (data.pageNumber > 1) {
@@ -269,24 +265,21 @@ export default function EstimatePage() {
 
     // --- SUMMARY ---
     const finalY = doc.lastAutoTable.finalY;
-    doc.setFillColor(245, 245, 245);
-    doc.rect(pageWidth - 85, finalY + 5, 70, 15, "F");
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(12);
-    doc.setTextColor(183, 39, 106);
-    doc.text(`GRAND TOTAL:  ₹ ${total.toLocaleString("en-IN")}`, pageWidth - 15, finalY + 15, { align: "right" });
+    doc.setFontSize(11);
+    doc.setTextColor(0, 0, 0);
+    doc.text(`GRAND TOTAL:  ₹ ${total.toLocaleString("en-IN")}`, pageWidth - 15, finalY + 12, { align: "right" });
 
     // --- NOTES SECTION ---
     if (form.notes) {
       doc.setFont("helvetica", "bold");
-      doc.setFontSize(11);
-      doc.setTextColor(0, 0, 0);
-      doc.text("Notes / Terms & Conditions:", 15, finalY + 30);
-
-      doc.setFont("helvetica", "normal");
       doc.setFontSize(10);
+      doc.text("Notes / Terms & Conditions:", 15, finalY + 25);
+      
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(9);
       const splitNotes = doc.splitTextToSize(form.notes, pageWidth - 30);
-      doc.text(splitNotes, 15, finalY + 37);
+      doc.text(splitNotes, 15, finalY + 31);
     }
 
     // --- FOOTER ---
@@ -314,11 +307,26 @@ export default function EstimatePage() {
         </MDBox>
 
         {/* ================= PROJECT DETAILS ================= */}
-        <Card sx={{ p: 3, mb: 3 }}>
-          <MDTypography variant="h6" fontWeight="bold" mb={2}>
-            Estimate Configuration
-          </MDTypography>
-          <Divider sx={{ my: 2 }} />
+        <Card sx={{ mb: 3, overflow: "visible" }}>
+          <MDBox
+            variant="gradient"
+            bgcolor="info"
+            borderRadius="lg"
+            coloredShadow="info"
+            mx={2}
+            mt={-3}
+            p={3}
+            mb={1}
+            textAlign="center"
+          >
+            <MDTypography variant="h4" fontWeight="medium" color="white">
+              Estimate Configuration
+            </MDTypography>
+            <MDTypography display="block" variant="button" color="white" my={1}>
+              Define your project scope and general details
+            </MDTypography>
+          </MDBox>
+          <MDBox p={3}>
 
           <Grid container spacing={3}>
             {/* INTRO FIRST */}
@@ -373,13 +381,43 @@ export default function EstimatePage() {
               />
             </Grid>
           </Grid>
+          </MDBox>
         </Card>
 
         {/* ================= ESTIMATE ITEMS ================= */}
-        <Card sx={{ p: { xs: 2, md: 3 } }}>
-          <MDTypography variant="h6" fontWeight="bold" mb={3}>
-            Estimate Items
-          </MDTypography>
+        <Card sx={{ mb: 3, overflow: "visible" }}>
+          <MDBox
+            variant="gradient"
+            bgcolor="success"
+            borderRadius="lg"
+            coloredShadow="success"
+            mx={2}
+            mt={-3}
+            p={2}
+            mb={1}
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+          >
+            <MDBox>
+              <MDTypography variant="h6" color="white" fontWeight="bold">
+                Estimate Items
+              </MDTypography>
+              <MDTypography variant="button" color="white" fontWeight="regular">
+                List of materials, services, and rates
+              </MDTypography>
+            </MDBox>
+            <Button 
+              variant="contained" 
+              color="white" 
+              startIcon={<AddCircleIcon />} 
+              onClick={addRow}
+              sx={{ color: (theme) => theme.palette.success.main }}
+            >
+              Add New Item
+            </Button>
+          </MDBox>
+          <MDBox p={3}>
 
           {/* TABLE HEADER (HIDDEN ON MOBILE) */}
           <Box sx={{ display: { xs: "none", md: "block" }, mb: 2 }}>
@@ -400,9 +438,15 @@ export default function EstimatePage() {
               mb={2}
               p={2}
               sx={{
-                border: { xs: "1px solid #eee", md: "none" },
-                borderRadius: 2,
-                background: { xs: "#fafafa", md: "transparent" }
+                border: "1px solid #f0f2f5",
+                borderRadius: "10px",
+                background: i % 2 === 0 ? "#ffffff" : "#f8f9fa",
+                transition: "all 0.3s ease",
+                "&:hover": {
+                  boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
+                  borderColor: (theme) => theme.palette.info.main,
+                  transform: "translateY(-2px)"
+                }
               }}
             >
               <Grid container spacing={2} alignItems="center">
@@ -451,23 +495,28 @@ export default function EstimatePage() {
             </MDBox>
           ))}
 
-          <MDBox mt={2}>
-            <Button variant="gradient" color="info" startIcon={<AddIcon />} onClick={addRow}>
+          <MDBox mt={2} display="flex" justifyContent="space-between" alignItems="center">
+            <MDTypography variant="button" color="text" fontWeight="regular">
+              Total items: {items.length}
+            </MDTypography>
+            <Button variant="gradient" color="success" startIcon={<AddIcon />} onClick={addRow}>
               Add Item
             </Button>
           </MDBox>
 
-          <MDBox textAlign="right" mt={3} p={2} bgcolor="#f8f9fa" borderRadius={2}>
-            <MDTypography variant="h5" fontWeight="bold" color="dark">
-              Total Estimate: ₹ {total.toLocaleString("en-IN")}
+          <MDBox textAlign="right" mt={3} p={2} variant="gradient" bgcolor="light" borderRadius="lg">
+            <MDTypography variant="h4" fontWeight="bold" color="dark">
+              Grand Total: <span style={{ color: "#2e7d32" }}>₹ {total.toLocaleString("en-IN")}</span>
             </MDTypography>
+          </MDBox>
           </MDBox>
         </Card>
 
         {/* ================= NOTES ================= */}
-        <Card sx={{ p: 3, mt: 3 }}>
+        <Card sx={{ mt: 3 }}>
+          <MDBox p={3}>
           <MDTypography variant="h6" fontWeight="bold">Notes / Terms & Conditions</MDTypography>
-          <Divider sx={{ my: 2 }} />
+          <Divider sx={{ my: 1 }} />
           <TextField
             fullWidth
             multiline
@@ -476,31 +525,52 @@ export default function EstimatePage() {
             value={form.notes}
             onChange={(e) => setForm({ ...form, notes: e.target.value })}
           />
+          </MDBox>
         </Card>
 
-        {/* ================= ACTIONS ================= */}
         <MDBox mt={4} display="flex" flexDirection={{ xs: "column", sm: "row" }} gap={2}>
           <Button
             variant="gradient"
-            color={editId ? "warning" : "success"}
+            color={editId ? "warning" : "info"}
             size="large"
             onClick={saveEstimate}
             fullWidth
-            sx={{ borderRadius: 2, py: 1.5, fontSize: "1rem" }}
+            startIcon={<SaveIcon />}
+            sx={{ borderRadius: "12px", py: 1.5, fontSize: "1rem" }}
           >
             {editId ? "Update Estimate" : "Save Estimate"}
           </Button>
 
           <Button
             variant="gradient"
-            color="info"
+            color="dark"
             size="large"
             onClick={generatePDF}
             fullWidth
-            sx={{ borderRadius: 2, py: 1.5, fontSize: "1rem" }}
+            startIcon={<PictureAsPdfIcon />}
+            sx={{ borderRadius: "12px", py: 1.5, fontSize: "1rem" }}
           >
-            Generate PDF
+            Download PDF
           </Button>
+
+          {editId && (
+            <Button
+              variant="outlined"
+              color="error"
+              size="large"
+              startIcon={<CloseIcon />}
+              onClick={() => {
+                setEditId(null);
+                setForm({ projectTitle: "", ownerName: "", location: "", plotArea: "", notes: "", description: "" });
+                setItems([{ sno: 1, desc: "", qty: "", unit: "", rate: "" }]);
+              }}
+              fullWidth
+              sx={{ borderRadius: "12px" }}
+            >
+              Cancel
+            </Button>
+          )}
+        </MDBox>
 
           {editId && (
             <Button
@@ -520,10 +590,22 @@ export default function EstimatePage() {
         </MDBox>
 
         {/* ================= SAVED ESTIMATES ================= */}
-        <MDBox mt={6}>
-          <Card>
-            <MDBox p={3} display="flex" justifyContent="space-between" alignItems="center">
-              <MDTypography variant="h5" fontWeight="bold">Saved Estimates</MDTypography>
+        <MDBox mt={8}>
+          <Card sx={{ overflow: "visible" }}>
+            <MDBox
+              variant="gradient"
+              bgcolor="primary"
+              borderRadius="lg"
+              coloredShadow="primary"
+              mx={2}
+              mt={-3}
+              p={3}
+              mb={1}
+              textAlign="center"
+            >
+              <MDTypography variant="h5" fontWeight="medium" color="white">
+                Saved Estimates Records
+              </MDTypography>
             </MDBox>
             <MDBox pb={3}>
               <DataTable
@@ -538,8 +620,12 @@ export default function EstimatePage() {
                       accessor: "actions",
                       Cell: ({ row }) => (
                         <MDBox display="flex" gap={1}>
-                          <Button variant="text" color="info" size="small" onClick={() => handleEdit(row.original)}>Edit</Button>
-                          <Button variant="text" color="error" size="small" onClick={() => deleteEstimate(row.original._id)}>Delete</Button>
+                          <IconButton color="info" onClick={() => handleEdit(row.original)} title="Edit">
+                            <EditIcon />
+                          </IconButton>
+                          <IconButton color="error" onClick={() => deleteEstimate(row.original._id)} title="Delete">
+                            <DeleteIcon />
+                          </IconButton>
                         </MDBox>
                       ),
                     },
