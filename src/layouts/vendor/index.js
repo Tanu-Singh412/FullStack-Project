@@ -191,7 +191,7 @@ function VendorHome() {
         </Box>
 
         {/* ========== STATS ROW ========== */}
-        <Grid container spacing={3} sx={{ mb: 4 }}>
+        <Grid container spacing={3} sx={{ mb: 4, textAlign : center }}>
           {[
             { label: "Total Categories", value: categories.length, color: "#f97316", bg: "#fff7ed", icon: <CategoryIcon /> },
             { label: "Active Suppliers", value: categories.length * 3 + "+", color: "#2563eb", bg: "#eff6ff", icon: <StorefrontIcon /> },
