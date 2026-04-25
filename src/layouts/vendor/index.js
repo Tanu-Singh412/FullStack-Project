@@ -191,30 +191,66 @@ function VendorHome() {
         </Box>
 
         {/* ========== STATS ROW ========== */}
-        <Grid container spacing={3} sx={{ mb: 4, textAlign : center }}>
-          {[
-            { label: "Total Categories", value: categories.length, color: "#f97316", bg: "#fff7ed", icon: <CategoryIcon /> },
-            { label: "Active Suppliers", value: categories.length * 3 + "+", color: "#2563eb", bg: "#eff6ff", icon: <StorefrontIcon /> },
-            { label: "Verified Vendors", value: categories.length * 2 + "+", color: "#16a34a", bg: "#f0fdf4", icon: <AddBusinessIcon /> },
-          ].map((s, i) => (
-            <Grid item xs={12} md={4} key={i}>
-              <Card sx={{
-                p: 3, borderRadius: 4,
-                background: s.bg,
-                border: `2px solid ${s.color}22`,
-                boxShadow: `0 4px 20px ${s.color}15`,
-                display: "flex", alignItems: "center", gap: 2,
-              }}>
-                <Box sx={{ bgcolor: s.color, borderRadius: 3, p: 1.5, color: "#fff", display: "flex" }}>{s.icon}</Box>
-                <Box>
-                  <Typography variant="h4" fontWeight="900" sx={{ color: s.color, lineHeight: 1 }}>{s.value}</Typography>
-                  <Typography variant="caption" fontWeight="bold" sx={{ color: "#64748b", textTransform: "uppercase", letterSpacing: 0.5 }}>{s.label}</Typography>
-                </Box>
-              </Card>
-            </Grid>
-          ))}
-        </Grid>
+<Grid container spacing={3} sx={{ mb: 4 }}>
+  {[
+    { label: "Total Categories", value: categories.length, color: "#f97316", bg: "#fff7ed", icon: <CategoryIcon /> },
+    { label: "Active Suppliers", value: categories.length * 3 + "+", color: "#2563eb", bg: "#eff6ff", icon: <StorefrontIcon /> },
+    { label: "Verified Vendors", value: categories.length * 2 + "+", color: "#16a34a", bg: "#f0fdf4", icon: <AddBusinessIcon /> },
+  ].map((s, i) => (
+    <Grid item xs={12} md={4} key={i}>
+      <Card
+        sx={{
+          p: 3,
+          borderRadius: 4,
+          background: s.bg,
+          border: `2px solid ${s.color}22`,
+          boxShadow: `0 4px 20px ${s.color}15`,
+          display: "flex",
+          flexDirection: "column",        // stack items
+          alignItems: "center",           // horizontal center
+          justifyContent: "center",       // vertical center
+          textAlign: "center",            // center text
+          gap: 1.5,
+          height: "100%",                 // equal height cards
+        }}
+      >
+        <Box
+          sx={{
+            bgcolor: s.color,
+            borderRadius: 3,
+            p: 1.5,
+            color: "#fff",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          {s.icon}
+        </Box>
 
+        <Typography
+          variant="h4"
+          fontWeight="900"
+          sx={{ color: s.color, lineHeight: 1 }}
+        >
+          {s.value}
+        </Typography>
+
+        <Typography
+          variant="caption"
+          fontWeight="bold"
+          sx={{
+            color: "#64748b",
+            textTransform: "uppercase",
+            letterSpacing: 0.5,
+          }}
+        >
+          {s.label}
+        </Typography>
+      </Card>
+    </Grid>
+  ))}
+</Grid>
         {/* ========== CATEGORY GRID ========== */}
         {categories.length === 0 ? (
           <Box sx={{ py: 10, textAlign: "center" }}>
