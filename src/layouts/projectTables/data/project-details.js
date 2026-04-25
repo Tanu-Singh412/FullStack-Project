@@ -646,11 +646,11 @@ function ProjectDetails() {
                         <MDTypography variant="caption" sx={{ color: "rgba(255,255,255,0.85)", display: "block" }}>
                           {desc}
                         </MDTypography>
-                        {pdfSupport && (
+                        {/* {pdfSupport && (
                           <Box sx={{ mt: 1, display: "inline-block", bgcolor: "rgba(255,255,255,0.2)", px: 2, py: 0.3, borderRadius: 10 }}>
                             <MDTypography variant="caption" sx={{ color: "#fff", fontWeight: "bold" }}>📄 PDF Upload Supported</MDTypography>
                           </Box>
-                        )}
+                        )} */}
                       </Box>
                       {/* Buttons */}
                       <Box sx={{ p: 3, display: "flex", gap: 2, bgcolor: "#fff" }}>
