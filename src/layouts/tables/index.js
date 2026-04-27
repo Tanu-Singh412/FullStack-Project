@@ -57,7 +57,7 @@ function Tables() {
                     borderRadius: "12px", textTransform: "none", fontWeight: "bold",
                     px: 3, py: 1.2,
                     background: "#fff",
-                    color: "#f97316",
+                    color: "#1976d2",
                     boxShadow: "0 6px 20px rgba(0,0,0,0.15)",
                     "&:hover": { background: "#fff7ed", transform: "translateY(-2px)", boxShadow: "0 10px 25px rgba(0,0,0,0.2)" },
                     transition: "all 0.25s",
