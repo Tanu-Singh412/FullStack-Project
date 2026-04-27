@@ -218,12 +218,22 @@ const [search, setSearch] = useState("");
 
   // EFFECTS
 useEffect(() => {
-  const filtered = clients.filter((c) =>
-    c.name?.toLowerCase().includes(search.toLowerCase())
-  );
+  const handleSearch = (e) => {
+    const query = e.detail.query.toLowerCase();
 
-  setRows(formatRows(filtered));
-}, [clients, search]);
+    const filtered = clients.filter((c) =>
+      `${c.name} ${c.phone} ${c.email}`
+        .toLowerCase()
+        .includes(query)
+    );
+
+    setRows(formatRows(filtered));
+  };
+
+  window.addEventListener("searchChanged", handleSearch);
+
+  return () => window.removeEventListener("searchChanged", handleSearch);
+}, [clients]);
 
   useEffect(() => {
     loadData();
