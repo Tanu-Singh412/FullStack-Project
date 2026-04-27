@@ -16,6 +16,7 @@ import {
   Paper,
   Tooltip,
   InputAdornment,
+  Icon,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -62,7 +63,7 @@ export default function EstimatePage() {
   const [estimates, setEstimates] = useState([]);
   const [loading, setLoading] = useState(false);
   const [editId, setEditId] = useState(null);
-const [search, setSearch] = useState("");
+  const [search, setSearch] = useState("");
   /* ================= FETCH ALL ================= */
   const loadEstimates = async () => {
     setLoading(true);
@@ -98,17 +99,23 @@ const [search, setSearch] = useState("");
 
   /* ================= DELETE ROW ================= */
   const deleteRow = (i) => {
-    const updated = items.filter((_, index) => index !== i).map((item, idx) => ({
-      ...item,
-      sno: idx + 1
-    }));
-    setItems(updated.length > 0 ? updated : [{ sno: 1, desc: "", qty: "", unit: "", rate: "" }]);
+    const updated = items
+      .filter((_, index) => index !== i)
+      .map((item, idx) => ({
+        ...item,
+        sno: idx + 1,
+      }));
+    setItems(
+      updated.length > 0
+        ? updated
+        : [{ sno: 1, desc: "", qty: "", unit: "", rate: "" }],
+    );
   };
 
   /* ================= TOTAL ================= */
   const total = items.reduce(
     (sum, i) => sum + Number(i.qty || 0) * Number(i.rate || 0),
-    0
+    0,
   );
 
   /* ================= SAVE / UPDATE ================= */
@@ -126,7 +133,14 @@ const [search, setSearch] = useState("");
       if (res.ok) {
         alert(editId ? "Updated Successfully" : "Saved Successfully");
         setEditId(null);
-        setForm({ projectTitle: "", ownerName: "", location: "", plotArea: "", notes: "", description: "" });
+        setForm({
+          projectTitle: "",
+          ownerName: "",
+          location: "",
+          plotArea: "",
+          notes: "",
+          description: "",
+        });
         setItems([{ sno: 1, desc: "", qty: "", unit: "", rate: "" }]);
         loadEstimates();
       } else {
@@ -140,7 +154,8 @@ const [search, setSearch] = useState("");
 
   /* ================= DELETE ================= */
   const deleteEstimate = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this estimate?")) return;
+    if (!window.confirm("Are you sure you want to delete this estimate?"))
+      return;
     try {
       const res = await fetch(`${API}/${id}`, { method: "DELETE" });
       if (res.ok) {
@@ -165,39 +180,59 @@ const [search, setSearch] = useState("");
     setItems(est.items || [{ sno: 1, desc: "", qty: "", unit: "", rate: "" }]);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
-const filteredEstimates = estimates.filter((est) =>
-  `${est.projectTitle} ${est.ownerName} ${est.totalEstimate}`
-    .toLowerCase()
-    .includes(search.toLowerCase())
-);
+  const filteredEstimates = estimates.filter((est) =>
+    `${est.projectTitle} ${est.ownerName} ${est.totalEstimate}`
+      .toLowerCase()
+      .includes(search.toLowerCase()),
+  );
   /* ================= PDF ================= */
-  const generatePDF = () => {
+  const generatePDF = (est = null) => {
+    const data = est || {
+      ...form,
+      items,
+      totalEstimate: total,
+    };
     const doc = new jsPDF();
     const pageWidth = doc.internal.pageSize.getWidth();
 
     const addHeader = () => {
       try {
         doc.addImage("/logo.png", "PNG", 15, 10, 22, 22);
-      } catch (e) { console.error(e); }
+      } catch (e) {
+        console.error(e);
+      }
 
       doc.setFont("helvetica", "bold");
       doc.setFontSize(14);
       doc.setTextColor(0, 0, 0); // Explicit black
-      doc.text("D DESIGN ARCHITECTS STUDIO", pageWidth / 2, 15, { align: "center" });
+      doc.text("D DESIGN ARCHITECTS STUDIO", pageWidth / 2, 15, {
+        align: "center",
+      });
 
       doc.setFont("helvetica", "normal");
       doc.setFontSize(9);
       doc.setTextColor(0, 0, 0);
-      doc.text("Architects, Interior Designers, Planners.", pageWidth / 2, 20, { align: "center" });
-      doc.text("Block No.C-12, Shop No. F-6, Sanjay Place, Agra. 282002", pageWidth / 2, 24, { align: "center" });
+      doc.text("Architects, Interior Designers, Planners.", pageWidth / 2, 20, {
+        align: "center",
+      });
+      doc.text(
+        "Block No.C-12, Shop No. F-6, Sanjay Place, Agra. 282002",
+        pageWidth / 2,
+        24,
+        { align: "center" },
+      );
 
       doc.setFont("helvetica", "bold");
       doc.setFontSize(10);
       doc.text("AR. PREMVEER SINGH", pageWidth - 15, 15, { align: "right" });
       doc.setFont("helvetica", "normal");
       doc.setFontSize(8);
-      doc.text("(B.Arch), Regi. No.- CA/18/98236", pageWidth - 15, 20, { align: "right" });
-      doc.text("Email- premchak24@gmail.com", pageWidth - 15, 24, { align: "right" });
+      doc.text("(B.Arch), Regi. No.- CA/18/98236", pageWidth - 15, 20, {
+        align: "right",
+      });
+      doc.text("Email- premchak24@gmail.com", pageWidth - 15, 24, {
+        align: "right",
+      });
 
       doc.setDrawColor(0, 0, 0);
       doc.line(15, 35, pageWidth - 15, 35);
@@ -213,11 +248,41 @@ const filteredEstimates = estimates.filter((est) =>
     autoTable(doc, {
       startY: 50,
       theme: "grid",
-      head: [[{ content: "Project Details", colSpan: 4, styles: { halign: "left", fillColor: [240, 240, 240], textColor: [0, 0, 0], fontStyle: "bold" } }]],
+      head: [
+        [
+          {
+            content: "Project Details",
+            colSpan: 4,
+            styles: {
+              halign: "left",
+              fillColor: [240, 240, 240],
+              textColor: [0, 0, 0],
+              fontStyle: "bold",
+            },
+          },
+        ],
+      ],
       body: [
-        ["Project Title:", { content: form.projectTitle || "-", styles: { fontStyle: "bold" } }, "Owner Name:", form.ownerName || "-"],
-        ["Location:", form.location || "-", "Plot Area:", form.plotArea ? `${form.plotArea} Sq.Ft` : "-"],
-        ["Total Estimated Amount:", { content: `Rs. ${total.toLocaleString("en-IN")}`, colSpan: 3, styles: { fontStyle: "bold" } }],
+        [
+          "Project Title:",
+          { content: form.projectTitle || "-", styles: { fontStyle: "bold" } },
+          "Owner Name:",
+          form.ownerName || "-",
+        ],
+        [
+          "Location:",
+          form.location || "-",
+          "Plot Area:",
+          form.plotArea ? `${form.plotArea} Sq.Ft` : "-",
+        ],
+        [
+          "Total Estimated Amount:",
+          {
+            content: `Rs. ${total.toLocaleString("en-IN")}`,
+            colSpan: 3,
+            styles: { fontStyle: "bold" },
+          },
+        ],
       ],
       styles: { fontSize: 9, textColor: [0, 0, 0], lineColor: [200, 200, 200] },
     });
@@ -233,7 +298,7 @@ const filteredEstimates = estimates.filter((est) =>
       doc.setFontSize(9);
       const splitDesc = doc.splitTextToSize(form.description, pageWidth - 30);
       doc.text(splitDesc, 15, currentY + 6);
-      currentY += (splitDesc.length * 4.5) + 10;
+      currentY += splitDesc.length * 4.5 + 10;
     }
 
     const tableData = items.map((row) => [
@@ -250,14 +315,27 @@ const filteredEstimates = estimates.filter((est) =>
       theme: "grid",
       head: [["No.", "Description", "Qty", "Unit", "Rate (Rs)", "Amount (Rs)"]],
       body: tableData,
-      headStyles: { fillColor: [50, 50, 50], textColor: [255, 255, 255], fontStyle: "bold" },
-      styles: { fontSize: 8.5, textColor: [0, 0, 0], lineColor: [200, 200, 200] },
+      headStyles: {
+        fillColor: [50, 50, 50],
+        textColor: [255, 255, 255],
+        fontStyle: "bold",
+      },
+      styles: {
+        fontSize: 8.5,
+        textColor: [0, 0, 0],
+        lineColor: [200, 200, 200],
+      },
     });
 
     const finalY = doc.lastAutoTable.finalY;
     doc.setFont("helvetica", "bold");
     doc.setTextColor(0, 0, 0);
-    doc.text(`GRAND TOTAL: Rs. ${total.toLocaleString("en-IN")}`, pageWidth - 20, finalY + 12, { align: "right" });
+    doc.text(
+      `GRAND TOTAL: Rs. ${total.toLocaleString("en-IN")}`,
+      pageWidth - 20,
+      finalY + 12,
+      { align: "right" },
+    );
 
     if (form.notes) {
       doc.text("Notes:", 15, finalY + 25);
@@ -273,45 +351,120 @@ const filteredEstimates = estimates.filter((est) =>
     <DashboardLayout>
       <DashboardNavbar />
 
-      <MDBox pt={6} pb={3} px={3} sx={{ backgroundColor: "#f0f2f5", minHeight: "100vh" }}>
+      <MDBox
+        pt={6}
+        pb={3}
+        px={3}
+        sx={{ backgroundColor: "#f0f2f5", minHeight: "100vh" }}
+      >
         <Grid container spacing={3}>
-          
           {/* ================= QUICK STATS (COLORFUL) ================= */}
           <Grid item xs={12} md={4}>
-            <Card sx={{ p: 2, borderRadius: "16px", background: "linear-gradient(135deg, #1A73E8 0%, #0d47a1 100%)", boxShadow: "0 10px 20px rgba(26, 115, 232, 0.2)" }}>
+            <Card
+              sx={{
+                p: 2,
+                borderRadius: "16px",
+                background: "linear-gradient(135deg, #1A73E8 0%, #0d47a1 100%)",
+                boxShadow: "0 10px 20px rgba(26, 115, 232, 0.2)",
+              }}
+            >
               <MDBox display="flex" alignItems="center" gap={2}>
-                <MDBox bgcolor="rgba(255,255,255,0.2)" color="white" borderRadius="lg" p={2}>
+                <MDBox
+                  bgcolor="rgba(255,255,255,0.2)"
+                  color="white"
+                  borderRadius="lg"
+                  p={2}
+                >
                   <AssignmentIcon fontSize="medium" />
                 </MDBox>
                 <Box>
-                  <MDTypography variant="caption" fontWeight="bold" color="white" sx={{ textTransform: "uppercase", opacity: 0.8 }}>Total Estimates</MDTypography>
-                  <MDTypography variant="h4" fontWeight="bold" color="white">{estimates.length}</MDTypography>
+                  <MDTypography
+                    variant="caption"
+                    fontWeight="bold"
+                    color="white"
+                    sx={{ textTransform: "uppercase", opacity: 0.8 }}
+                  >
+                    Total Estimates
+                  </MDTypography>
+                  <MDTypography variant="h4" fontWeight="bold" color="white">
+                    {estimates.length}
+                  </MDTypography>
                 </Box>
               </MDBox>
             </Card>
           </Grid>
           <Grid item xs={12} md={4}>
-            <Card sx={{ p: 2, borderRadius: "16px", background: "linear-gradient(135deg, #4CAF50 0%, #1b5e20 100%)", boxShadow: "0 10px 20px rgba(76, 175, 80, 0.2)" }}>
+            <Card
+              sx={{
+                p: 2,
+                borderRadius: "16px",
+                background: "linear-gradient(135deg, #4CAF50 0%, #1b5e20 100%)",
+                boxShadow: "0 10px 20px rgba(76, 175, 80, 0.2)",
+              }}
+            >
               <MDBox display="flex" alignItems="center" gap={2}>
-                <MDBox bgcolor="rgba(255,255,255,0.2)" color="white" borderRadius="lg" p={2}>
+                <MDBox
+                  bgcolor="rgba(255,255,255,0.2)"
+                  color="white"
+                  borderRadius="lg"
+                  p={2}
+                >
                   <BusinessIcon fontSize="medium" />
                 </MDBox>
                 <Box>
-                  <MDTypography variant="caption" fontWeight="bold" color="white" sx={{ textTransform: "uppercase", opacity: 0.8 }}>Pipeline Value</MDTypography>
-                  <MDTypography variant="h4" fontWeight="bold" color="white">Rs. {total.toLocaleString("en-IN")}</MDTypography>
+                  <MDTypography
+                    variant="caption"
+                    fontWeight="bold"
+                    color="white"
+                    sx={{ textTransform: "uppercase", opacity: 0.8 }}
+                  >
+                    Pipeline Value
+                  </MDTypography>
+                  <MDTypography variant="h4" fontWeight="bold" color="white">
+                    Rs. {total.toLocaleString("en-IN")}
+                  </MDTypography>
                 </Box>
               </MDBox>
             </Card>
           </Grid>
           <Grid item xs={12} md={4}>
-            <Card sx={{ p: 2, borderRadius: "16px", background: "linear-gradient(135deg, #FF9800 0%, #e65100 100%)", boxShadow: "0 10px 20px rgba(255, 152, 0, 0.2)" }}>
+            <Card
+              sx={{
+                p: 2,
+                borderRadius: "16px",
+                background: "linear-gradient(135deg, #FF9800 0%, #e65100 100%)",
+                boxShadow: "0 10px 20px rgba(255, 152, 0, 0.2)",
+              }}
+            >
               <MDBox display="flex" alignItems="center" gap={2}>
-                <MDBox bgcolor="rgba(255,255,255,0.2)" color="white" borderRadius="lg" p={2}>
+                <MDBox
+                  bgcolor="rgba(255,255,255,0.2)"
+                  color="white"
+                  borderRadius="lg"
+                  p={2}
+                >
                   <AspectRatioIcon fontSize="medium" />
                 </MDBox>
                 <Box>
-                  <MDTypography variant="caption" fontWeight="bold" color="white" sx={{ textTransform: "uppercase", opacity: 0.8 }}>Avg. Size</MDTypography>
-                  <MDTypography variant="h4" fontWeight="bold" color="white">Rs. {estimates.length ? Math.round(estimates.reduce((s, e) => s + (e.totalEstimate || 0), 0) / estimates.length).toLocaleString("en-IN") : 0}</MDTypography>
+                  <MDTypography
+                    variant="caption"
+                    fontWeight="bold"
+                    color="white"
+                    sx={{ textTransform: "uppercase", opacity: 0.8 }}
+                  >
+                    Avg. Size
+                  </MDTypography>
+                  <MDTypography variant="h4" fontWeight="bold" color="white">
+                    Rs.{" "}
+                    {estimates.length
+                      ? Math.round(
+                          estimates.reduce(
+                            (s, e) => s + (e.totalEstimate || 0),
+                            0,
+                          ) / estimates.length,
+                        ).toLocaleString("en-IN")
+                      : 0}
+                  </MDTypography>
                 </Box>
               </MDBox>
             </Card>
@@ -319,17 +472,37 @@ const filteredEstimates = estimates.filter((est) =>
 
           {/* ================= ACTION HEADER (COLORFUL) ================= */}
           <Grid item xs={12}>
-            <MDBox 
-              display="flex" 
-              justifyContent="space-between" 
-              alignItems="center" 
-              p={3} 
-              sx={{ background: "linear-gradient(90deg, #1e293b 0%, #334155 100%)", borderRadius: "16px", boxShadow: "0 10px 30px rgba(0,0,0,0.1)" }}
+            <MDBox
+              display="flex"
+              justifyContent="space-between"
+              alignItems="center"
+              p={3}
+              sx={{
+                background: "linear-gradient(90deg, #1e293b 0%, #334155 100%)",
+                borderRadius: "16px",
+                boxShadow: "0 10px 30px rgba(0,0,0,0.1)",
+              }}
             >
-              <MDTypography variant="h4" fontWeight="bold" color="white">Estimate Studio</MDTypography>
+              <MDTypography variant="h4" fontWeight="bold" color="white">
+                Estimate Studio
+              </MDTypography>
               <MDBox display="flex" gap={2}>
-                <MDButton variant="gradient" color="light" startIcon={<PictureAsPdfIcon />} onClick={generatePDF}>Download PDF</MDButton>
-                <MDButton variant="gradient" color="info" startIcon={<SaveIcon />} onClick={saveEstimate}>Save Proposal</MDButton>
+                <MDButton
+                  variant="gradient"
+                  color="light"
+                  startIcon={<PictureAsPdfIcon />}
+                  onClick={generatePDF}
+                >
+                  Download PDF
+                </MDButton>
+                <MDButton
+                  variant="gradient"
+                  color="info"
+                  startIcon={<SaveIcon />}
+                  onClick={saveEstimate}
+                >
+                  Save Proposal
+                </MDButton>
               </MDBox>
             </MDBox>
           </Grid>
@@ -338,17 +511,47 @@ const filteredEstimates = estimates.filter((est) =>
           <Grid item xs={12} lg={4}>
             <Card sx={{ borderRadius: "16px", overflow: "hidden" }}>
               <MDBox p={3} sx={{ background: "#1e293b" }}>
-                <MDTypography variant="h6" fontWeight="bold" color="white">Project Scope</MDTypography>
+                <MDTypography variant="h6" fontWeight="bold" color="white">
+                  Project Scope
+                </MDTypography>
               </MDBox>
               <MDBox p={3} display="flex" flexDirection="column" gap={3}>
-                <TextField label="Project Title" fullWidth value={form.projectTitle} onChange={(e) => setForm({ ...form, projectTitle: e.target.value })}
-                  inputProps={{ style: { color: '#000', fontWeight: 600 } }} />
-                <TextField label="Owner Name" fullWidth value={form.ownerName} onChange={(e) => setForm({ ...form, ownerName: e.target.value })}
-                  inputProps={{ style: { color: '#000', fontWeight: 600 } }} />
-                <TextField label="Location" fullWidth value={form.location} onChange={(e) => setForm({ ...form, location: e.target.value })}
-                  inputProps={{ style: { color: '#000', fontWeight: 600 } }} />
-                <TextField label="Plot Area (Sq.Ft)" fullWidth value={form.plotArea} onChange={(e) => setForm({ ...form, plotArea: e.target.value })}
-                  inputProps={{ style: { color: '#000', fontWeight: 600 } }} />
+                <TextField
+                  label="Project Title"
+                  fullWidth
+                  value={form.projectTitle}
+                  onChange={(e) =>
+                    setForm({ ...form, projectTitle: e.target.value })
+                  }
+                  inputProps={{ style: { color: "#000", fontWeight: 600 } }}
+                />
+                <TextField
+                  label="Owner Name"
+                  fullWidth
+                  value={form.ownerName}
+                  onChange={(e) =>
+                    setForm({ ...form, ownerName: e.target.value })
+                  }
+                  inputProps={{ style: { color: "#000", fontWeight: 600 } }}
+                />
+                <TextField
+                  label="Location"
+                  fullWidth
+                  value={form.location}
+                  onChange={(e) =>
+                    setForm({ ...form, location: e.target.value })
+                  }
+                  inputProps={{ style: { color: "#000", fontWeight: 600 } }}
+                />
+                <TextField
+                  label="Plot Area (Sq.Ft)"
+                  fullWidth
+                  value={form.plotArea}
+                  onChange={(e) =>
+                    setForm({ ...form, plotArea: e.target.value })
+                  }
+                  inputProps={{ style: { color: "#000", fontWeight: 600 } }}
+                />
               </MDBox>
             </Card>
           </Grid>
@@ -356,20 +559,54 @@ const filteredEstimates = estimates.filter((est) =>
           {/* ================= RIGHT: TABLE ================= */}
           <Grid item xs={12} lg={8}>
             <Card sx={{ borderRadius: "16px", mb: 3, overflow: "hidden" }}>
-              <MDBox p={2} sx={{ background: "#f8f9fa", borderBottom: "1px solid #eee" }}>
-                <MDTypography variant="h6" fontWeight="bold" color="dark">Introduction</MDTypography>
+              <MDBox
+                p={2}
+                sx={{ background: "#f8f9fa", borderBottom: "1px solid #eee" }}
+              >
+                <MDTypography variant="h6" fontWeight="bold" color="dark">
+                  Introduction
+                </MDTypography>
               </MDBox>
               <MDBox p={3}>
-                <TextField fullWidth multiline rows={3} placeholder="Describe the project overview..." value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })}
-                  inputProps={{ style: { color: '#000' } }} />
+                <TextField
+                  fullWidth
+                  multiline
+                  rows={3}
+                  placeholder="Describe the project overview..."
+                  value={form.description}
+                  onChange={(e) =>
+                    setForm({ ...form, description: e.target.value })
+                  }
+                  inputProps={{ style: { color: "#000" } }}
+                />
               </MDBox>
             </Card>
 
             <Card sx={{ borderRadius: "16px", overflow: "hidden" }}>
-              <MDBox p={3} display="flex" justifyContent="space-between" alignItems="center" sx={{ background: "linear-gradient(90deg, #1A73E8, #0d47a1)", color: "#white" }}>
-                <MDTypography variant="h6" fontWeight="bold" color="white">Itemized Breakdown</MDTypography>
-                <MDBox sx={{ bgcolor: "rgba(255,255,255,0.2)", px: 2, py: 0.5, borderRadius: "10px" }}>
-                  <MDTypography variant="h5" fontWeight="bold" color="white">Total: Rs. {total.toLocaleString("en-IN")}</MDTypography>
+              <MDBox
+                p={3}
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+                sx={{
+                  background: "linear-gradient(90deg, #1A73E8, #0d47a1)",
+                  color: "#white",
+                }}
+              >
+                <MDTypography variant="h6" fontWeight="bold" color="white">
+                  Itemized Breakdown
+                </MDTypography>
+                <MDBox
+                  sx={{
+                    bgcolor: "rgba(255,255,255,0.2)",
+                    px: 2,
+                    py: 0.5,
+                    borderRadius: "10px",
+                  }}
+                >
+                  <MDTypography variant="h5" fontWeight="bold" color="white">
+                    Total: Rs. {total.toLocaleString("en-IN")}
+                  </MDTypography>
                 </MDBox>
               </MDBox>
               <MDBox p={0}>
@@ -377,44 +614,194 @@ const filteredEstimates = estimates.filter((est) =>
                   <Table>
                     <TableHead sx={{ display: "table-header-group" }}>
                       <TableRow>
-                        <TableCell sx={{ fontWeight: "bold", color: "#1e293b", bgcolor: "#f1f5f9", border: "1px solid #cbd5e1" }}>S.No</TableCell>
-                        <TableCell sx={{ fontWeight: "bold", color: "#1e293b", bgcolor: "#f1f5f9", width: "40%", border: "1px solid #cbd5e1" }}>Description</TableCell>
-                        <TableCell sx={{ fontWeight: "bold", color: "#1e293b", bgcolor: "#f1f5f9", textAlign: "center", border: "1px solid #cbd5e1" }}>Qty</TableCell>
-                        <TableCell sx={{ fontWeight: "bold", color: "#1e293b", bgcolor: "#f1f5f9", textAlign: "center", border: "1px solid #cbd5e1" }}>Unit</TableCell>
-                        <TableCell sx={{ fontWeight: "bold", color: "#1e293b", bgcolor: "#f1f5f9", textAlign: "right", border: "1px solid #cbd5e1" }}>Rate (Rs)</TableCell>
-                        <TableCell sx={{ fontWeight: "bold", color: "#1e293b", bgcolor: "#f1f5f9", textAlign: "right", border: "1px solid #cbd5e1" }}>Amount (Rs)</TableCell>
-                        <TableCell sx={{ bgcolor: "#f1f5f9", border: "1px solid #cbd5e1" }}></TableCell>
+                        <TableCell
+                          sx={{
+                            fontWeight: "bold",
+                            color: "#1e293b",
+                            bgcolor: "#f1f5f9",
+                            border: "1px solid #cbd5e1",
+                          }}
+                        >
+                          S.No
+                        </TableCell>
+                        <TableCell
+                          sx={{
+                            fontWeight: "bold",
+                            color: "#1e293b",
+                            bgcolor: "#f1f5f9",
+                            width: "40%",
+                            border: "1px solid #cbd5e1",
+                          }}
+                        >
+                          Description
+                        </TableCell>
+                        <TableCell
+                          sx={{
+                            fontWeight: "bold",
+                            color: "#1e293b",
+                            bgcolor: "#f1f5f9",
+                            textAlign: "center",
+                            border: "1px solid #cbd5e1",
+                          }}
+                        >
+                          Qty
+                        </TableCell>
+                        <TableCell
+                          sx={{
+                            fontWeight: "bold",
+                            color: "#1e293b",
+                            bgcolor: "#f1f5f9",
+                            textAlign: "center",
+                            border: "1px solid #cbd5e1",
+                          }}
+                        >
+                          Unit
+                        </TableCell>
+                        <TableCell
+                          sx={{
+                            fontWeight: "bold",
+                            color: "#1e293b",
+                            bgcolor: "#f1f5f9",
+                            textAlign: "right",
+                            border: "1px solid #cbd5e1",
+                          }}
+                        >
+                          Rate (Rs)
+                        </TableCell>
+                        <TableCell
+                          sx={{
+                            fontWeight: "bold",
+                            color: "#1e293b",
+                            bgcolor: "#f1f5f9",
+                            textAlign: "right",
+                            border: "1px solid #cbd5e1",
+                          }}
+                        >
+                          Amount (Rs)
+                        </TableCell>
+                        <TableCell
+                          sx={{
+                            bgcolor: "#f1f5f9",
+                            border: "1px solid #cbd5e1",
+                          }}
+                        ></TableCell>
                       </TableRow>
                     </TableHead>
                     <TableBody>
                       {items.map((row, i) => (
                         <TableRow key={i}>
-                          <TableCell sx={{ fontWeight: "bold", color: "#000", border: "1px solid #e2e8f0", textAlign: "center" }}>{row.sno}</TableCell>
-                          <TableCell sx={{ p: 1, border: "1px solid #e2e8f0" }}>
-                            <TextField fullWidth size="small" variant="standard" value={row.desc} onChange={(e) => handleChange(i, "desc", e.target.value)}
-                              InputProps={{ disableUnderline: true }}
-                              inputProps={{ style: { color: '#000', fontSize: '13px', padding: '8px' } }} />
+                          <TableCell
+                            sx={{
+                              fontWeight: "bold",
+                              color: "#000",
+                              border: "1px solid #e2e8f0",
+                              textAlign: "center",
+                            }}
+                          >
+                            {row.sno}
                           </TableCell>
                           <TableCell sx={{ p: 1, border: "1px solid #e2e8f0" }}>
-                            <TextField type="number" size="small" variant="standard" value={row.qty} onChange={(e) => handleChange(i, "qty", e.target.value)}
+                            <TextField
+                              fullWidth
+                              size="small"
+                              variant="standard"
+                              value={row.desc}
+                              onChange={(e) =>
+                                handleChange(i, "desc", e.target.value)
+                              }
                               InputProps={{ disableUnderline: true }}
-                              inputProps={{ style: { color: '#000', fontSize: '13px', textAlign: 'center', padding: '8px' } }} />
+                              inputProps={{
+                                style: {
+                                  color: "#000",
+                                  fontSize: "13px",
+                                  padding: "8px",
+                                },
+                              }}
+                            />
                           </TableCell>
                           <TableCell sx={{ p: 1, border: "1px solid #e2e8f0" }}>
-                            <TextField size="small" variant="standard" value={row.unit} onChange={(e) => handleChange(i, "unit", e.target.value)}
+                            <TextField
+                              type="number"
+                              size="small"
+                              variant="standard"
+                              value={row.qty}
+                              onChange={(e) =>
+                                handleChange(i, "qty", e.target.value)
+                              }
                               InputProps={{ disableUnderline: true }}
-                              inputProps={{ style: { color: '#000', fontSize: '13px', textAlign: 'center', padding: '8px' } }} />
+                              inputProps={{
+                                style: {
+                                  color: "#000",
+                                  fontSize: "13px",
+                                  textAlign: "center",
+                                  padding: "8px",
+                                },
+                              }}
+                            />
                           </TableCell>
                           <TableCell sx={{ p: 1, border: "1px solid #e2e8f0" }}>
-                            <TextField type="number" size="small" variant="standard" value={row.rate} onChange={(e) => handleChange(i, "rate", e.target.value)}
+                            <TextField
+                              size="small"
+                              variant="standard"
+                              value={row.unit}
+                              onChange={(e) =>
+                                handleChange(i, "unit", e.target.value)
+                              }
                               InputProps={{ disableUnderline: true }}
-                              inputProps={{ style: { color: '#000', fontSize: '13px', textAlign: 'right', padding: '8px' } }} />
+                              inputProps={{
+                                style: {
+                                  color: "#000",
+                                  fontSize: "13px",
+                                  textAlign: "center",
+                                  padding: "8px",
+                                },
+                              }}
+                            />
                           </TableCell>
-                          <TableCell sx={{ textAlign: "right", color: "#000", fontWeight: "bold", border: "1px solid #e2e8f0", pr: 2 }}>
+                          <TableCell sx={{ p: 1, border: "1px solid #e2e8f0" }}>
+                            <TextField
+                              type="number"
+                              size="small"
+                              variant="standard"
+                              value={row.rate}
+                              onChange={(e) =>
+                                handleChange(i, "rate", e.target.value)
+                              }
+                              InputProps={{ disableUnderline: true }}
+                              inputProps={{
+                                style: {
+                                  color: "#000",
+                                  fontSize: "13px",
+                                  textAlign: "right",
+                                  padding: "8px",
+                                },
+                              }}
+                            />
+                          </TableCell>
+                          <TableCell
+                            sx={{
+                              textAlign: "right",
+                              color: "#000",
+                              fontWeight: "bold",
+                              border: "1px solid #e2e8f0",
+                              pr: 2,
+                            }}
+                          >
                             {(row.qty * row.rate || 0).toLocaleString("en-IN")}
                           </TableCell>
-                          <TableCell sx={{ textAlign: "center", border: "1px solid #e2e8f0" }}>
-                            <IconButton color="error" onClick={() => deleteRow(i)} size="small"><DeleteIcon fontSize="small" /></IconButton>
+                          <TableCell
+                            sx={{
+                              textAlign: "center",
+                              border: "1px solid #e2e8f0",
+                            }}
+                          >
+                            <IconButton
+                              color="error"
+                              onClick={() => deleteRow(i)}
+                              size="small"
+                            >
+                              <DeleteIcon fontSize="small" />
+                            </IconButton>
                           </TableCell>
                         </TableRow>
                       ))}
@@ -422,104 +809,154 @@ const filteredEstimates = estimates.filter((est) =>
                   </Table>
                 </TableContainer>
                 <MDBox p={2} display="flex" justifyContent="center">
-                  <MDButton variant="outlined" color="info" startIcon={<AddCircleIcon />} onClick={addRow} sx={{ textTransform: "none" }}>Add Item</MDButton>
+                  <MDButton
+                    variant="outlined"
+                    color="info"
+                    startIcon={<AddCircleIcon />}
+                    onClick={addRow}
+                    sx={{ textTransform: "none" }}
+                  >
+                    Add Item
+                  </MDButton>
                 </MDBox>
               </MDBox>
             </Card>
 
-            <Card sx={{ mt: 3, borderRadius: "16px", borderLeft: "5px solid #1A73E8" }}>
+            <Card
+              sx={{
+                mt: 3,
+                borderRadius: "16px",
+                borderLeft: "5px solid #1A73E8",
+              }}
+            >
               <MDBox p={3}>
-                <MDTypography variant="h6" fontWeight="bold" color="dark" mb={1}>Notes / T&C</MDTypography>
-                <TextField fullWidth multiline rows={2} value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })}
-                  inputProps={{ style: { color: '#000' } }} />
+                <MDTypography
+                  variant="h6"
+                  fontWeight="bold"
+                  color="dark"
+                  mb={1}
+                >
+                  Notes / T&C
+                </MDTypography>
+                <TextField
+                  fullWidth
+                  multiline
+                  rows={2}
+                  value={form.notes}
+                  onChange={(e) => setForm({ ...form, notes: e.target.value })}
+                  inputProps={{ style: { color: "#000" } }}
+                />
               </MDBox>
             </Card>
           </Grid>
 
           {/* ================= HISTORY ================= */}
-{/* ================= HISTORY ================= */}
-<Grid item xs={12}>
-  <Card sx={{ mt: 4, borderRadius: "16px", overflow: "hidden" }}>
-    
-    {/* HEADER */}
-    <MDBox
-      p={3}
-      sx={{
-        background: "linear-gradient(90deg, #1e293b, #334155)",
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        flexWrap: "wrap",
-        gap: 2
-      }}
-    >
-      <MDTypography variant="h5" fontWeight="bold" color="white">
-        Saved Estimates
-      </MDTypography>
-
-      {/* ✅ SEARCH BAR */}
-      <TextField
-        placeholder="Search..."
-        size="small"
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        sx={{
-          bgcolor: "#fff",
-          borderRadius: "8px",
-          width: { xs: "100%", sm: 250 }
-        }}
-        InputProps={{
-          startAdornment: (
-            <InputAdornment position="start">
-              🔍
-            </InputAdornment>
-          ),
-        }}
-      />
-    </MDBox>
-
-    {/* TABLE */}
-    <MDBox pb={3}>
-      <DataTable
-        table={{
-          columns: [
-            { Header: "Project", accessor: "projectTitle", width: "40%" },
-            { Header: "Client", accessor: "ownerName", width: "20%" },
-            {
-              Header: "Amount",
-              accessor: "totalEstimate",
-              width: "20%",
-              Cell: ({ value }) => (
-                <MDTypography variant="button" fontWeight="bold" color="dark">
-                  Rs. {value?.toLocaleString("en-IN")}
+          {/* ================= HISTORY ================= */}
+          <Grid item xs={12}>
+            <Card sx={{ mt: 4, borderRadius: "16px", overflow: "hidden" }}>
+              {/* HEADER */}
+              <MDBox
+                p={3}
+                sx={{
+                  background: "linear-gradient(90deg, #1e293b, #334155)",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  flexWrap: "wrap",
+                  gap: 2,
+                }}
+              >
+                <MDTypography variant="h5" fontWeight="bold" color="white">
+                  Saved Estimates
                 </MDTypography>
-              ),
-            },
-            {
-              Header: "Actions",
-              accessor: "actions",
-              Cell: ({ row }) => (
-                <MDBox display="flex" gap={1}>
-                  <IconButton color="info" onClick={() => handleEdit(row.original)} size="small">
-                    <EditIcon fontSize="small" />
-                  </IconButton>
-                  <IconButton color="error" onClick={() => deleteEstimate(row.original._id)} size="small">
-                    <DeleteIcon fontSize="small" />
-                  </IconButton>
-                </MDBox>
-              ),
-            },
-          ],
-          rows: filteredEstimates,
-        }}
-        isSorted={true}
-        entriesPerPage={{ defaultValue: 5, entries: [5, 10, 15, 20, 25] }}
-        showTotalEntries={true}
-        noEndBorder
-      />
-    </MDBox>
-  </Card>
-</Grid>
+
+                {/* ✅ SEARCH BAR */}
+                <TextField
+                  placeholder="Search..."
+                  size="small"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  sx={{
+                    bgcolor: "#fff",
+                    borderRadius: "8px",
+                    width: { xs: "100%", sm: 250 },
+                  }}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">🔍</InputAdornment>
+                    ),
+                  }}
+                />
+              </MDBox>
+
+              {/* TABLE */}
+              <MDBox pb={3}>
+                <DataTable
+                  table={{
+                    columns: [
+                      {
+                        Header: "Project",
+                        accessor: "projectTitle",
+                        width: "40%",
+                      },
+                      { Header: "Client", accessor: "ownerName", width: "20%" },
+                      {
+                        Header: "Amount",
+                        accessor: "totalEstimate",
+                        width: "20%",
+                        Cell: ({ value }) => (
+                          <MDTypography
+                            variant="button"
+                            fontWeight="bold"
+                            color="dark"
+                          >
+                            Rs. {value?.toLocaleString("en-IN")}
+                          </MDTypography>
+                        ),
+                      },
+                      {
+                        Header: "Actions",
+                        accessor: "actions",
+                        Cell: ({ row }) => (
+                          <MDBox display="flex" gap={1}>
+                            <IconButton
+                              color="info"
+                              onClick={() => handleEdit(row.original)}
+                              size="small"
+                            >
+                              <EditIcon fontSize="small" />
+                            </IconButton>
+                            <IconButton
+                              color="error"
+                              onClick={() => deleteEstimate(row.original._id)}
+                              size="small"
+                            >
+                              <DeleteIcon fontSize="small" />
+                            </IconButton>
+                            <Icon
+                              color="success"
+                              onClick={() => generatePDF(row.original)}
+                              fontSize="small"
+                            >
+                              <PictureAsPdfIcon fontSize="small" />
+                            </Icon>
+                          </MDBox>
+                        ),
+                      },
+                    ],
+                    rows: filteredEstimates,
+                  }}
+                  isSorted={true}
+                  entriesPerPage={{
+                    defaultValue: 5,
+                    entries: [5, 10, 15, 20, 25],
+                  }}
+                  showTotalEntries={true}
+                  noEndBorder
+                />
+              </MDBox>
+            </Card>
+          </Grid>
         </Grid>
       </MDBox>
       <Footer />
