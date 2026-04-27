@@ -272,23 +272,9 @@ export default function useProjectData() {
   };
 
   // Update rows whenever projects change
-useEffect(() => {
-  const handleSearch = (e) => {
-    const query = e.detail.query.toLowerCase();
-
-    const filtered = projects.filter((p) =>
-      `${p.projectTitle} ${p.clientName} ${p.location}`
-        .toLowerCase()
-        .includes(query)
-    );
-
-    setRows(formatRows(filtered));
-  };
-
-  window.addEventListener("searchChanged", handleSearch);
-
-  return () => window.removeEventListener("searchChanged", handleSearch);
-}, [projects]);
+  useEffect(() => {
+    setRows(formatRows(projects));
+  }, [projects]);
 
   // Initial load
   useEffect(() => {
