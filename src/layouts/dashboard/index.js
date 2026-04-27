@@ -25,7 +25,7 @@ const STATS = [
     label: "Total Clients",
     key: "clients",
     route: "/tables",
-    grad: "linear-gradient(135deg, #f97316, #fb923c)",
+    grad: "#fb923c",
     shadow: "rgba(249,115,22,0.35)",
     bg: "#fff7ed",
     textColor: "#f97316",
@@ -36,7 +36,7 @@ const STATS = [
     label: "Active Projects",
     key: "projects",
     route: "/projectTables",
-    grad: "linear-gradient(135deg, #2563eb, #60a5fa)",
+    grad: "#2563eb",
     shadow: "rgba(37,99,235,0.35)",
     bg: "#eff6ff",
     textColor: "#2563eb",
@@ -47,7 +47,7 @@ const STATS = [
     label: "Total Invoices",
     key: "invoices",
     route: "/billing",
-    grad: "linear-gradient(135deg, #16a34a, #4ade80)",
+    grad: "#16a34a",
     shadow: "rgba(22,163,74,0.35)",
     bg: "#f0fdf4",
     textColor: "#16a34a",
@@ -58,7 +58,7 @@ const STATS = [
     label: "Vendors",
     key: "vendors",
     route: "/vendor",
-    grad: "linear-gradient(135deg, #9333ea, #c084fc)",
+    grad: "#9333ea",
     shadow: "rgba(147,51,234,0.35)",
     bg: "#faf5ff",
     textColor: "#9333ea",
@@ -93,7 +93,7 @@ function Dashboard() {
         {/* ====== HERO BANNER ====== */}
         <Box sx={{
           mb: 4, p: { xs: 3, md: 5 }, borderRadius: 5,
-          background: "linear-gradient(135deg, #f97316 0%, #ea580c 30%, #2563eb 70%, #16a34a 100%)",
+          background: "#2563eb",
           color: "#fff",
           boxShadow: "0 20px 60px rgba(249,115,22,0.3)",
           position: "relative", overflow: "hidden",
@@ -170,10 +170,10 @@ function Dashboard() {
         {/* ====== QUICK ACTIONS ====== */}
         <Grid container spacing={3} mb={4}>
           {[
-            { label: "🏗️ Civil Drawings", route: "/projectTables?target=drawings", grad: "linear-gradient(135deg, #f97316, #ea580c)" },
-            { label: "💰 Accounts", route: "/projectTables?target=accounts", grad: "linear-gradient(135deg, #16a34a, #22c55e)" },
-            { label: "📋 Scope of Work", route: "/projectTables?target=scope", grad: "linear-gradient(135deg, #2563eb, #60a5fa)" },
-            { label: "📄 Estimates", route: "/estimate", grad: "linear-gradient(135deg, #9333ea, #c084fc)" },
+            { label: "🏗️ Civil Drawings", route: "/projectTables?target=drawings", grad: "#f97316" },
+            { label: "💰 Accounts", route: "/projectTables?target=accounts", grad: "#16a34a" },
+            { label: "📋 Scope of Work", route: "/projectTables?target=scope", grad: "#2563eb" },
+            { label: "📄 Estimates", route: "/estimate", grad: "#9333ea" },
           ].map((q, i) => (
             <Grid item xs={6} md={3} key={i}>
               <Card
@@ -221,7 +221,7 @@ function Dashboard() {
           </Box>
           <Box sx={{
             px: 2, py: 0.8, borderRadius: 3,
-            background: "linear-gradient(135deg, #16a34a, #22c55e)",
+            background: "#16a34a",
             display: "flex", alignItems: "center", gap: 1,
           }}>
             <Box sx={{ width: 8, height: 8, borderRadius: "50%", bgcolor: "#fff", animation: "pulse 2s infinite" }} />

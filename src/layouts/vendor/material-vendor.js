@@ -26,12 +26,12 @@ import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
 
 const AVATAR_COLORS = [
-  "linear-gradient(135deg, #f97316, #fb923c)",
-  "linear-gradient(135deg, #2563eb, #60a5fa)",
-  "linear-gradient(135deg, #16a34a, #4ade80)",
-  "linear-gradient(135deg, #9333ea, #c084fc)",
-  "linear-gradient(135deg, #dc2626, #f87171)",
-  "linear-gradient(135deg, #0891b2, #67e8f9)",
+  "#fb923c",
+  "#2563eb",
+  "#16a34a",
+  "#9333ea",
+  "#dc2626",
+  "#0891b2",
 ];
 
 function VendorList() {
@@ -81,7 +81,7 @@ function VendorList() {
             mb: 5,
             p: { xs: 3, md: 5 },
             borderRadius: 5,
-            background: "linear-gradient(135deg, #2563eb 0%, #16a34a 60%, #f97316 100%)",
+            background: "#f97316",
             color: "white",
             boxShadow: "0 20px 60px rgba(37, 99, 235, 0.35)",
             position: "relative",
@@ -281,7 +281,7 @@ function VendorList() {
                           endIcon={<ArrowForwardIcon sx={{ fontSize: 14 }} />}
                           onClick={() => navigate(`/vendor/${v._id}`)}
                           sx={{
-                            background: "linear-gradient(135deg, #2563eb, #f97316)",
+                            background: "#2563eb",
                             color: "#fff",
                             fontWeight: "900",
                             borderRadius: 3,
@@ -290,7 +290,7 @@ function VendorList() {
                             textTransform: "none",
                             fontSize: "0.8rem",
                             "&:hover": {
-                              background: "linear-gradient(135deg, #1d4ed8, #ea580c)",
+                              background: "#1d4ed8",
                               transform: "translateX(4px)",
                             },
                             transition: "all 0.25s",

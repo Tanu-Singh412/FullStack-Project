@@ -179,7 +179,7 @@ function VendorDetail() {
         {/* ====== HERO ====== */}
         <Box sx={{
           mb: 4, p: { xs: 3, md: 4 }, borderRadius: 5,
-          background: "linear-gradient(135deg, #f97316 0%, #ea580c 35%, #2563eb 70%, #16a34a 100%)",
+          background: "#f97316",
           color: "#fff", boxShadow: "0 20px 60px rgba(249,115,22,0.3)",
           position: "relative", overflow: "hidden",
           display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 3,
@@ -201,12 +201,12 @@ function VendorDetail() {
           {/* ====== LEFT: PROFILE ====== */}
           <Grid item xs={12} md={4}>
             <Card sx={{ borderRadius: 5, overflow: "hidden", boxShadow: "0 10px 40px rgba(0,0,0,0.1)" }}>
-              <Box sx={{ height: 100, background: "linear-gradient(135deg, #f97316, #2563eb)", position: "relative" }}>
+              <Box sx={{ height: 100, background: "#f97316", position: "relative" }}>
                 <Avatar src={preview} sx={{
                   width: 100, height: 100, border: "5px solid #fff",
                   boxShadow: "0 8px 24px rgba(0,0,0,0.15)",
                   position: "absolute", bottom: -40, left: "50%", transform: "translateX(-50%)",
-                  background: "linear-gradient(135deg, #f97316, #2563eb)", fontSize: "2.5rem", fontWeight: "bold",
+                  background: "#f97316", fontSize: "2.5rem", fontWeight: "bold",
                 }}>
                   {vendor.vendorName?.charAt(0)}
                 </Avatar>
@@ -217,7 +217,7 @@ function VendorDetail() {
                   <>
                     <Typography variant="h4" fontWeight="900" sx={{ color: "#1e293b" }}>{vendor.vendorName}</Typography>
                     <Chip label={vendor.category?.toUpperCase() || "VENDOR"} size="small"
-                      sx={{ mt: 1, background: "linear-gradient(135deg, #f97316, #2563eb)", color: "#fff", fontWeight: "bold" }} />
+                      sx={{ mt: 1, background: "#f97316", color: "#fff", fontWeight: "bold" }} />
                     <Divider sx={{ my: 3 }} />
                     <Box sx={{ textAlign: "left", display: "flex", flexDirection: "column", gap: 2.5 }}>
                       {[
@@ -258,30 +258,30 @@ function VendorDetail() {
                 <Box sx={{ mt: 3, display: "flex", gap: 2 }}>
                   {!profileEditMode ? (
                     <Button fullWidth variant="contained" startIcon={<EditIcon />} onClick={() => setProfileEditMode(true)}
-                      sx={{ background: "linear-gradient(135deg, #2563eb, #60a5fa)", color: "#fff", borderRadius: 3, fontWeight: "bold", textTransform: "none", py: 1.3, "&:hover": { opacity: 0.9, transform: "translateY(-2px)" }, transition: "all 0.25s", boxShadow: "0 6px 20px rgba(37,99,235,0.3)" }}>
+                      sx={{ background: "#60a5fa", color: "#fff", borderRadius: 3, fontWeight: "bold", textTransform: "none", py: 1.3, "&:hover": { opacity: 0.9, transform: "translateY(-2px)" }, transition: "all 0.25s", boxShadow: "0 6px 20px rgba(37,99,235,0.3)" }}>
                       Edit Profile
                     </Button>
                   ) : (
                     <>
                       <Button fullWidth variant="contained" startIcon={<SaveIcon />} onClick={handleProfileUpdate}
-                        sx={{ background: "linear-gradient(135deg, #16a34a, #22c55e)", color: "#fff", borderRadius: 3, fontWeight: "bold", textTransform: "none", py: 1.3, "&:hover": { opacity: 0.9 }, transition: "all 0.25s", boxShadow: "0 6px 20px rgba(22,163,74,0.3)" }}>
+                        sx={{ background: "#16a34a", color: "#fff", borderRadius: 3, fontWeight: "bold", textTransform: "none", py: 1.3, "&:hover": { opacity: 0.9 }, transition: "all 0.25s", boxShadow: "0 6px 20px rgba(22,163,74,0.3)" }}>
                         Save
                       </Button>
                       <Button variant="contained" onClick={() => { setProfileEditMode(false); fetchVendor(); }}
-                        sx={{ background: "linear-gradient(135deg, #64748b, #94a3b8)", color: "#fff", borderRadius: 3, fontWeight: "bold", textTransform: "none", px: 2, "&:hover": { opacity: 0.9 }, minWidth: 0 }}>
+                        sx={{ background: "#64748b", color: "#fff", borderRadius: 3, fontWeight: "bold", textTransform: "none", px: 2, "&:hover": { opacity: 0.9 }, minWidth: 0 }}>
                         <CancelIcon />
                       </Button>
                     </>
                   )}
                   <Button variant="contained"
                     onClick={async () => { if (window.confirm("Delete this vendor?")) { await fetch(`https://fullstack-project-1-n510.onrender.com/api/vendors/${id}`, { method: "DELETE" }); navigate("/vendor"); } }}
-                    sx={{ background: "linear-gradient(135deg, #dc2626, #f87171)", color: "#fff", borderRadius: 3, fontWeight: "bold", textTransform: "none", px: 2, "&:hover": { opacity: 0.9 }, minWidth: 0, boxShadow: "0 6px 20px rgba(220,38,38,0.3)" }}>
+                    sx={{ background: "#dc2626", color: "#fff", borderRadius: 3, fontWeight: "bold", textTransform: "none", px: 2, "&:hover": { opacity: 0.9 }, minWidth: 0, boxShadow: "0 6px 20px rgba(220,38,38,0.3)" }}>
                     <DeleteIcon />
                   </Button>
                 </Box>
 
                 <Button fullWidth variant="contained" startIcon={<WhatsAppIcon />} onClick={handleOpenWhatsApp}
-                  sx={{ mt: 2, background: "linear-gradient(135deg, #25D366, #128C7E)", color: "#fff", borderRadius: 3, fontWeight: "bold", textTransform: "none", py: 1.3, "&:hover": { opacity: 0.9, transform: "translateY(-2px)" }, transition: "all 0.25s", boxShadow: "0 6px 20px rgba(37,211,102,0.3)" }}>
+                  sx={{ mt: 2, background: "#25D366", color: "#fff", borderRadius: 3, fontWeight: "bold", textTransform: "none", py: 1.3, "&:hover": { opacity: 0.9, transform: "translateY(-2px)" }, transition: "all 0.25s", boxShadow: "0 6px 20px rgba(37,211,102,0.3)" }}>
                   WhatsApp Share
                 </Button>
               </Box>
@@ -305,7 +305,7 @@ function VendorDetail() {
                   </Box>
                 </Box>
                 <Button variant="contained" startIcon={<AddCircleIcon />} onClick={addMaterialRow}
-                  sx={{ background: "linear-gradient(135deg, #f97316, #fb923c)", color: "#fff", borderRadius: 3, fontWeight: "bold", textTransform: "none", boxShadow: "0 6px 18px rgba(249,115,22,0.4)", "&:hover": { opacity: 0.9, transform: "translateY(-2px)" }, transition: "all 0.25s" }}>
+                  sx={{ background: "#fb923c", color: "#fff", borderRadius: 3, fontWeight: "bold", textTransform: "none", boxShadow: "0 6px 18px rgba(249,115,22,0.4)", "&:hover": { opacity: 0.9, transform: "translateY(-2px)" }, transition: "all 0.25s" }}>
                   Add Material
                 </Button>
               </Box>
@@ -340,7 +340,7 @@ function VendorDetail() {
                             <Typography variant="caption" fontWeight="bold" sx={{ color: "#94a3b8", textTransform: "uppercase", letterSpacing: 0.5 }}>Client</Typography>
                             <br />
                             <Chip label={m.clientName || "Direct"} size="small"
-                              sx={{ background: "linear-gradient(135deg, #2563eb, #60a5fa)", color: "#fff", fontWeight: "bold", mt: 0.5 }} />
+                              sx={{ background: "#60a5fa", color: "#fff", fontWeight: "bold", mt: 0.5 }} />
                           </Grid>
                           <Grid item xs={4} md={2}>
                             <Typography variant="caption" fontWeight="bold" sx={{ color: "#94a3b8", textTransform: "uppercase", letterSpacing: 0.5 }}>Rate</Typography>
@@ -394,7 +394,7 @@ function VendorDetail() {
                             <Grid item xs={12} md={2} sx={{ display: "flex", gap: 1 }}>
                               <Button fullWidth variant="contained" size="small" startIcon={<SaveIcon />}
                                 onClick={() => saveRow(i)} disabled={savingRow === i}
-                                sx={{ background: "linear-gradient(135deg, #16a34a, #22c55e)", color: "#fff", borderRadius: 2, fontWeight: "bold", textTransform: "none", "&:hover": { opacity: 0.9 } }}>
+                                sx={{ background: "#22c55e", color: "#fff", borderRadius: 2, fontWeight: "bold", textTransform: "none", "&:hover": { opacity: 0.9 } }}>
                                 {savingRow === i ? "..." : "Save"}
                               </Button>
                               <IconButton size="small" onClick={() => cancelEditRow(i)}
@@ -417,7 +417,7 @@ function VendorDetail() {
       {/* ====== WHATSAPP DIALOG ====== */}
       <Dialog open={whatsappOpen} onClose={() => setWhatsappOpen(false)} maxWidth="sm" fullWidth
         PaperProps={{ sx: { borderRadius: 4, overflow: "hidden" } }}>
-        <DialogTitle sx={{ background: "linear-gradient(135deg, #25D366, #128C7E)", color: "#fff", fontWeight: "bold" }}>
+        <DialogTitle sx={{ background: "#25D366", color: "#fff", fontWeight: "bold" }}>
           <WhatsAppIcon sx={{ mr: 1, verticalAlign: "middle" }} />
           Send WhatsApp Message
         </DialogTitle>
@@ -433,7 +433,7 @@ function VendorDetail() {
           </Button>
           <Button variant="contained"
             onClick={() => { window.open(`https://wa.me/91${vendor.phone?.replace(/[^0-9]/g, "")}?text=${encodeURIComponent(whatsappMessage)}`, "_blank"); setWhatsappOpen(false); }}
-            sx={{ background: "linear-gradient(135deg, #25D366, #128C7E)", color: "#fff", borderRadius: 2, fontWeight: "bold", textTransform: "none", px: 3 }}>
+            sx={{ background: "#25D366", color: "#fff", borderRadius: 2, fontWeight: "bold", textTransform: "none", px: 3 }}>
             Send on WhatsApp
           </Button>
         </DialogActions>

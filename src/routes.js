@@ -63,17 +63,9 @@ const routes = [
     name: "Project Management",
     key: "projectManagement",
     icon: <Icon fontSize="small">business_center</Icon>,
-    children: [
-      {
-        name: "All Projects",
-        key: "projectTables",
-        route: "/projectTables",
+           route: "/projectTables",
         component: <ProjectTables />,
-        icon: <Icon fontSize="small">table_view</Icon>,
-      },
 
-  
-    ],
   },
 
   {

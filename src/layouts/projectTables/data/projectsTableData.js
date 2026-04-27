@@ -147,7 +147,7 @@ export default function useProjectData() {
                 width: 26,
                 height: 26,
                 borderRadius: "6px",
-                background: "linear-gradient(135deg, #10b981, #3b82f6)",
+                background: "#10b981",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",

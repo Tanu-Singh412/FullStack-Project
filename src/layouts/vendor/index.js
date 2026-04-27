@@ -21,12 +21,12 @@ import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
 
 const COLORS = [
-  { bg: "linear-gradient(135deg, #f97316, #fb923c)", icon: "🏗️" },
-  { bg: "linear-gradient(135deg, #2563eb, #60a5fa)", icon: "🔩" },
-  { bg: "linear-gradient(135deg, #16a34a, #4ade80)", icon: "🌿" },
-  { bg: "linear-gradient(135deg, #9333ea, #c084fc)", icon: "⚡" },
-  { bg: "linear-gradient(135deg, #dc2626, #f87171)", icon: "🔧" },
-  { bg: "linear-gradient(135deg, #0891b2, #67e8f9)", icon: "💧" },
+  { bg: "#fb923c", icon: "🏗️" },
+  { bg: "#2563eb", icon: "🔩" },
+  { bg: "#16a34a", icon: "🌿" },
+  { bg: "#9333ea", icon: "⚡" },
+  { bg: "#dc2626", icon: "🔧" },
+  { bg: "#0891b2", icon: "💧" },
 ];
 
 function VendorHome() {
@@ -136,7 +136,7 @@ function VendorHome() {
             mb: 5,
             p: { xs: 3, md: 5 },
             borderRadius: 5,
-            background: "linear-gradient(135deg, #f97316 0%, #ea580c 40%, #2563eb 100%)",
+            background: "#f97316",
             color: "white",
             boxShadow: "0 20px 60px rgba(249, 115, 22, 0.35)",
             position: "relative",
@@ -379,7 +379,7 @@ function VendorHome() {
                       <Box sx={{ display: "flex", justifyContent: "center", gap: 1 }}>
                         <Box sx={{
                           px: 2, py: 0.5, borderRadius: 10,
-                          background: "linear-gradient(135deg, #f97316, #2563eb)",
+                          background: "#2563eb",
                           color: "#fff",
                           fontSize: "11px", fontWeight: 700, letterSpacing: 0.5,
                         }}>
@@ -410,7 +410,7 @@ function VendorHome() {
       >
         {/* Dialog Header */}
         <Box sx={{
-          background: "linear-gradient(135deg, #f97316, #2563eb)",
+          background: "#f97316",
           p: 3,
           display: "flex", alignItems: "center", gap: 2,
         }}>
@@ -483,12 +483,12 @@ function VendorHome() {
               sx={{
                 py: 1.5,
                 borderRadius: 3,
-                background: "linear-gradient(135deg, #dc2626, #ef4444)",
+                background: "#ef4444",
                 color: "#fff",
                 fontWeight: "bold",
                 textTransform: "none",
                 fontSize: "0.95rem",
-                "&:hover": { background: "linear-gradient(135deg, #b91c1c, #dc2626)", transform: "translateY(-2px)" },
+                "&:hover": { background: "#ef4444", transform: "translateY(-2px)" },
                 transition: "all 0.25s",
                 boxShadow: "0 6px 20px rgba(220,38,38,0.3)",
               }}
@@ -502,12 +502,12 @@ function VendorHome() {
               sx={{
                 py: 1.5,
                 borderRadius: 3,
-                background: "linear-gradient(135deg, #f97316, #2563eb)",
+                background: "#f97316",
                 color: "#fff",
                 fontWeight: "bold",
                 textTransform: "none",
                 fontSize: "0.95rem",
-                "&:hover": { background: "linear-gradient(135deg, #ea580c, #1d4ed8)", transform: "translateY(-2px)" },
+                "&:hover": { background: "#ea580c", transform: "translateY(-2px)" },
                 transition: "all 0.25s",
                 boxShadow: "0 6px 20px rgba(249,115,22,0.35)",
               }}

@@ -444,7 +444,7 @@ function ProjectDetails() {
             p: 4,
             mb: 3,
             borderRadius: "20px",
-            background: "linear-gradient(135deg, #f97316 0%, #ea580c 35%, #2563eb 100%)",
+            background: "#f97316",
             color: "#fff",
             boxShadow: "0 15px 40px rgba(249,115,22,0.3)",
             position: "relative",
@@ -477,7 +477,7 @@ function ProjectDetails() {
               transition: "all 0.2s",
             },
             "& .Mui-selected": {
-              background: "linear-gradient(135deg, #f97316, #2563eb) !important",
+              background: "#2563eb !important",
               color: "#fff !important",
               boxShadow: "0 6px 20px rgba(249,115,22,0.3)",
             },
@@ -550,7 +550,7 @@ function ProjectDetails() {
                   <Grid item xs={12}>
                     <Card sx={{ borderRadius: "20px", overflow: "hidden", boxShadow: "0 10px 30px rgba(0,0,0,0.08)" }}>
                       <Box sx={{
-                        p: 3, background: "linear-gradient(135deg, #f97316, #2563eb)",
+                        p: 3, background: "#2563eb",
                         display: "flex", justifyContent: "space-between", alignItems: "center",
                       }}>
                         <MDTypography variant="h5" fontWeight="900" sx={{ color: "#fff" }}>
@@ -601,7 +601,7 @@ function ProjectDetails() {
                               <Box sx={{ p: 1.5, background: isCivil ? "#fff7ed" : "#eff6ff", display: "flex", justifyContent: "center" }}>
                                 <Box sx={{
                                   px: 2, py: 0.3, borderRadius: 10,
-                                  background: isCivil ? "linear-gradient(135deg, #f97316, #ea580c)" : "linear-gradient(135deg, #2563eb, #16a34a)",
+                                  background: isCivil ? "#f97316" : "#2563eb",
                                 }}>
                                   <MDTypography variant="caption" fontWeight="bold" sx={{ color: "#fff", fontSize: "10px" }}>
                                     {isCivil ? "🏗️ CIVIL" : "🎨 INTERIOR"}
@@ -626,8 +626,8 @@ function ProjectDetails() {
             {!drawingType ? (
               <Grid container spacing={4}>
                 {[
-                  { type: "civil", label: "Civil Drawings", desc: "Structural plans, layouts & blueprints", icon: "🏗️", grad: "linear-gradient(135deg, #f97316, #ea580c)", pdfSupport: true },
-                  { type: "interior", label: "Interior Drawings", desc: "3D elevations, interior schematics", icon: "🎨", grad: "linear-gradient(135deg, #2563eb, #16a34a)", pdfSupport: false },
+                  { type: "civil", label: "Civil Drawings", desc: "Structural plans, layouts & blueprints", icon: "🏗️", grad: "#f97316", pdfSupport: true },
+                  { type: "interior", label: "Interior Drawings", desc: "3D elevations, interior schematics", icon: "🎨", grad: "#2563eb", pdfSupport: false },
                 ].map(({ type, label, desc, icon, grad, pdfSupport }) => (
                   <Grid item xs={12} md={6} key={type}>
                     <Card sx={{
@@ -694,7 +694,7 @@ function ProjectDetails() {
                 <Button
                   onClick={() => setDrawingType(null)}
                   sx={{
-                    mb: 3, background: "linear-gradient(135deg, #f97316, #2563eb)",
+                    mb: 3, background: "#f97316",
                     color: "#fff", px: 3, py: 1.2, borderRadius: "10px", fontWeight: "bold",
                     textTransform: "none",
                     "&:hover": { opacity: 0.9 },
@@ -707,7 +707,7 @@ function ProjectDetails() {
                 <Button
                   onClick={() => { setUploadType(drawingType); setOpenUpload(true); }}
                   sx={{
-                    mb: 3, ml: 2, background: "linear-gradient(135deg, #16a34a, #22c55e)",
+                    mb: 3, ml: 2, background: "#16a34a",
                     color: "#fff", px: 3, py: 1.2, borderRadius: "10px", fontWeight: "bold",
                     textTransform: "none",
                     "&:hover": { opacity: 0.9 },
@@ -758,7 +758,7 @@ function ProjectDetails() {
                             <Button
                               size="small" fullWidth
                               sx={{
-                                background: "linear-gradient(135deg, #dc2626, #f87171)",
+                                background: "#f87171",
                                 color: "#fff", fontWeight: "bold", borderRadius: "8px",
                                 textTransform: "none",
                                 "&:hover": { opacity: 0.9 },
@@ -1011,7 +1011,7 @@ function ProjectDetails() {
                 <MDBox
                   sx={{
                     width: 40, height: 40, borderRadius: "10px",
-                    background: "linear-gradient(135deg, #4f46e5, #818cf8)",
+                    background: "#4f46e5",
                     display: "flex", alignItems: "center", justifyContent: "center", color: "#fff"
                   }}
                 >
@@ -1167,7 +1167,7 @@ function ProjectDetails() {
                     borderRadius: "10px",
                     textTransform: "none",
                     fontWeight: "bold",
-                    background: "linear-gradient(135deg, #4f46e5, #6366f1)",
+                    background: "#4f46e5",
                     color: "#fff",
                     boxShadow: "0 10px 25px rgba(79, 70, 229, 0.3)",
                     "&:hover": { background: "#4338ca" }
@@ -1375,8 +1375,8 @@ function ProjectDetails() {
             <Box sx={{
               p: 3,
               background: uploadType === "civil"
-                ? "linear-gradient(135deg, #f97316, #ea580c)"
-                : "linear-gradient(135deg, #2563eb, #16a34a)",
+                ? "#f97316"
+                : "#2563eb",
               textAlign: "center",
             }}>
               <Box sx={{ fontSize: 40, mb: 0.5 }}>{uploadType === "civil" ? "🏗️" : "🎨"}</Box>
@@ -1430,8 +1430,8 @@ function ProjectDetails() {
                   mt: 3, py: 1.5, borderRadius: "12px",
                   textTransform: "none", fontWeight: "bold", color: "#fff",
                   background: uploadType === "civil"
-                    ? "linear-gradient(135deg, #f97316, #ea580c)"
-                    : "linear-gradient(135deg, #2563eb, #16a34a)",
+                    ? "#f97316"
+                    : "#2563eb",
                   boxShadow: "0 8px 24px rgba(0,0,0,0.2)",
                   "&:hover": { opacity: 0.9, transform: "translateY(-2px)" },
                   transition: "all 0.25s",
