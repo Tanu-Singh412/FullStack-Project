@@ -113,16 +113,33 @@ function Dashboard() {
                 { label: "Add Client", route: "/add-clients", color: "rgba(255,255,255,0.2)", text: "#fff" },
                 { label: "New Estimate", route: "/estimate", color: "rgba(255,255,255,0.2)", text: "#fff" },
               ].map((btn, i) => (
-                <Button key={i} onClick={() => navigate(btn.route)} endIcon={<ArrowForwardIcon />}
-                  sx={{
-                    bgcolor: btn.color, color: btn.text, fontWeight: "bold", borderRadius: 3,
-                    textTransform: "none", px: 3, py: 1,
-                    "&:hover": { bgcolor: btn.color, opacity: 0.85, transform: "translateY(-2px)" },
-                    transition: "all 0.25s",
-                    boxShadow: i === 0 ? "0 6px 20px rgba(0,0,0,0.15)" : "none",
-                  }}>
-                  {btn.label}
-                </Button>
+<Button
+  key={i}
+  onClick={() => navigate(btn.route)}
+  endIcon={<ArrowForwardIcon />}
+  sx={{
+    bgcolor: btn.color,
+    color: btn.text,
+    fontWeight: "bold",
+    borderRadius: 3,
+    textTransform: "none",
+    px: 3,
+    py: 1,
+    transition: "all 0.25s",
+
+    "&:hover": {
+      bgcolor: "#000",        // ✅ BLACK HOVER
+      color: "#fff",          // white text
+      transform: "translateY(-2px)",
+      boxShadow: "0 8px 20px rgba(0,0,0,0.3)",
+      opacity: 1              // override old opacity
+    },
+
+    boxShadow: i === 0 ? "0 6px 20px rgba(0,0,0,0.15)" : "none",
+  }}
+>
+  {btn.label}
+</Button>
               ))}
             </Box>
           </Box>
