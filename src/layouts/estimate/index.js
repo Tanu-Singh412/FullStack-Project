@@ -933,13 +933,13 @@ export default function EstimatePage() {
                             >
                               <DeleteIcon fontSize="small" />
                             </IconButton>
-                            <Icon
+                            <IconButton
                               color="success"
                               onClick={() => generatePDF(row.original)}
                               fontSize="small"
                             >
                               <PictureAsPdfIcon fontSize="small" />
-                            </Icon>
+                            </IconButton>
                           </MDBox>
                         ),
                       },
