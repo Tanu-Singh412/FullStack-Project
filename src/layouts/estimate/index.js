@@ -851,7 +851,6 @@ export default function EstimatePage() {
           </Grid>
 
           {/* ================= HISTORY ================= */}
-          {/* ================= HISTORY ================= */}
           <Grid item xs={12}>
             <Card sx={{ mt: 4, borderRadius: "16px", overflow: "hidden" }}>
               {/* HEADER */}
@@ -897,7 +896,7 @@ export default function EstimatePage() {
                       {
                         Header: "Project",
                         accessor: "projectTitle",
-                        width: "40%",
+                        width: "20%",
                       },
                       { Header: "Client", accessor: "ownerName", width: "20%" },
                       {
