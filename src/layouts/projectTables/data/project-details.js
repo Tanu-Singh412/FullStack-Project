@@ -452,9 +452,11 @@ function ProjectDetails() {
           }}
         >
           <Box sx={{ position: "absolute", top: -50, right: -50, width: 180, height: 180, borderRadius: "50%", background: "rgba(255,255,255,0.07)" }} />
-          <MDTypography variant="h4" fontWeight="900" sx={{ color: "#fff", letterSpacing: -0.5, position: "relative", zIndex: 1 }}>
-            {project.projectName}
+        
+          <MDTypography sx={{ mt: 1, color: "rgba(255,255,255,0.85)", position: "relative", zIndex: 1 }}>
+            Project: <b style={{ color: "#fff" }}>{project.projectName}</b>
           </MDTypography>
+
           <MDTypography sx={{ mt: 1, color: "rgba(255,255,255,0.85)", position: "relative", zIndex: 1 }}>
             Client: <b style={{ color: "#fff" }}>{project.clientName}</b>
           </MDTypography>

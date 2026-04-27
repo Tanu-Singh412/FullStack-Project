@@ -83,12 +83,11 @@ function Breadcrumbs({ icon, title, route, light }) {
         noWrap
       >
         {title.replace("-", " ")}
-      </MDTypography>
+      </MDTypography>   
     </MDBox>
   );
 }
 
-// Setting default values for the props of Breadcrumbs
 Breadcrumbs.defaultProps = {
   light: false,
 };
@@ -98,7 +97,7 @@ Breadcrumbs.propTypes = {
   icon: PropTypes.node.isRequired,
   title: PropTypes.string.isRequired,
   route: PropTypes.oneOfType([PropTypes.string, PropTypes.array]).isRequired,
-  light: PropTypes.bool,
+  light: PropTypes.bool,  
 };
 
 export default Breadcrumbs;

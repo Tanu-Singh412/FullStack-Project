@@ -102,7 +102,7 @@ function Dashboard() {
           <Box sx={{ position: "absolute", bottom: -60, left: "20%", width: 200, height: 200, borderRadius: "50%", background: "rgba(255,255,255,0.05)" }} />
           <Box sx={{ position: "relative", zIndex: 1 }}>
             <Typography variant="h3" fontWeight="900" sx={{ color: "#fff", letterSpacing: -1, mb: 1 }}>
-              🏛️ Architects CRM
+              🏛️ Architect CRM
             </Typography>
             <Typography variant="h6" sx={{ color: "rgba(255,255,255,0.85)", fontWeight: 400, mb: 2 }}>
               Architectural Management System · All modules synchronized
