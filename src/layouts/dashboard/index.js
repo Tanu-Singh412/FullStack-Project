@@ -93,7 +93,7 @@ function Dashboard() {
         {/* ====== HERO BANNER ====== */}
         <Box sx={{
           mb: 4, p: { xs: 3, md: 5 }, borderRadius: 5,
-          background: "#2563eb",
+          background: "#1a73e8",
           color: "#fff",
           boxShadow: "0 20px 60px rgba(249,115,22,0.3)",
           position: "relative", overflow: "hidden",
