@@ -29,7 +29,7 @@ export default function useClientTableData() {
   const [clients, setClients] = useState([]);
   const [selectedClient, setSelectedClient] = useState(null);
   const [deleteId, setDeleteId] = useState(null);
-const [search, setSearch] = useState("");
+
   const columns = [
     { Header: "S.No.", accessor: "serial", width: "5%" },
     { Header: "Client", accessor: "client", width: "30%" },
@@ -217,13 +217,9 @@ const [search, setSearch] = useState("");
   };
 
   // EFFECTS
-useEffect(() => {
-  const filtered = clients.filter((c) =>
-    c.name?.toLowerCase().includes(search.toLowerCase())
-  );
-
-  setRows(formatRows(filtered));
-}, [clients, search]);
+  useEffect(() => {
+    setRows(formatRows(clients));
+  }, [clients]);
 
   useEffect(() => {
     loadData();
