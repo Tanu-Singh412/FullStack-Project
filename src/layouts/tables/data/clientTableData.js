@@ -29,7 +29,7 @@ export default function useClientTableData() {
   const [clients, setClients] = useState([]);
   const [selectedClient, setSelectedClient] = useState(null);
   const [deleteId, setDeleteId] = useState(null);
-const [searchQuery, setSearchQuery] = useState("");
+
   const columns = [
     { Header: "S.No.", accessor: "serial", width: "5%" },
     { Header: "Client", accessor: "client", width: "30%" },
@@ -93,13 +93,10 @@ const [searchQuery, setSearchQuery] = useState("");
   };
 
   // FORMAT ROWS
-const formatRows = (data) => {
-  return data
-    .filter((c) =>
-      c.name?.toLowerCase().includes(searchQuery)
-    )
-    .slice()
-    .reverse()
+  const formatRows = (data) => {
+    return data
+      .slice()
+      .reverse()
       .map((c, i) => {
         const dateString = new Date(c.createdAt).toLocaleDateString("en-IN", {
           day: "numeric",
@@ -220,15 +217,9 @@ const formatRows = (data) => {
   };
 
   // EFFECTS
-useEffect(() => {
-  const handleSearch = (e) => {
-    setSearchQuery(e.detail.query.toLowerCase());
-  };
-
-  window.addEventListener("searchChanged", handleSearch);
-
-  return () => window.removeEventListener("searchChanged", handleSearch);
-}, []);
+  useEffect(() => {
+    setRows(formatRows(clients));
+  }, [clients]);
 
   useEffect(() => {
     loadData();
