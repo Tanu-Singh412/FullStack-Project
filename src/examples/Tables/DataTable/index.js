@@ -184,7 +184,7 @@ function DataTable({
         </MDBox>
       ) : null}
       <Table {...getTableProps()}>
-        <MDBox component="thead">
+        <MDBox component="thead" sx={{ background: "#f8fafc", display: "table-header-group" }}>
           {headerGroups.map((headerGroup, key) => (
             <TableRow key={key} {...headerGroup.getHeaderGroupProps()}>
               {headerGroup.headers.map((column, idx) => (
