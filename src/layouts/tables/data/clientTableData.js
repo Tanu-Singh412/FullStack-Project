@@ -30,6 +30,14 @@ export default function useClientTableData() {
   const [clients, setClients] = useState([]);
   const [selectedClient, setSelectedClient] = useState(null);
   const [deleteId, setDeleteId] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  // SEARCH LISTENER
+  useEffect(() => {
+    const handleSearch = (e) => setSearchTerm(e.detail.query || "");
+    window.addEventListener("searchChanged", handleSearch);
+    return () => window.removeEventListener("searchChanged", handleSearch);
+  }, []);
 
   const columns = [
     { Header: "S.No.", accessor: "serial", width: "5%" },
@@ -230,8 +238,13 @@ export default function useClientTableData() {
 
   // EFFECTS
   useEffect(() => {
-    setRows(formatRows(clients));
-  }, [clients]);
+    const filtered = clients.filter(c => 
+      c.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      c.phone?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      c.clientId?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setRows(formatRows(filtered));
+  }, [clients, searchTerm]);
 
   useEffect(() => {
     loadData();

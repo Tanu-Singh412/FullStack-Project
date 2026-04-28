@@ -124,8 +124,8 @@ function VendorList() {
               startIcon={<AddCircleIcon />}
               onClick={() => navigate(`/add-vendor/${categoryId}`)}
               sx={{
-                background: "#fff",
-                color: "#2563eb",
+                background: "#1e293b",
+                color: "#fff",
                 fontWeight: "900",
                 borderRadius: 4,
                 px: 4,
@@ -134,7 +134,7 @@ function VendorList() {
                 textTransform: "none",
                 boxShadow: "0 10px 30px rgba(0,0,0,0.15)",
                 "&:hover": {
-                  background: "#eff6ff",
+                  background: "#334155",
                   transform: "translateY(-4px)",
                   boxShadow: "0 18px 40px rgba(0,0,0,0.2)",
                 },

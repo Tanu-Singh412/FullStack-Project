@@ -444,9 +444,9 @@ return (
             p: 4,
             mb: 3,
             borderRadius: "20px",
-            background: "#f97316",
+            background: "#1e293b",
             color: "#fff",
-            boxShadow: "0 15px 40px rgba(249,115,22,0.3)",
+            boxShadow: "0 15px 40px rgba(30,41,59,0.2)",
             position: "relative",
             overflow: "hidden",
           }}
@@ -455,12 +455,12 @@ return (
         
           <MDBox display="flex" justifyContent="space-between" alignItems="center">
             <MDBox sx={{ position: "relative", zIndex: 1 }}>
-              <MDTypography sx={{ mt: 1, color: "rgba(255,255,255,0.85)" }}>
-                Project: <b style={{ color: "#fff" }}>{project.projectName}</b>
+              <MDTypography variant="h4" fontWeight="bold" sx={{ color: "#fff", mb: 0.5 }}>
+                {project.projectName}
               </MDTypography>
-              <MDTypography sx={{ mt: 0.5, color: "rgba(255,255,255,0.85)" }}>
-                Client: <b style={{ color: "#fff" }}>{project.clientName}</b> 
-                <span style={{ marginLeft: "12px", opacity: 0.7, fontSize: "0.8rem" }}>(ID: {project.clientId})</span>
+              <MDTypography sx={{ color: "rgba(255,255,255,0.85)", fontSize: "0.95rem" }}>
+                CLIENT: <b style={{ color: "#10b981" }}>{project.clientName?.toUpperCase()}</b> 
+                <span style={{ marginLeft: "16px", opacity: 0.6 }}>PROJECT ID: <b>{project.projectId || project._id?.slice(-8).toUpperCase()}</b></span>
               </MDTypography>
             </MDBox>
             
@@ -605,7 +605,7 @@ return (
                                 alert("Visit recorded!");
                               }
                             }}
-                            sx={{ bgcolor: "#f97316", color: "#fff", minWidth: "40px", borderRadius: "8px" }}
+                            sx={{ bgcolor: "#2563eb", color: "#fff", minWidth: "40px", borderRadius: "8px" }}
                           >
                             +
                           </Button>
@@ -619,16 +619,8 @@ return (
                 {scopeList.length > 0 && (
                   <Grid item xs={12}>
                     <Card sx={{ p: 4, borderRadius: "20px", boxShadow: "0 10px 30px rgba(0,0,0,0.05)" }}>
-                      <MDBox display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+                      <MDBox display="flex" alignItems="center" mb={2}>
                         <MDTypography variant="h5" fontWeight="bold">📋 Scope of Work Summary</MDTypography>
-                        <Button 
-                          variant="contained" 
-                          size="small" 
-                          onClick={() => setTab(3)}
-                          sx={{ bgcolor: "#2563eb", color: "#fff", borderRadius: 2, textTransform: "none" }}
-                        >
-                          + Add Scope
-                        </Button>
                       </MDBox>
                       <Grid container spacing={2}>
                         {scopeList.map((s, idx) => (
@@ -743,7 +735,7 @@ return (
                                   background: "linear-gradient(135deg, #fff7ed, #fed7aa)",
                                 }}>
                                   <Box sx={{ fontSize: 48 }}>📄</Box>
-                                  <MDTypography variant="caption" fontWeight="bold" sx={{ color: "#f97316", mt: 1 }}>PDF</MDTypography>
+                                  <MDTypography variant="caption" fontWeight="bold" sx={{ color: "#475569", mt: 1 }}>PDF</MDTypography>
                                 </Box>
                               ) : (
                                 <img src={img} alt={`img-${idx}`}
@@ -752,7 +744,7 @@ return (
                               <Box sx={{ p: 1.5, background: isCivil ? "#fff7ed" : "#eff6ff", display: "flex", justifyContent: "center" }}>
                                 <Box sx={{
                                   px: 2, py: 0.3, borderRadius: 10,
-                                  background: isCivil ? "#f97316" : "#2563eb",
+                                  background: isCivil ? "#1e293b" : "#2563eb",
                                 }}>
                                   <MDTypography variant="caption" fontWeight="bold" sx={{ color: "#fff", fontSize: "10px" }}>
                                     {isCivil ? "🏗️ CIVIL" : "🎨 INTERIOR"}

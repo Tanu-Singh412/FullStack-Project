@@ -136,6 +136,21 @@ function AddProject() {
       alert("Project Name, Associated Client, and Total Amount are required");
       return;
     }
+
+    // CHECK UNIQUE PROJECT NAME
+    const resExisting = await fetch("https://fullstack-project-1-n510.onrender.com/api/projects");
+    const existingProjectsRes = await resExisting.json();
+    const existingProjects = existingProjectsRes.data || existingProjectsRes;
+    
+    const isDuplicate = existingProjects.some(p => 
+      p.projectName.toLowerCase().trim() === form.projectName.toLowerCase().trim() && p._id !== editData?._id
+    );
+
+    if (isDuplicate) {
+      alert("A project with this name already exists. Please use a unique name.");
+      return;
+    }
+
     const formData = new FormData();
 
     // form fields

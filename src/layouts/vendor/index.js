@@ -167,8 +167,8 @@ function VendorHome() {
               startIcon={<AddBusinessIcon />}
               onClick={() => handleOpen()}
               sx={{
-                background: "#fff",
-                color: "#f97316",
+                background: "#1e293b",
+                color: "#fff",
                 fontWeight: "900",
                 borderRadius: "14px",
                 px: 4,
@@ -178,7 +178,7 @@ function VendorHome() {
                 letterSpacing: 0.5,
                 boxShadow: "0 8px 25px rgba(0,0,0,0.15)",
                 "&:hover": {
-                  background: "#fff7ed",
+                  background: "#334155",
                   transform: "translateY(-3px)",
                   boxShadow: "0 15px 35px rgba(0,0,0,0.2)",
                 },

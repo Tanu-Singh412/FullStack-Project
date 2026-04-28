@@ -192,7 +192,7 @@ function VendorDetail() {
             </Typography>
           </Box>
           <Button startIcon={<ArrowBackIcon />} onClick={() => navigate(-1)}
-            sx={{ position: "relative", zIndex: 1, bgcolor: "rgba(255,255,255,0.2)", color: "#fff", borderRadius: 3, textTransform: "none", fontWeight: "bold", px: 3, py: 1.2, "&:hover": { bgcolor: "rgba(255,255,255,0.35)" } }}>
+            sx={{ position: "relative", zIndex: 1, bgcolor: "#1e293b", color: "#fff", borderRadius: 3, textTransform: "none", fontWeight: "bold", px: 3, py: 1.2, "&:hover": { bgcolor: "#334155" } }}>
             Back
           </Button>
         </Box>

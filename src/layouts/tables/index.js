@@ -55,10 +55,10 @@ function Tables() {
                     position: "relative", zIndex: 1,
                     borderRadius: "12px", textTransform: "none", fontWeight: "bold",
                     px: 3, py: 1.2,
-                    background: "#fff",
-                    color: "#1976d2",
+                    background: "#1e293b",
+                    color: "#fff",
                     boxShadow: "0 6px 20px rgba(0,0,0,0.15)",
-                    "&:hover": { background: "#fff7ed", transform: "translateY(-2px)", boxShadow: "0 10px 25px rgba(0,0,0,0.2)" },
+                    "&:hover": { background: "#334155", transform: "translateY(-2px)", boxShadow: "0 10px 25px rgba(0,0,0,0.2)" },
                     transition: "all 0.25s",
                   }}
                 >

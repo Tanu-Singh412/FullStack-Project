@@ -39,6 +39,14 @@ export default function useProjectData() {
   const [imageIndex, setImageIndex] = useState(0);
   const [selectedDescription, setSelectedDescription] = useState(null);
   const [deleteId, setDeleteId] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  // SEARCH LISTENER
+  useEffect(() => {
+    const handleSearch = (e) => setSearchTerm(e.detail.query || "");
+    window.addEventListener("searchChanged", handleSearch);
+    return () => window.removeEventListener("searchChanged", handleSearch);
+  }, []);
 
   const openPaymentDialog = (project, type) => {
     setPaymentProject(project);
@@ -284,10 +292,15 @@ export default function useProjectData() {
     });
   };
 
-  // Update rows whenever projects change
+  // Update rows whenever projects or search term changes
   useEffect(() => {
-    setRows(formatRows(projects));
-  }, [projects]);
+    const filtered = projects.filter(p => 
+      p.projectName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      p.clientName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      p.projectId?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setRows(formatRows(filtered));
+  }, [projects, searchTerm]);
 
   // Initial load
   useEffect(() => {
