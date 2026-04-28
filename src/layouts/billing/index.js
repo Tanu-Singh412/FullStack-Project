@@ -228,7 +228,7 @@ export default function InvoicePage() {
                   <Grid item xs={12} sm={3}><TextField required fullWidth label="Date" type="date" InputLabelProps={{ shrink: true }} value={data.date} onChange={(e) => setData({ ...data, date: e.target.value })} /></Grid>
                   <Grid item xs={12} sm={3}><TextField fullWidth label="SGST %" type="number" value={data.sgst} onChange={(e) => setData({ ...data, sgst: Number(e.target.value) })} /></Grid>
                   <Grid item xs={12} sm={3}><TextField fullWidth label="CGST %" type="number" value={data.cgst} onChange={(e) => setData({ ...data, cgst: Number(e.target.value) })} /></Grid>
-                  
+
                   <Grid item xs={12}>
                     <MDTypography variant="h6" fontWeight="bold" mt={2} mb={2}>Item Details</MDTypography>
                     {data.items.map((item, i) => (
@@ -258,7 +258,7 @@ export default function InvoicePage() {
           <Grid item xs={12}>
             <Card sx={{ borderRadius: "16px", overflow: "hidden" }}>
               <MDBox p={3} sx={{ background: "linear-gradient(90deg, #1e293b, #334155)" }} display="flex" justifyContent="space-between" alignItems="center">
-                <MDTypography variant="h5" fontWeight="bold" color="white">Saved Invoices</MDTypography>
+                <MDTypography variant="h5" fontWeight="bold" color="white">All Invoices</MDTypography>
                 <Box display="flex" gap={2}>
                   <TextField size="small" placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} sx={{ bgcolor: "#fff", borderRadius: 1 }} />
                   <Select size="small" value={filter} onChange={(e) => setFilter(e.target.value)} sx={{ bgcolor: "#fff", borderRadius: 1, minWidth: 120 }}>
@@ -275,13 +275,15 @@ export default function InvoicePage() {
                     { Header: "Recipient", accessor: "invoiceName", width: "35%" },
                     { Header: "Date", accessor: "date", width: "15%", Cell: ({ value, row }) => new Date(value || row.original.createdAt).toLocaleDateString() },
                     { Header: "Amount", accessor: "total", width: "15%", Cell: ({ value }) => <MDTypography variant="button" fontWeight="bold" color="success">₹{value?.toLocaleString("en-IN")}</MDTypography> },
-                    { Header: "Actions", accessor: "actions", Cell: ({ row }) => (
-                      <Box display="flex" gap={1}>
-                        <IconButton color="info" size="small" onClick={() => { setData({ ...data, ...row.original, billingName: row.original.invoiceName, date: new Date(row.original.date || row.original.createdAt).toISOString().split("T")[0] }); setPreviewOpen(true); }}><VisibilityIcon fontSize="small" /></IconButton>
-                        <IconButton color="success" size="small" onClick={() => handleDownloadExisting(row.original)}><DownloadIcon fontSize="small" /></IconButton>
-                        <IconButton color="error" size="small" onClick={() => setDeleteId(row.original._id)}><DeleteIcon fontSize="small" /></IconButton>
-                      </Box>
-                    )}
+                    {
+                      Header: "Actions", accessor: "actions", Cell: ({ row }) => (
+                        <Box display="flex" gap={1}>
+                          <IconButton color="info" size="small" onClick={() => { setData({ ...data, ...row.original, billingName: row.original.invoiceName, date: new Date(row.original.date || row.original.createdAt).toISOString().split("T")[0] }); setPreviewOpen(true); }}><VisibilityIcon fontSize="small" /></IconButton>
+                          <IconButton color="success" size="small" onClick={() => handleDownloadExisting(row.original)}><DownloadIcon fontSize="small" /></IconButton>
+                          <IconButton color="error" size="small" onClick={() => setDeleteId(row.original._id)}><DeleteIcon fontSize="small" /></IconButton>
+                        </Box>
+                      )
+                    }
                   ],
                   rows: invoices
                 }} entriesPerPage={{ defaultValue: 5 }} isSorted={true} />
