@@ -63,25 +63,18 @@ const routes = [
     name: "Projects",
     key: "projectManagement",
     icon: <Icon fontSize="small">business_center</Icon>,
-           route: "/projectTables",
-        component: <ProjectTables />,
+    route: "/projectTables",
+    component: <ProjectTables />,
 
   },
 
   {
     type: "collapse",
-    name: "Accounts",
-    key: "accounts",
-    icon: <Icon fontSize="small">account_balance</Icon>,
-    children: [
-      {
-        name: "Invoices",
-        key: "billing",
-        route: "/billing",
-        component: <Billing />,
-        icon: <Icon fontSize="small">receipt</Icon>,
-      },
-    ],
+    name: "Invoices",
+    key: "billing",
+    route: "/billing",
+    component: <Billing />,
+    icon: <Icon fontSize="small">receipt</Icon>,
   },
 
 

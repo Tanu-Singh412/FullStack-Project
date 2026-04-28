@@ -1,5 +1,5 @@
 import { useLocation, useParams } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Fragment } from "react";
 
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
@@ -78,7 +78,10 @@ function ProjectDetails() {
     try {
       const res = await fetch(`${Base_API}/projects/${projectId}`);
       const data = await res.json();
-      setProject(data);
+      setProject({
+        ...data,
+        totalAmount: Number(data.totalAmount || 0),
+      });
     } catch (err) {
       console.error("Failed to fetch project", err);
     }
@@ -1043,29 +1046,43 @@ return (
                           const amount = Number(pay?.amount ?? pay?.payment?.amount ?? pay?.data?.amount ?? 0);
                           const date = pay?.date || pay?.createdAt;
                           return (
-                            <tr key={i} style={{ borderBottom: "1px solid #f1f5f9" }}>
-                              <td style={{ padding: "20px" }}>
-                                <MDTypography variant="button" fontWeight="bold" display="block" sx={{ color: "#1e293b" }}>
-                                  {date ? new Date(date).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" }) : "-"}
-                                </MDTypography>
-                                <MDTypography variant="caption" color="text" sx={{ fontWeight: 500 }}>
-                                  Note: {pay?.note || "Direct Payment"}
-                                </MDTypography>
-                              </td>
-                              <td style={{ padding: "20px", textAlign: "center" }}>
-                                <MDTypography variant="h6" fontWeight="bold" color="success">₹ {amount.toLocaleString("en-IN")}</MDTypography>
-                              </td>
-                              <td style={{ padding: "20px", textAlign: "right" }}>
-                                <Button
-                                  variant="contained"
-                                  size="small"
-                                  sx={{ bgcolor: "#25D366", color: "#fff", borderRadius: "8px", textTransform: "none", "&:hover": { bgcolor: "#128C7E" } }}
-                                  onClick={() => sendWhatsAppSlip(pay)}
-                                >
-                                  WhatsApp Receipt
-                                </Button>
-                              </td>
-                            </tr>
+                            <Fragment key={i}>
+                              <tr style={{ background: "#fff" }}>
+                                <td style={{ padding: "16px 20px" }}>
+                                  <MDTypography variant="button" fontWeight="bold" display="block" sx={{ color: "#1e293b" }}>
+                                    {date ? new Date(date).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" }) : "-"}
+                                  </MDTypography>
+                                </td>
+                                <td style={{ padding: "16px 20px", textAlign: "center" }}>
+                                  <MDTypography variant="h6" fontWeight="bold" color="success">₹ {amount.toLocaleString("en-IN")}</MDTypography>
+                                </td>
+                                <td style={{ padding: "16px 20px", textAlign: "right" }}>
+                                  <Button
+                                    variant="contained"
+                                    size="small"
+                                    sx={{ bgcolor: "#25D366", color: "#fff", borderRadius: "8px", textTransform: "none", "&:hover": { bgcolor: "#128C7E" } }}
+                                    onClick={() => sendWhatsAppSlip(pay)}
+                                  >
+                                    WhatsApp Receipt
+                                  </Button>
+                                </td>
+                              </tr>
+                              {pay?.note && (
+                                <tr style={{ borderBottom: "1px solid #f1f5f9" }}>
+                                  <td colSpan={3} style={{ padding: "0 20px 16px 20px" }}>
+                                    <MDBox sx={{ bgcolor: "#f8fafc", p: 1.5, borderRadius: "8px", border: "1px solid #e2e8f0" }}>
+                                      <MDTypography variant="caption" sx={{ color: "#64748b", fontWeight: 600, display: "block" }}>
+                                        📝 TRANSACTION NOTE:
+                                      </MDTypography>
+                                      <MDTypography variant="caption" sx={{ color: "#334155", fontWeight: 500 }}>
+                                        {pay.note}
+                                      </MDTypography>
+                                    </MDBox>
+                                  </td>
+                                </tr>
+                              )}
+                              {!pay?.note && <tr style={{ borderBottom: "1px solid #f1f5f9" }}><td colSpan={3} /></tr>}
+                            </Fragment>
                           );
                         })}
                       </tbody>
