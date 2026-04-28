@@ -1019,9 +1019,8 @@ return (
                         <Button
                           fullWidth
                           variant="contained"
-                          color="info"
                           onClick={handleAddPayment}
-                          sx={{ color: "#fff" }}
+                          sx={{ bgcolor: "#1e293b", color: "#fff", "&:hover": { bgcolor: "#334155" }, borderRadius: "8px", textTransform: "none", fontWeight: "bold" }}
                         >
                           {loading ? <CircularProgress size={20} color="inherit" /> : "Save Payment"}
                         </Button>
@@ -1046,10 +1045,12 @@ return (
                           return (
                             <tr key={i} style={{ borderBottom: "1px solid #f1f5f9" }}>
                               <td style={{ padding: "20px" }}>
-                                <MDTypography variant="button" fontWeight="bold" display="block">
+                                <MDTypography variant="button" fontWeight="bold" display="block" sx={{ color: "#1e293b" }}>
                                   {date ? new Date(date).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" }) : "-"}
                                 </MDTypography>
-                                <MDTypography variant="caption" color="text">{pay?.note || "Direct Payment"}</MDTypography>
+                                <MDTypography variant="caption" color="text" sx={{ fontWeight: 500 }}>
+                                  Note: {pay?.note || "Direct Payment"}
+                                </MDTypography>
                               </td>
                               <td style={{ padding: "20px", textAlign: "center" }}>
                                 <MDTypography variant="h6" fontWeight="bold" color="success">₹ {amount.toLocaleString("en-IN")}</MDTypography>
@@ -1057,9 +1058,8 @@ return (
                               <td style={{ padding: "20px", textAlign: "right" }}>
                                 <Button
                                   variant="contained"
-                                  color="success"
                                   size="small"
-                                  sx={{ borderRadius: "8px", textTransform: "none", color: "#fff" }}
+                                  sx={{ bgcolor: "#25D366", color: "#fff", borderRadius: "8px", textTransform: "none", "&:hover": { bgcolor: "#128C7E" } }}
                                   onClick={() => sendWhatsAppSlip(pay)}
                                 >
                                   WhatsApp Receipt
@@ -1241,9 +1241,8 @@ return (
               <MDBox display="flex" justifyContent="flex-end" mt={4} gap={2}>
                 {editScopeId && (
                   <Button
-                    variant="outlined"
-                    color="#fff"
-                    sx={{ borderRadius: "10px", textTransform: "none", px: 4, bgcolor: "red" }}
+                    variant="contained"
+                    sx={{ borderRadius: "10px", textTransform: "none", px: 4, bgcolor: "#64748b", color: "#fff", "&:hover": { bgcolor: "#475569" } }}
                     onClick={() => { setEditScopeId(null); resetScopeForm(); }}
                   >
                     Cancel
@@ -1257,10 +1256,10 @@ return (
                     borderRadius: "10px",
                     textTransform: "none",
                     fontWeight: "bold",
-                    background: "#4f46e5",
+                    background: "#1e293b",
                     color: "#fff",
-                    boxShadow: "0 10px 25px rgba(79, 70, 229, 0.3)",
-                    "&:hover": { background: "#4338ca" }
+                    boxShadow: "0 10px 25px rgba(30, 41, 59, 0.2)",
+                    "&:hover": { background: "#334155" }
                   }}
                   onClick={editScopeId ? handleUpdateScope : handleAddScope}
                 >
@@ -1307,7 +1306,7 @@ return (
                               <Chip
                                 label={s.workType}
                                 size="small"
-                                sx={{ bgcolor: "#4f46e5", color: "#fff", fontWeight: "bold", mb: 2, borderRadius: "6px" }}
+                                sx={{ bgcolor: "#1e293b", color: "#fff", fontWeight: "bold", mb: 2, borderRadius: "6px" }}
                               />
                               <MDTypography variant="h4" fontWeight="bold" sx={{ color: "#1e293b", mb: 1 }}>
                                 {s.projectType}
@@ -1355,7 +1354,7 @@ return (
                                   <MDBox sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                                     <MDBox sx={{
                                       width: 8, height: 8, borderRadius: "50%",
-                                      bgcolor: "#4f46e5"
+                                      bgcolor: "#1e293b"
                                     }} />
                                     <MDTypography variant="caption" sx={{
                                       color: "#1e293b",
