@@ -14,6 +14,7 @@ import MDButton from "components/MDButton";
 
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import Footer from "examples/Footer";
 
 function AddClient() {
