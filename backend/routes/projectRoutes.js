@@ -16,8 +16,9 @@ const {
   updateDrawing,
   deleteDrawing,
   deleteDrawingImage,
-    getProjectById, // ✅ ADD THIS
+    getProjectById, 
   addDrawingBase64,
+  addVisit,
 } = require("../controllers/projectController");
 
 const upload = require("../middleware/upload");
@@ -62,6 +63,9 @@ router.put("/:projectId/drawing", upload.array("images", 10), updateDrawing);
 router.delete("/:projectId/drawing", deleteDrawing);
 
 router.put("/:projectId/drawing/image", deleteDrawingImage);
+
+// ✅ VISIT COUNTER
+router.post("/:projectId/visit", addVisit);
 
 // ✅ CORRECT
 router.post("/:projectId/scope", addScope);

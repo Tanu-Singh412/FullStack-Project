@@ -15,6 +15,8 @@ const estimateSchema = new mongoose.Schema({
   location: String,
   plotArea: Number,
   totalEstimate: Number,
+  notes: String,
+  description: String,
   items: [itemSchema],
 }, { timestamps: true });
 

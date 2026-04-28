@@ -68,7 +68,17 @@ client: {
   type: mongoose.Schema.Types.ObjectId,
   ref: "Client"
 },
-scope: [scopeSchema], 
+    scope: [scopeSchema], 
+    visitCounter: {
+      type: Number,
+      default: 5,
+    },
+    visitNotes: [
+      {
+        note: String,
+        date: { type: Date, default: Date.now },
+      },
+    ],
   },
   
   {

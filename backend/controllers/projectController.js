@@ -489,3 +489,35 @@ exports.deleteDrawingImage = async (req, res) => {
     res.status(500).json(err);
   }
 };
+
+// ================= ADD VISIT =================
+exports.addVisit = async (req, res) => {
+  try {
+    const { projectId } = req.params;
+    const { note } = req.body;
+
+    const project = await Project.findById(projectId);
+    if (!project) return res.status(404).json({ msg: "Project not found" });
+
+    // Decrease counter if > 0
+    if (project.visitCounter > 0) {
+      project.visitCounter -= 1;
+    }
+
+    project.visitNotes.push({
+      note,
+      date: new Date(),
+    });
+
+    await project.save();
+
+    res.json({
+      msg: "Visit recorded",
+      visitCounter: project.visitCounter,
+      visitNotes: project.visitNotes,
+    });
+  } catch (err) {
+    console.error("ADD VISIT ERROR:", err);
+    res.status(500).json(err);
+  }
+};
