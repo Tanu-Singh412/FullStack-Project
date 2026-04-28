@@ -433,7 +433,7 @@ function ProjectDetails() {
     );
   }
 
-  return (
+return (
     <DashboardLayout>
       <DashboardNavbar />
 
@@ -453,13 +453,36 @@ function ProjectDetails() {
         >
           <Box sx={{ position: "absolute", top: -50, right: -50, width: 180, height: 180, borderRadius: "50%", background: "rgba(255,255,255,0.07)" }} />
         
-          <MDTypography sx={{ mt: 1, color: "rgba(255,255,255,0.85)", position: "relative", zIndex: 1 }}>
-            Project: <b style={{ color: "#fff" }}>{project.projectName}</b>
-          </MDTypography>
-
-          <MDTypography sx={{ mt: 1, color: "rgba(255,255,255,0.85)", position: "relative", zIndex: 1 }}>
-            Client: <b style={{ color: "#fff" }}>{project.clientName}</b>
-          </MDTypography>
+          <MDBox display="flex" justifyContent="space-between" alignItems="center">
+            <MDBox sx={{ position: "relative", zIndex: 1 }}>
+              <MDTypography sx={{ mt: 1, color: "rgba(255,255,255,0.85)" }}>
+                Project: <b style={{ color: "#fff" }}>{project.projectName}</b>
+              </MDTypography>
+              <MDTypography sx={{ mt: 0.5, color: "rgba(255,255,255,0.85)" }}>
+                Client: <b style={{ color: "#fff" }}>{project.clientName}</b> 
+                <span style={{ marginLeft: "12px", opacity: 0.7, fontSize: "0.8rem" }}>(ID: {project.clientId})</span>
+              </MDTypography>
+            </MDBox>
+            
+            {/* VISIT COUNTER DISPLAY */}
+            <MDBox 
+              sx={{ 
+                position: "relative", zIndex: 1, 
+                bgcolor: "rgba(255,255,255,0.2)", 
+                p: 2, borderRadius: "15px", 
+                textAlign: "center",
+                minWidth: "120px",
+                border: "1px solid rgba(255,255,255,0.3)"
+              }}
+            >
+              <MDTypography variant="h4" fontWeight="bold" color="white">
+                {project.visitCounter ?? 5}
+              </MDTypography>
+              <MDTypography variant="xxs" fontWeight="bold" color="white" sx={{ textTransform: "uppercase" }}>
+                Visits Left
+              </MDTypography>
+            </MDBox>
+          </MDBox>
         </Card>
 
         {/* TABS */}
@@ -481,7 +504,7 @@ function ProjectDetails() {
             "& .Mui-selected": {
               background: "#2563eb !important",
               color: "#fff !important",
-              boxShadow: "0 6px 20px rgba(249,115,22,0.3)",
+              boxShadow: "0 4px 12px rgba(37, 99, 235, 0.2)",
             },
             "& .MuiTabs-indicator": { display: "none" },
           }}
@@ -514,36 +537,162 @@ function ProjectDetails() {
                 </Grid>
 
                 <Grid item xs={12} md={4}>
-                  <Card sx={{ p: 4, borderRadius: "20px", background: "linear-gradient(135deg, #1e293b, #334155)", color: "#fff" }}>
-                    <MDTypography variant="h6" fontWeight="bold" color="white" mb={3}>Project Pulse</MDTypography>
-                    <MDBox display="flex" flexDirection="column" gap={2.5}>
-                      <Box>
-                        <MDTypography variant="caption" color="white" sx={{ opacity: 0.6, fontWeight: "bold", textTransform: "uppercase" }}>Registration Date</MDTypography>
-                        <MDTypography variant="h6" color="white" fontWeight="bold">
-                          {new Date(project.createdAt).toLocaleDateString("en-IN", { day: "2-digit", month: "long", year: "numeric" })}
-                        </MDTypography>
-                        <MDTypography variant="caption" color="white" sx={{ opacity: 0.5 }}>
-                          {new Date(project.createdAt).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}
-                        </MDTypography>
+                  <Card sx={{ p: 3, borderRadius: "20px", background: "linear-gradient(135deg, #1e293b, #334155)", color: "#fff", height: "100%" }}>
+                    <MDTypography variant="h6" fontWeight="bold" color="white" mb={2}>Project Pulse</MDTypography>
+                    <MDBox display="flex" flexDirection="column" gap={2}>
+                      <Box display="flex" justifyContent="space-between">
+                        <MDTypography variant="caption" color="white" sx={{ opacity: 0.6 }}>STATUS</MDTypography>
+                        <Chip label={project.status || "Active"} size="small" sx={{ bgcolor: "#34d399", color: "#064e3b", fontWeight: "bold" }} />
                       </Box>
-                      <Box>
-                        <MDTypography variant="caption" color="white" sx={{ opacity: 0.6, fontWeight: "bold", textTransform: "uppercase" }}>Current Status</MDTypography>
-                        <Chip label={project.status || "Active"} size="small"
-                          sx={{ bgcolor: "#34d399", color: "#064e3b", fontWeight: "900", mt: 0.5 }} />
+                      <Box display="flex" justifyContent="space-between">
+                        <MDTypography variant="caption" color="white" sx={{ opacity: 0.6 }}>PROJECT ID</MDTypography>
+                        <MDTypography variant="button" color="white" fontWeight="bold">#{project.projectId || project._id?.slice(-8).toUpperCase()}</MDTypography>
                       </Box>
-                      <Box>
-                        <MDTypography variant="caption" color="white" sx={{ opacity: 0.6, fontWeight: "bold", textTransform: "uppercase" }}>Project ID</MDTypography>
-                        <MDTypography variant="button" display="block" color="white" fontWeight="bold">
-                          #{project.projectId || project._id?.slice(-8).toUpperCase()}
-                        </MDTypography>
+                      <Box display="flex" justifyContent="space-between">
+                        <MDTypography variant="caption" color="white" sx={{ opacity: 0.6 }}>TOTAL BUDGET</MDTypography>
+                        <MDTypography variant="h6" color="white" fontWeight="bold" sx={{ color: "#34d399" }}>₹{Number(project.totalAmount || 0).toLocaleString("en-IN")}</MDTypography>
                       </Box>
-                      <Box>
-                        <MDTypography variant="caption" color="white" sx={{ opacity: 0.6, fontWeight: "bold", textTransform: "uppercase" }}>Total Amount</MDTypography>
-                        <MDTypography variant="h5" color="white" fontWeight="900" sx={{ color: "#34d399" }}>
-                          ₹{Number(project.totalAmount || 0).toLocaleString("en-IN")}
-                        </MDTypography>
+                      
+                      {/* PAYMENT PROGRESS */}
+                      <Box mt={1}>
+                        <MDTypography variant="caption" color="white" sx={{ opacity: 0.6, fontWeight: "bold" }}>PAYMENT STATUS</MDTypography>
+                        <MDBox display="flex" alignItems="center" gap={1} mt={0.5}>
+                          <MDBox sx={{ flex: 1, height: 6, bgcolor: "rgba(255,255,255,0.1)", borderRadius: 3, overflow: "hidden" }}>
+                            <MDBox sx={{ 
+                              width: `${Math.min(100, (Number(project.payments?.reduce((s,p) => s + (Number(p.amount || 0)), 0) || 0) / Number(project.totalAmount || 1)) * 100)}%`, 
+                              height: "100%", 
+                              bgcolor: "#34d399" 
+                            }} />
+                          </MDBox>
+                          <MDTypography variant="caption" color="white" fontWeight="bold">
+                            {Math.round((Number(project.payments?.reduce((s,p) => s + (Number(p.amount || 0)), 0) || 0) / Number(project.totalAmount || 1)) * 100)}%
+                          </MDTypography>
+                        </MDBox>
                       </Box>
+                      <Divider sx={{ bgcolor: "rgba(255,255,255,0.1)", my: 1 }} />
+                      
+                      {/* VISIT COUNTER INTERACTION */}
+                      <MDBox>
+                        <MDTypography variant="caption" color="white" sx={{ opacity: 0.6, fontWeight: "bold" }}>RECORD VISIT</MDTypography>
+                        <MDBox display="flex" gap={1} mt={1}>
+                          <TextField 
+                            size="small" 
+                            placeholder="Visit note..." 
+                            variant="outlined"
+                            value={paymentData.visitNote || ""}
+                            onChange={(e) => setPaymentData({ ...paymentData, visitNote: e.target.value })}
+                            sx={{ 
+                              bgcolor: "rgba(255,255,255,0.1)", 
+                              borderRadius: "8px",
+                              "& input": { color: "#fff", fontSize: "12px" },
+                              "& fieldset": { border: "none" }
+                            }}
+                          />
+                          <Button 
+                            variant="contained" 
+                            size="small"
+                            onClick={async () => {
+                              if (!paymentData.visitNote) return alert("Please add a note for the visit");
+                              const res = await fetch(`${Base_API}/projects/${project._id}/visit`, {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({ note: paymentData.visitNote })
+                              });
+                              if (res.ok) {
+                                const updated = await res.json();
+                                setProject({ ...project, visitCounter: updated.visitCounter, visitNotes: updated.visitNotes });
+                                setPaymentData({ ...paymentData, visitNote: "" });
+                                alert("Visit recorded!");
+                              }
+                            }}
+                            sx={{ bgcolor: "#f97316", color: "#fff", minWidth: "40px", borderRadius: "8px" }}
+                          >
+                            +
+                          </Button>
+                        </MDBox>
+                      </MDBox>
                     </MDBox>
+                  </Card>
+                </Grid>
+
+                {/* SCOPE OF WORK SUMMARY */}
+                {scopeList.length > 0 && (
+                  <Grid item xs={12}>
+                    <Card sx={{ p: 4, borderRadius: "20px", boxShadow: "0 10px 30px rgba(0,0,0,0.05)" }}>
+                      <MDBox display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+                        <MDTypography variant="h5" fontWeight="bold">📋 Scope of Work Summary</MDTypography>
+                        <Button 
+                          variant="contained" 
+                          size="small" 
+                          onClick={() => setTab(3)}
+                          sx={{ bgcolor: "#2563eb", color: "#fff", borderRadius: 2, textTransform: "none" }}
+                        >
+                          + Add Scope
+                        </Button>
+                      </MDBox>
+                      <Grid container spacing={2}>
+                        {scopeList.map((s, idx) => (
+                          <Grid item xs={12} md={6} key={idx}>
+                            <MDBox sx={{ p: 2, bgcolor: "#f8fafc", borderRadius: "12px", border: "1px solid #e2e8f0" }}>
+                              <MDTypography variant="button" fontWeight="bold" color="dark">{s.projectType} ({s.workType})</MDTypography>
+                              <MDTypography variant="caption" display="block" color="text">Area: {s.area} sqft | Timeline: {s.timeline}</MDTypography>
+                              <MDBox display="flex" flexWrap="wrap" gap={0.5} mt={1}>
+                                {s.conceptDesign && <Chip label="Concept" size="small" variant="outlined" sx={{ fontSize: "10px" }} />}
+                                {s.drawings2D && <Chip label="2D" size="small" variant="outlined" sx={{ fontSize: "10px" }} />}
+                                {s.elevation3D && <Chip label="3D" size="small" variant="outlined" sx={{ fontSize: "10px" }} />}
+                                {s.civil && <Chip label="Civil" size="small" variant="outlined" sx={{ fontSize: "10px" }} />}
+                              </MDBox>
+                            </MDBox>
+                          </Grid>
+                        ))}
+                      </Grid>
+                    </Card>
+                  </Grid>
+                )}
+
+                {/* VISIT HISTORY TABLE */}
+                <Grid item xs={12}>
+                  <Card sx={{ p: 4, borderRadius: "20px", boxShadow: "0 10px 30px rgba(0,0,0,0.05)" }}>
+                    <MDBox display="flex" justifyContent="space-between" alignItems="center" mb={3}>
+                      <MDTypography variant="h5" fontWeight="bold">🚗 Site Visit Log</MDTypography>
+                      <MDBox sx={{ px: 2, py: 0.5, borderRadius: 10, bgcolor: "#eff6ff", border: "1px solid #dbeafe" }}>
+                        <MDTypography variant="caption" fontWeight="bold" color="info">
+                          {project.visitCounter ?? 5} VISITS REMAINING
+                        </MDTypography>
+                      </MDBox>
+                    </MDBox>
+                    <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                      <thead>
+                        <tr style={{ borderBottom: "1px solid #f1f5f9" }}>
+                          <th style={{ textAlign: "left", padding: "12px", color: "#64748b", fontSize: "12px", textTransform: "uppercase" }}>Visit Date</th>
+                          <th style={{ textAlign: "left", padding: "12px", color: "#64748b", fontSize: "12px", textTransform: "uppercase" }}>Observation/Note</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {(project.visitNotes || []).map((v, i) => (
+                          <tr key={i} style={{ borderBottom: "1px solid #f8fafc" }}>
+                            <td style={{ padding: "12px" }}>
+                              <MDTypography variant="button" fontWeight="bold">
+                                {new Date(v.date).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}
+                              </MDTypography>
+                              <MDTypography variant="caption" display="block" color="text">
+                                {new Date(v.date).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}
+                              </MDTypography>
+                            </td>
+                            <td style={{ padding: "12px" }}>
+                              <MDTypography variant="caption" fontWeight="medium" color="text">{v.note}</MDTypography>
+                            </td>
+                          </tr>
+                        ))}
+                        {(project.visitNotes || []).length === 0 && (
+                          <tr>
+                            <td colSpan="2" style={{ padding: "30px", textAlign: "center" }}>
+                              <MDTypography variant="caption" color="text">No visits recorded yet.</MDTypography>
+                            </td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
                   </Card>
                 </Grid>
 
@@ -648,11 +797,6 @@ function ProjectDetails() {
                         <MDTypography variant="caption" sx={{ color: "rgba(255,255,255,0.85)", display: "block" }}>
                           {desc}
                         </MDTypography>
-                        {/* {pdfSupport && (
-                          <Box sx={{ mt: 1, display: "inline-block", bgcolor: "rgba(255,255,255,0.2)", px: 2, py: 0.3, borderRadius: 10 }}>
-                            <MDTypography variant="caption" sx={{ color: "#fff", fontWeight: "bold" }}>📄 PDF Upload Supported</MDTypography>
-                          </Box>
-                        )} */}
                       </Box>
                       {/* Buttons */}
                       <Box sx={{ p: 3, display: "flex", gap: 2, bgcolor: "#fff" }}>
@@ -662,8 +806,8 @@ function ProjectDetails() {
                           sx={{
                             background: grad, color: "#fff",
                             py: 1.5, borderRadius: "12px", fontWeight: "bold", textTransform: "none",
-                            boxShadow: `0 6px 20px rgba(0,0,0,0.2)`,
-                            "&:hover": { opacity: 0.9, transform: "translateY(-2px)" },
+                            boxShadow: "none",
+                            "&:hover": { background: grad, opacity: 0.9, transform: "translateY(-2px)" },
                             transition: "all 0.25s",
                           }}
                         >
@@ -720,7 +864,6 @@ function ProjectDetails() {
 
                 <Grid container spacing={3}>
                   {images.map((img, i) => {
-                    // detect base64 PDFs (data:application/pdf) AND URL-based PDFs (.pdf)
                     const isPdf = typeof img === "string" && (
                       img.startsWith("data:application/pdf") ||
                       img.toLowerCase().includes(".pdf")
@@ -790,9 +933,6 @@ function ProjectDetails() {
         )}
 
         {/* ACCOUNTS */}
-
-
-
         {tab === 2 && (
           <MDBox mt={3}>
             {(() => {
@@ -830,151 +970,107 @@ function ProjectDetails() {
                         key={i}
                         sx={{
                           p: 2,
-                          borderRadius: "12px",
+                          borderRadius: "15px",
                           textAlign: "center",
-                          background: item.bg,
+                          background: "#fff",
+                          border: `1px solid ${item.color}20`,
+                          boxShadow: "0 4px 12px rgba(0,0,0,0.03)"
                         }}
                       >
-                        <MDTypography variant="caption">
-                          {item.label}
+                        <MDTypography variant="caption" fontWeight="bold" sx={{ color: "#64748b" }}>
+                          {item.label.toUpperCase()}
                         </MDTypography>
 
                         <MDTypography
-                          variant="h6"
+                          variant="h5"
                           fontWeight="bold"
-                          sx={{ color: item.color }}
+                          sx={{ color: item.color, mt: 0.5 }}
                         >
-                          ₹ {item.value}
+                          ₹ {item.value.toLocaleString("en-IN")}
                         </MDTypography>
                       </Card>
                     ))}
                   </MDBox>
 
                   {/* ================= ADD PAYMENT ================= */}
-                  <Card sx={{ p: 2, borderRadius: "12px", mb: 3 }}>
-                    <MDBox
-                      display="grid"
-                      gridTemplateColumns="repeat(4, 1fr)"
-                      gap={2}
-                    >
-                      <input
-                        type="number"
-                        placeholder="Amount"
-                        value={paymentData.amount}
-                        onChange={(e) =>
-                          setPaymentData({
-                            ...paymentData,
-                            amount: e.target.value,
-                          })
-                        }
-                        style={inputStyle}
-                      />
-
-                      <input
-                        type="date"
-                        value={paymentData.date}
-                        onChange={(e) =>
-                          setPaymentData({
-                            ...paymentData,
-                            date: e.target.value,
-                          })
-                        }
-                        style={inputStyle}
-                      />
-
-                      <input
-                        type="text"
-                        placeholder="Note"
-                        value={paymentData.note}
-                        onChange={(e) =>
-                          setPaymentData({
-                            ...paymentData,
-                            note: e.target.value,
-                          })
-                        }
-                        style={inputStyle}
-                      />
-
-                      <Button
-                        variant="contained"
-                        onClick={handleAddPayment}
-                        sx={{
-                          borderRadius: "8px",
-                          textTransform: "none",
-                          height: "40px",
-                          color: "#fff"
-                        }}
-                      >
-                        {loading ? <CircularProgress size={20} /> : "Add Payment"}
-                      </Button>
-                    </MDBox>
+                  <Card sx={{ p: 4, borderRadius: "20px", mb: 3, boxShadow: "0 10px 30px rgba(0,0,0,0.05)" }}>
+                    <MDTypography variant="h6" fontWeight="bold" mb={3}>Add New Transaction</MDTypography>
+                    <Grid container spacing={2} alignItems="center">
+                      <Grid item xs={12} md={3}>
+                        <TextField
+                          fullWidth
+                          type="number"
+                          label="Amount (₹)"
+                          value={paymentData.amount}
+                          onChange={(e) => setPaymentData({ ...paymentData, amount: e.target.value })}
+                        />
+                      </Grid>
+                      <Grid item xs={12} md={3}>
+                        <TextField
+                          fullWidth
+                          type="date"
+                          label="Payment Date"
+                          InputLabelProps={{ shrink: true }}
+                          value={paymentData.date}
+                          onChange={(e) => setPaymentData({ ...paymentData, date: e.target.value })}
+                        />
+                      </Grid>
+                      <Grid item xs={12} md={4}>
+                        <TextField
+                          fullWidth
+                          label="Note / Description"
+                          value={paymentData.note}
+                          onChange={(e) => setPaymentData({ ...paymentData, note: e.target.value })}
+                        />
+                      </Grid>
+                      <Grid item xs={12} md={2}>
+                        <Button
+                          fullWidth
+                          variant="contained"
+                          color="info"
+                          onClick={handleAddPayment}
+                          sx={{ color: "#fff" }}
+                        >
+                          {loading ? <CircularProgress size={20} color="inherit" /> : "Save Payment"}
+                        </Button>
+                      </Grid>
+                    </Grid>
                   </Card>
 
                   {/* ================= TABLE ================= */}
-                  <Card sx={{ p: 2, borderRadius: "12px" }}>
-                    <table
-                      style={{
-                        width: "100%",
-                        borderCollapse: "collapse",
-                      }}
-                    >
+                  <Card sx={{ p: 0, borderRadius: "20px", overflow: "hidden", boxShadow: "0 10px 30px rgba(0,0,0,0.05)" }}>
+                    <table style={{ width: "100%", borderCollapse: "collapse" }}>
                       <thead>
-                        <tr style={{ background: "linear-gradient(90deg, #1e293b, #334155)", color: "#fff" }}>
-                          <th style={{ padding: "15px", textAlign: "center", fontWeight: "bold", fontSize: "13px", textTransform: "uppercase" }}>Transaction Date</th>
-                          <th style={{ padding: "15px", textAlign: "center", fontWeight: "bold", fontSize: "13px", textTransform: "uppercase" }}>Amount Received</th>
-                          <th style={{ padding: "15px", textAlign: "center", fontWeight: "bold", fontSize: "13px", textTransform: "uppercase" }}>Description/Note</th>
-                          <th style={{ padding: "15px", textAlign: "center", fontWeight: "bold", fontSize: "13px", textTransform: "uppercase" }}>Actions</th>
+                        <tr style={{ background: "#f8fafc", borderBottom: "1px solid #e2e8f0" }}>
+                          <th style={{ padding: "20px", textAlign: "left", fontSize: "12px", fontWeight: "800", color: "#64748b", textTransform: "uppercase" }}>Transaction Details</th>
+                          <th style={{ padding: "20px", textAlign: "center", fontSize: "12px", fontWeight: "800", color: "#64748b", textTransform: "uppercase" }}>Amount Received</th>
+                          <th style={{ padding: "20px", textAlign: "right", fontSize: "12px", fontWeight: "800", color: "#64748b", textTransform: "uppercase" }}>Actions</th>
                         </tr>
                       </thead>
-
                       <tbody>
                         {(project?.payments || []).map((pay, i) => {
-                          const amount =
-                            Number(
-                              pay?.amount ??
-                              pay?.payment?.amount ??
-                              pay?.data?.amount ??
-                              0
-                            );
-
+                          const amount = Number(pay?.amount ?? pay?.payment?.amount ?? pay?.data?.amount ?? 0);
                           const date = pay?.date || pay?.createdAt;
-
                           return (
-                            <tr key={i}>
-                              <td style={{ padding: "10px", textAlign: "center" }}>
-                                {date
-                                  ? new Date(date).toLocaleDateString("en-IN", {
-                                    day: "2-digit",
-                                    month: "long",
-                                    year: "numeric",
-                                  })
-                                  : "-"}
+                            <tr key={i} style={{ borderBottom: "1px solid #f1f5f9" }}>
+                              <td style={{ padding: "20px" }}>
+                                <MDTypography variant="button" fontWeight="bold" display="block">
+                                  {date ? new Date(date).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" }) : "-"}
+                                </MDTypography>
+                                <MDTypography variant="caption" color="text">{pay?.note || "Direct Payment"}</MDTypography>
                               </td>
-
-                              <td
-                                style={{
-                                  padding: "10px",
-                                  textAlign: "center",
-                                  fontWeight: "600",
-                                  color: "#2e7d32",
-                                }}
-                              >
-                                ₹ {amount}
+                              <td style={{ padding: "20px", textAlign: "center" }}>
+                                <MDTypography variant="h6" fontWeight="bold" color="success">₹ {amount.toLocaleString("en-IN")}</MDTypography>
                               </td>
-
-                              <td style={{ padding: "15px", textAlign: "center" }}>
-                                {pay?.note || pay?.payment?.note || "-"}
-                              </td>
-
-                              <td style={{ padding: "15px", textAlign: "center" }}>
+                              <td style={{ padding: "20px", textAlign: "right" }}>
                                 <Button
-                                  size="small"
                                   variant="contained"
                                   color="success"
-                                  sx={{ color: "#000", textTransform: "none", borderRadius: "20px", fontWeight: "bold", background: "#25D366", "&:hover": { background: "#128C7E" } }}
+                                  size="small"
+                                  sx={{ borderRadius: "8px", textTransform: "none", color: "#fff" }}
                                   onClick={() => sendWhatsAppSlip(pay)}
                                 >
-                                  Send WA Slip
+                                  WhatsApp Receipt
                                 </Button>
                               </td>
                             </tr>

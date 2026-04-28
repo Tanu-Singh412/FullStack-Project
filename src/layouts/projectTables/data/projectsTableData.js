@@ -69,6 +69,7 @@ export default function useProjectData() {
     { Header: "Project", accessor: "project", width: "25%" },
     { Header: "Client", accessor: "client", width: "20%" },
     { Header: "Total", accessor: "total", width: "15%" },
+    { Header: "Visits", accessor: "visits", width: "10%" },
     { Header: "Date", accessor: "date", width: "15%" },
     { Header: "Status", accessor: "status", width: "10%" },
     { Header: "Actions", accessor: "actions", width: "10%" },
@@ -183,6 +184,18 @@ export default function useProjectData() {
             <MDTypography variant="caption" fontWeight="bold" color="success">
               ₹ {p.totalAmount?.toLocaleString("en-IN")}
             </MDTypography>
+          </MDBox>
+        ),
+        visits: (
+          <MDBox sx={{ px: 1, py: 0.5, borderRadius: 1.5, bgcolor: p.visitCounter > 0 ? "#eff6ff" : "#fef2f2", border: `1px solid ${p.visitCounter > 0 ? "#dbeafe" : "#fee2e2"}`, textAlign: "center" }}>
+            <MDTypography variant="caption" fontWeight="bold" sx={{ color: p.visitCounter > 0 ? "#2563eb" : "#dc2626" }}>
+              {p.visitCounter ?? 5} Left
+            </MDTypography>
+            {p.visitNotes?.length > 0 && (
+              <MDTypography variant="xxs" display="block" sx={{ color: "#64748b", mt: 0.2 }}>
+                Last: {new Date(p.visitNotes[p.visitNotes.length - 1].date).toLocaleDateString("en-IN", { day: "numeric", month: "short" })}
+              </MDTypography>
+            )}
           </MDBox>
         ),
 

@@ -155,6 +155,10 @@ export default function InvoicePage() {
   useEffect(() => { loadInvoices(); }, [search, filter]);
 
   const handleSaveAndDownload = async () => {
+    if (!data.billingName || !data.invoiceNo || !data.items[0].name) {
+      alert("Please fill in all mandatory fields: Billing Name, Invoice No, and at least one Item Name.");
+      return;
+    }
     const payload = { ...data, clientName: data.billingName, invoiceName: data.billingName, clientGstin: data.billingGstin, total: Number(totals.total) };
     delete payload._id; delete payload.createdAt; delete payload.updatedAt; delete payload.__v;
     let res = data._id ? await updateInvoice(data._id, payload) : await createInvoice(payload);
@@ -205,7 +209,7 @@ export default function InvoicePage() {
           <Grid item xs={12}>
             <MDBox display="flex" justifyContent="space-between" alignItems="center" p={3} sx={{ background: "linear-gradient(90deg, #1e293b, #334155)", borderRadius: "16px", boxShadow: "0 4px 20px rgba(0,0,0,0.1)" }}>
               <MDTypography variant="h4" fontWeight="bold" color="white">Billing Management</MDTypography>
-              <MDButton variant="gradient" color="info" startIcon={<ArrowBackIcon />} onClick={() => navigate(-1)}>Back</MDButton>
+              <MDButton variant="contained" color="info" startIcon={<ArrowBackIcon />} onClick={() => navigate(-1)}>Back</MDButton>
             </MDBox>
           </Grid>
 
@@ -217,11 +221,11 @@ export default function InvoicePage() {
               </MDBox>
               <MDBox p={4}>
                 <Grid container spacing={3}>
-                  <Grid item xs={12} sm={4}><TextField fullWidth label="Billing Name" variant="outlined" value={data.billingName} onChange={(e) => setData({ ...data, billingName: e.target.value })} inputProps={{ style: { color: '#000', fontWeight: 600 } }} /></Grid>
+                  <Grid item xs={12} sm={4}><TextField required fullWidth label="Billing Name" variant="outlined" value={data.billingName} onChange={(e) => setData({ ...data, billingName: e.target.value })} inputProps={{ style: { color: '#000', fontWeight: 600 } }} /></Grid>
                   <Grid item xs={12} sm={4}><TextField fullWidth label="Email" variant="outlined" value={data.email} onChange={(e) => setData({ ...data, email: e.target.value })} /></Grid>
                   <Grid item xs={12} sm={4}><TextField fullWidth label="GSTIN" variant="outlined" value={data.billingGstin} onChange={(e) => setData({ ...data, billingGstin: e.target.value })} /></Grid>
-                  <Grid item xs={12} sm={3}><TextField fullWidth label="Invoice No" value={data.invoiceNo} onChange={(e) => setData({ ...data, invoiceNo: e.target.value })} /></Grid>
-                  <Grid item xs={12} sm={3}><TextField fullWidth label="Date" type="date" InputLabelProps={{ shrink: true }} value={data.date} onChange={(e) => setData({ ...data, date: e.target.value })} /></Grid>
+                  <Grid item xs={12} sm={3}><TextField required fullWidth label="Invoice No" value={data.invoiceNo} onChange={(e) => setData({ ...data, invoiceNo: e.target.value })} /></Grid>
+                  <Grid item xs={12} sm={3}><TextField required fullWidth label="Date" type="date" InputLabelProps={{ shrink: true }} value={data.date} onChange={(e) => setData({ ...data, date: e.target.value })} /></Grid>
                   <Grid item xs={12} sm={3}><TextField fullWidth label="SGST %" type="number" value={data.sgst} onChange={(e) => setData({ ...data, sgst: Number(e.target.value) })} /></Grid>
                   <Grid item xs={12} sm={3}><TextField fullWidth label="CGST %" type="number" value={data.cgst} onChange={(e) => setData({ ...data, cgst: Number(e.target.value) })} /></Grid>
                   
@@ -229,7 +233,7 @@ export default function InvoicePage() {
                     <MDTypography variant="h6" fontWeight="bold" mt={2} mb={2}>Item Details</MDTypography>
                     {data.items.map((item, i) => (
                       <Grid container spacing={2} key={i} sx={{ mb: 2, alignItems: "center" }}>
-                        <Grid item xs={12} sm={4}><TextField fullWidth label="Name" size="small" value={item.name} onChange={(e) => { const items = [...data.items]; items[i].name = e.target.value; setData({ ...data, items }); }} /></Grid>
+                        <Grid item xs={12} sm={4}><TextField required fullWidth label="Item Name" size="small" value={item.name} onChange={(e) => { const items = [...data.items]; items[i].name = e.target.value; setData({ ...data, items }); }} /></Grid>
                         <Grid item xs={12} sm={2}><TextField fullWidth label="HSN" size="small" value={item.hsn} onChange={(e) => { const items = [...data.items]; items[i].hsn = e.target.value; setData({ ...data, items }); }} /></Grid>
                         <Grid item xs={12} sm={2}><TextField fullWidth label="Qty" type="number" size="small" value={item.qty} onChange={(e) => { const items = [...data.items]; items[i].qty = Number(e.target.value); setData({ ...data, items }); }} /></Grid>
                         <Grid item xs={12} sm={2}><TextField fullWidth label="Price" type="number" size="small" value={item.price} onChange={(e) => { const items = [...data.items]; items[i].price = Number(e.target.value); setData({ ...data, items }); }} /></Grid>
@@ -243,7 +247,7 @@ export default function InvoicePage() {
                   <MDTypography variant="h5" fontWeight="bold" color="dark">Total Amount: ₹{totals.total}</MDTypography>
                   <Box display="flex" gap={2}>
                     <Button variant="outlined" onClick={() => setPreviewOpen(true)} startIcon={<VisibilityIcon />} sx={{ color: "#000", borderColor: "#000", fontWeight: "bold" }}>Preview</Button>
-                    <MDButton variant="gradient" color="success" onClick={handleSaveAndDownload} startIcon={<DownloadIcon />}>Save & Download</MDButton>
+                    <MDButton variant="contained" color="success" onClick={handleSaveAndDownload} startIcon={<DownloadIcon />}>Save & Download</MDButton>
                   </Box>
                 </Box>
               </MDBox>
@@ -289,7 +293,7 @@ export default function InvoicePage() {
       <Footer />
       {/* Dialogs */}
       <Dialog open={!!deleteId} onClose={() => setDeleteId(null)}><DialogTitle>Confirm Delete</DialogTitle><DialogContent>Are you sure?</DialogContent><DialogActions><Button onClick={() => setDeleteId(null)}>Cancel</Button><Button variant="contained" color="error" onClick={handleDelete}>Delete</Button></DialogActions></Dialog>
-      <Dialog open={previewOpen} onClose={() => setPreviewOpen(false)} maxWidth="md" fullWidth><DialogTitle>Preview</DialogTitle><DialogContent dividers sx={{ bgcolor: "#f5f5f5", display: "flex", justifyContent: "center", p: 4 }}><Paper elevation={3}><Invoice data={data} totals={totals} /></Paper></DialogContent><DialogActions><Button onClick={() => setPreviewOpen(false)}>Close</Button><MDButton variant="gradient" color="success" onClick={() => { handleSaveAndDownload(); setPreviewOpen(false); }}>Save & Download</MDButton></DialogActions></Dialog>
+      <Dialog open={previewOpen} onClose={() => setPreviewOpen(false)} maxWidth="md" fullWidth><DialogTitle>Preview</DialogTitle><DialogContent dividers sx={{ bgcolor: "#f5f5f5", display: "flex", justifyContent: "center", p: 4 }}><Paper elevation={3}><Invoice data={data} totals={totals} /></Paper></DialogContent><DialogActions><Button onClick={() => setPreviewOpen(false)}>Close</Button><MDButton variant="contained" color="success" onClick={() => { handleSaveAndDownload(); setPreviewOpen(false); }}>Save & Download</MDButton></DialogActions></Dialog>
       <div style={{ position: "absolute", left: "-9999px", top: 0 }}><Invoice ref={pdfRef} data={data} totals={totals} /></div>
     </DashboardLayout>
   );

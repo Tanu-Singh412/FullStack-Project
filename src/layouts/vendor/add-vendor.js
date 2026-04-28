@@ -19,6 +19,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 // Dashboard
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
+import MDButton from "components/MDButton";
 
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
@@ -267,19 +268,19 @@ function AddVendor() {
                 <Grid item xs={12} md={8}>
                     <Grid container spacing={2}>
                         <Grid item xs={12} md={6}>
-                            <TextField fullWidth label="Vendor Name *" name="vendorName" value={form.vendorName} onChange={handleChange} />
+                            <TextField fullWidth required label="Vendor Name" name="vendorName" value={form.vendorName} onChange={handleChange} variant="outlined" />
                         </Grid>
                         <Grid item xs={12} md={6}>
-                            <TextField fullWidth label="Phone *" name="phone" value={form.phone} onChange={handleChange} />
+                            <TextField fullWidth required label="Phone Number" name="phone" value={form.phone} onChange={handleChange} variant="outlined" />
                         </Grid>
                         <Grid item xs={12} md={6}>
-                            <TextField fullWidth label="Email" name="email" value={form.email} onChange={handleChange} />
+                            <TextField fullWidth required label="Category" name="category" value={form.category} onChange={handleChange} variant="outlined" />
                         </Grid>
                         <Grid item xs={12} md={6}>
-                            <TextField fullWidth label="GSTIN" name="gst" value={form.gst} onChange={handleChange} />
+                            <TextField fullWidth label="GSTIN" name="gst" value={form.gst} onChange={handleChange} variant="outlined" />
                         </Grid>
                         <Grid item xs={12}>
-                            <TextField fullWidth label="Company" name="company" value={form.company} onChange={handleChange} />
+                            <TextField fullWidth label="Company Name" name="company" value={form.company} onChange={handleChange} variant="outlined" />
                         </Grid>
                     </Grid>
                 </Grid>
@@ -335,10 +336,10 @@ function AddVendor() {
                   ))}
                 </Grid>
 
-                <Grid item xs={12} mt={2}>
-                  <Button fullWidth variant="contained" size="large" onClick={handleSubmit} sx={{ bgcolor: "#3b82f6", color: "#fff", py: 2, fontWeight: "bold" }}>
-                    Register Vendor with Material Data
-                  </Button>
+                <Grid item xs={12} mt={2} display="flex" justifyContent="center">
+                  <MDButton variant="contained" color="dark" size="large" onClick={handleSubmit} sx={{ px: 8, py: 1.5 }}>
+                    Register Vendor
+                  </MDButton>
                 </Grid>
               </Grid>
             </Card>

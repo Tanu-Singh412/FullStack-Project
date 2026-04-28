@@ -13,6 +13,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 // Dashboard
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
+import MDButton from "components/MDButton";
 
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
@@ -38,6 +39,7 @@ function AddProject() {
     totalAmount: "",
     advanceAmount: "",
     balance: "",
+    visitCounter: 5,
   });
 
   const [images, setImages] = useState([]);
@@ -65,6 +67,7 @@ function AddProject() {
         totalAmount: editData.totalAmount || "",
         advanceAmount: editData.advanceAmount || "",
         balance: editData.balance || "",
+        visitCounter: editData.visitCounter || 5,
       });
 
       if (editData.images) {
@@ -129,6 +132,10 @@ function AddProject() {
   // =====================
 
   const handleSubmit = async () => {
+    if (!form.projectName || !form.clientId || !form.totalAmount) {
+      alert("Project Name, Associated Client, and Total Amount are required");
+      return;
+    }
     const formData = new FormData();
 
     // form fields
@@ -191,7 +198,7 @@ function AddProject() {
                 py={3}
                 px={2}
                 bgColor="info"
-                variant="gradient"
+                variant="contained"
                 borderRadius="lg"
               >
                 <MDTypography variant="h6" color="white">
@@ -251,6 +258,7 @@ function AddProject() {
                   <Grid item xs={12}>
                     <TextField
                       fullWidth
+                      required
                       label="Project Name"
                       name="projectName"
                       value={form.projectName}
@@ -273,10 +281,10 @@ function AddProject() {
                   </Grid>
 
                   {/* Total */}
-
                   <Grid item xs={12} md={4}>
                     <TextField
                       fullWidth
+                      required
                       label="Total Amount"
                       name="totalAmount"
                       value={form.totalAmount}
@@ -285,7 +293,6 @@ function AddProject() {
                   </Grid>
 
                   {/* Advance */}
-
                   <Grid item xs={12} md={4}>
                     <TextField
                       fullWidth
@@ -297,9 +304,20 @@ function AddProject() {
                   </Grid>
 
                   {/* Balance */}
-
                   <Grid item xs={12} md={4}>
-                    <TextField fullWidth label="Balance" value={form.balance} />
+                    <TextField fullWidth label="Balance" value={form.balance} InputProps={{ readOnly: true }} />
+                  </Grid>
+
+                  {/* Visit Counter */}
+                  <Grid item xs={12} md={4}>
+                    <TextField
+                      fullWidth
+                      label="Initial Site Visits"
+                      name="visitCounter"
+                      type="number"
+                      value={form.visitCounter}
+                      onChange={handleChange}
+                    />
                   </Grid>
 
                   {/* Upload */}
@@ -357,10 +375,20 @@ function AddProject() {
 
                   {/* Save */}
 
-                  <Grid item xs={12}>
-                    <Button variant="contained" color="info" onClick={handleSubmit}>
+                  <Grid item xs={12} display="flex" justifyContent="center">
+                    <MDButton 
+                      variant="contained" 
+                      sx={{ 
+                        px: 6, 
+                        py: 1.5,
+                        background: "#1e293b", 
+                        color: "#fff",
+                        "&:hover": { background: "#334155" }
+                      }} 
+                      onClick={handleSubmit}
+                    >
                       Save Project
-                    </Button>
+                    </MDButton>
                   </Grid>
                 </Grid>
               </MDBox>

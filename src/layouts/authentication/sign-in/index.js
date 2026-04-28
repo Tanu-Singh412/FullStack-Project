@@ -139,7 +139,7 @@ function Basic() {
 
             {/* LOGIN BUTTON */}
             <MDBox mt={4} mb={1}>
-              <MDButton variant="gradient" color="info" fullWidth onClick={handleLogin}>
+              <MDButton variant="contained" color="info" fullWidth onClick={handleLogin}>
                 Sign In
               </MDButton>
             </MDBox>

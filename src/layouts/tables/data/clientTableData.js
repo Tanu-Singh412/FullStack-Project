@@ -21,6 +21,7 @@ import Divider from "@mui/material/Divider";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import Button from "@mui/material/Button";
 import DialogActions from "@mui/material/DialogActions";
+import CallIcon from "@mui/icons-material/Call";
 
 export default function useClientTableData() {
   const navigate = useNavigate();
@@ -187,6 +188,17 @@ export default function useClientTableData() {
             </Select>
           ), actions: (
             <MDBox display="flex" gap={1}>
+              <IconButton
+                onClick={() => window.open(`tel:${c.phone}`, "_self")}
+                sx={{
+                  bgcolor: "#f0fdf4",
+                  color: "#16a34a",
+                  "&:hover": { bgcolor: "#dcfce7" },
+                  borderRadius: 2,
+                }}
+              >
+                <CallIcon fontSize="small" />
+              </IconButton>
               <IconButton
                 onClick={() => editClient(c)}
                 sx={{

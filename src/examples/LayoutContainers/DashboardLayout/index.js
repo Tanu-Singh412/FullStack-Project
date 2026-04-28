@@ -16,7 +16,8 @@ Coded by www.creative-tim.com
 import { useEffect } from "react";
 
 // react-router-dom components
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { isAuthenticated } from "layouts/authentication/sign-in/auth";
 
 // prop-types is a library for typechecking of props.
 import PropTypes from "prop-types";
@@ -31,10 +32,16 @@ function DashboardLayout({ children }) {
   const [controller, dispatch] = useMaterialUIController();
   const { miniSidenav } = controller;
   const { pathname } = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     setLayout(dispatch, "dashboard");
-  }, [pathname]);
+
+    // Enforce authentication
+    if (!isAuthenticated()) {
+      navigate("/authentication/sign-in");
+    }
+  }, [pathname, dispatch, navigate]);
 
   return (
     <MDBox

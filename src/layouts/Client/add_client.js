@@ -10,6 +10,7 @@ import Button from "@mui/material/Button";
 // Dashboard
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
+import MDButton from "components/MDButton";
 
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
@@ -56,8 +57,8 @@ function AddClient() {
   // Save / update client
   const handleSubmit = async () => {
     try {
-      if (!form.name) {
-        alert("Client Name is required");
+      if (!form.name || !form.phone || !form.address) {
+        alert("Name, Phone and Address are required");
         return;
       }
 
@@ -103,7 +104,7 @@ function AddClient() {
                 py={3}
                 px={2}
                 bgColor="info"
-                variant="gradient"
+                variant="contained"
                 borderRadius="lg"
                 coloredShadow="info"
               >
@@ -117,6 +118,7 @@ function AddClient() {
                   <Grid item xs={12} md={6}>
                     <TextField
                       fullWidth
+                      required
                       label="Client Name"
                       name="name"
                       value={form.name}
@@ -127,6 +129,7 @@ function AddClient() {
                   <Grid item xs={12} md={6}>
                     <TextField
                       fullWidth
+                      required
                       label="Phone"
                       name="phone"
                       value={form.phone}
@@ -147,6 +150,7 @@ function AddClient() {
                   <Grid item xs={12}>
                     <TextField
                       fullWidth
+                      required
                       label="Address"
                       name="address"
                       value={form.address}
@@ -196,10 +200,13 @@ function AddClient() {
                     />
                   </Grid> */}
 
-                  <Grid item xs={12}>
-                    <Button variant="contained" color="info" onClick={handleSubmit}>
+                  <Grid item xs={12} display="flex" justifyContent="space-between">
+                    <MDButton variant="contained" color="secondary" startIcon={<ArrowBackIcon />} onClick={() => navigate(-1)}>
+                      Back
+                    </MDButton>
+                    <MDButton variant="contained" color="dark" onClick={handleSubmit} sx={{ px: 4 }}>
                       Save Client
-                    </Button>
+                    </MDButton>
                   </Grid>
                 </Grid>
               </MDBox>

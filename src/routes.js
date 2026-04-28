@@ -42,7 +42,7 @@ const routes = [
 
   {
     type: "collapse",
-    name: "Manage Clients",
+    name: "Clients",
     key: "tables",
     icon: <Icon fontSize="small">table_view</Icon>,
     route: "/tables",
@@ -60,7 +60,7 @@ const routes = [
 
   {
     type: "collapse",
-    name: "Project Management",
+    name: "Projects",
     key: "projectManagement",
     icon: <Icon fontSize="small">business_center</Icon>,
            route: "/projectTables",
