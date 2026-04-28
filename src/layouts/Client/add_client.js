@@ -66,8 +66,8 @@ function AddClient() {
       // CHECK UNIQUE NAME
       const resExisting = await fetch("https://fullstack-project-1-n510.onrender.com/api/clients");
       const existingClients = await resExisting.json();
-      
-      const isDuplicate = existingClients.some(c => 
+
+      const isDuplicate = existingClients.some(c =>
         c.name.toLowerCase().trim() === form.name.toLowerCase().trim() && c._id !== form._id
       );
 
@@ -218,7 +218,7 @@ function AddClient() {
                     <MDButton variant="contained" sx={{ bgcolor: "#1e293b", color: "#fff", "&:hover": { bgcolor: "#334155" } }} startIcon={<ArrowBackIcon />} onClick={() => navigate(-1)}>
                       Back
                     </MDButton>
-                    <MDButton variant="contained" sx={{ bgcolor: "#1e293b", color: "#fff", "&:hover": { bgcolor: "#334155" } }} onClick={handleSubmit} sx={{ px: 4 }}>
+                    <MDButton variant="contained" sx={{ bgcolor: "#1e293b", color: "#fff", px: 4, "&:hover": { bgcolor: "#334155" } }} onClick={handleSubmit}>
                       Save Client
                     </MDButton>
                   </Grid>
