@@ -6,18 +6,14 @@ import MDBox from "components/MDBox";
 
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
-import Chip from "@mui/material/Chip";
 
 import IconButton from "@mui/material/IconButton";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import VisibilityIcon from "@mui/icons-material/Visibility";
 
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
-import Grid from "@mui/material/Grid";
-import Divider from "@mui/material/Divider";
 
 import Button from "@mui/material/Button";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
@@ -58,14 +54,6 @@ export default function useProjectData() {
     navigate("/projects", { state: p });
   }, [navigate]);
 
-  // Delete project
-  const deleteProject = useCallback(async (id) => {
-    await fetch(`https://fullstack-project-1-n510.onrender.com/api/projects/${id}`, {
-      method: "DELETE",
-    });
-    loadData();
-  }, [loadData]);
-
   // Update project status
   const handleStatusChange = useCallback(async (id, value) => {
     setProjects((prev) => prev.map((p) => (p._id === id ? { ...p, status: value } : p)));
@@ -83,6 +71,14 @@ export default function useProjectData() {
     const data = await res.json();
     setProjects(data);
   }, []);
+
+  // Delete project
+  const deleteProject = useCallback(async (id) => {
+    await fetch(`https://fullstack-project-1-n510.onrender.com/api/projects/${id}`, {
+      method: "DELETE",
+    });
+    loadData();
+  }, [loadData]);
 
   // Function to format project data into table rows
   const formatRows = useCallback((data) => {

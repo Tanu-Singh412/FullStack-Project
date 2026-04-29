@@ -1,5 +1,5 @@
 import { useLocation, useParams } from "react-router-dom";
-import { useState, useEffect, Fragment } from "react";
+import { useState, useEffect, Fragment, useCallback } from "react";
 
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
@@ -74,7 +74,7 @@ function ProjectDetails() {
     }
   }, [id]);
 
-  const fetchProjectById = async (projectId) => {
+  const fetchProjectById = useCallback(async (projectId) => {
     try {
       const res = await fetch(`${Base_API}/projects/${projectId}`);
       const data = await res.json();
@@ -85,7 +85,7 @@ function ProjectDetails() {
     } catch (err) {
       console.error("Failed to fetch project", err);
     }
-  };
+  }, []);
 
   const [drawingType, setDrawingType] = useState(null);
   const [openUpload, setOpenUpload] = useState(false);
@@ -105,7 +105,7 @@ function ProjectDetails() {
   const [imageIndex, setImageIndex] = useState(0);
 
   // ================= FETCH =================
-  const fetchProject = async () => {
+  const fetchProject = useCallback(async () => {
     if (!state?._id) return;
 
     const res = await fetch(`${Base_API}/projects/${state._id}`);
@@ -115,17 +115,17 @@ function ProjectDetails() {
       ...data,
       totalAmount: Number(data.totalAmount || 0),
     });
-  };
+  }, [state?._id]);
 
-  const fetchScope = async () => {
+  const fetchScope = useCallback(async () => {
     if (!project?._id) return;
 
     const res = await fetch(`${Base_API}/projects/${project._id}/scope`);
     const data = await res.json();
     setScopeList(data || []);
-  };
+  }, [project?._id]);
   // ================= UPLOAD =================
-  const fetchDrawings = async () => {
+  const fetchDrawings = useCallback(async () => {
     if (!project?._id) return;
 
     try {
@@ -141,7 +141,7 @@ function ProjectDetails() {
       console.log("DRAWINGS ERROR:", err);
       setDrawings([]);
     }
-  };
+  }, [project?._id]);
 
   const convertToBase64 = (file) => {
     return new Promise((resolve, reject) => {
@@ -188,19 +188,19 @@ function ProjectDetails() {
 
   useEffect(() => {
     fetchProject();
-  }, []);
+  }, [fetchProject]);
 
   useEffect(() => {
     if (project?._id) {
       fetchScope();
     }
-  }, [project?._id]);
+  }, [project?._id, fetchScope]);
 
   useEffect(() => {
     if (project?._id) {
       fetchDrawings();
     }
-  }, [project?._id]);
+  }, [project?._id, fetchDrawings]);
 
   // ✅ AFTER ALL HOOKS
   if (!project?._id) return <div>Loading...</div>;
@@ -308,15 +308,7 @@ function ProjectDetails() {
     setSelectedImage(images[i]);
   };
 
-  const inputStyle = {
-    flex: 1,
-    minWidth: "140px",
-    padding: "10px",
-    borderRadius: "8px",
-    border: "1px solid #ccc",
-    outline: "none",
-    fontSize: "14px",
-  };
+
 
   const handleAddScope = async () => {
     try {
@@ -1104,9 +1096,7 @@ return (
             {/* ================= FORM ================= */}
             <Card
               sx={{
-                p: 3,
                 mb: 3,
-                borderRadius: "12px",
                 p: 4,
                 borderRadius: "18px",
                 boxShadow: "0 20px 40px rgba(0,0,0,0.08)",
