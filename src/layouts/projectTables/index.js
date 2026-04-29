@@ -3,9 +3,7 @@ import Card from "@mui/material/Card";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
-import { useState } from "react";
 import MDBox from "components/MDBox";
-import MDTypography from "components/MDTypography";
 
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
@@ -19,7 +17,6 @@ import projectTableData from "layouts/projectTables/data/projectsTableData";
 
 function ProjectTables() {
   const { columns, rows, dialog } = projectTableData();
-  const [openRow, setOpenRow] = useState(null);
   const navigate = useNavigate();
 
   const target = new URLSearchParams(window.location.search).get("target");

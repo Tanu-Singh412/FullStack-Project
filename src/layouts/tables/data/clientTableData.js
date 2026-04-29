@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import MDTypography from "components/MDTypography";
 import MDBox from "components/MDBox";
 
@@ -49,7 +49,7 @@ export default function useClientTableData() {
   ];
 
   // LOAD DATA
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     try {
       const res = await fetch(
         "https://fullstack-project-1-n510.onrender.com/api/clients",
@@ -59,10 +59,10 @@ export default function useClientTableData() {
     } catch (error) {
       console.error("Failed to fetch clients:", error);
     }
-  };
+  }, []);
 
   // STATUS UPDATE
-  const handleStatusChange = async (id, value) => {
+  const handleStatusChange = useCallback(async (id, value) => {
     setClients((prev) =>
       prev.map((c) => (c._id === id ? { ...c, status: value } : c)),
     );
@@ -78,7 +78,7 @@ export default function useClientTableData() {
         body: JSON.stringify({ ...clientToUpdate, status: value }),
       },
     );
-  };
+  }, [clients]);
 
   // DELETE
   const deleteClient = async (id) => {
@@ -96,22 +96,17 @@ export default function useClientTableData() {
   };
 
   // EDIT
-  const editClient = (c) => {
+  const editClient = useCallback((c) => {
     localStorage.setItem("editClient", JSON.stringify(c));
     navigate("/add-clients");
-  };
+  }, [navigate]);
 
   // FORMAT ROWS
-  const formatRows = (data) => {
+  const formatRows = useCallback((data) => {
     return data
       .slice()
       .reverse()
       .map((c, i) => {
-        const dateString = new Date(c.createdAt).toLocaleDateString("en-IN", {
-          day: "numeric",
-          month: "short",
-          year: "numeric"
-        });
         const currentStatus = c.status || "Active";
 
         return {
@@ -234,7 +229,7 @@ export default function useClientTableData() {
           ),
         };
       });
-  };
+  }, [handleStatusChange, editClient]);
 
   // EFFECTS
   useEffect(() => {
@@ -244,11 +239,11 @@ export default function useClientTableData() {
       c.clientId?.toLowerCase().includes(searchTerm.toLowerCase())
     );
     setRows(formatRows(filtered));
-  }, [clients, searchTerm]);
+  }, [clients, searchTerm, formatRows]);
 
   useEffect(() => {
     loadData();
-  }, []);
+  }, [loadData]);
 
   // RETURN
   return {
