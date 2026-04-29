@@ -5,7 +5,6 @@ import MenuItem from "@mui/material/MenuItem";
 import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
 import TextField from "@mui/material/TextField";
-import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -20,7 +19,6 @@ import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
 
 import { useNavigate, useLocation } from "react-router-dom";
-import { Margin } from "@mui/icons-material";
 
 function AddProject() {
   const navigate = useNavigate();
@@ -46,7 +44,6 @@ function AddProject() {
 
   const [clients, setClients] = useState([]);
 
-  const [dwgFile, setDwgFile] = useState(null);
 
   useEffect(() => {
     fetch("https://fullstack-project-1-n510.onrender.com/api/clients")
@@ -104,16 +101,7 @@ function AddProject() {
   // UPLOAD IMAGE
   // =====================
 
-  const handleImageUpload = (e) => {
-    const files = Array.from(e.target.files);
 
-    const newImages = files.map((file) => ({
-      file,
-      url: URL.createObjectURL(file),
-    }));
-
-    setImages((prev) => [...prev, ...newImages]);
-  };
 
   // =====================
   // DELETE IMAGE
@@ -173,9 +161,7 @@ function AddProject() {
       }
     });
 
-    if (dwgFile) {
-      formData.append("dwgFile", dwgFile);
-    }
+
     if (editData?._id) {
       await fetch("https://fullstack-project-1-n510.onrender.com/api/projects/" + editData._id, {
         method: "PUT",
@@ -368,7 +354,7 @@ function AddProject() {
                       {images.map((img, index) => (
                         <Grid item key={index}>
                           <MDBox position="relative">
-                            <img src={img.url} width="120" height="100" />
+                            <img src={img.url} width="120" height="100" alt={`Project Image ${index + 1}`} />
 
                             <IconButton
                               color="error"
@@ -416,28 +402,4 @@ function AddProject() {
     </DashboardLayout>
   );
 }
-const styles = {
-  uploadWrapper: {
-    display: "flex",
-    alignItems: "center",
-    gap: "10px",
-    marginTop: "10px",
-  },
-
-  uploadLabel: {
-    padding: "10px 18px",
-    background: "linear-gradient(135deg, #1e293b, #334155)",
-    color: "#fff",
-    borderRadius: "10px",
-    cursor: "pointer",
-    fontSize: "14px",
-    fontWeight: 500,
-    transition: "0.3s",
-    boxShadow: "0 6px 15px rgba(0,0,0,0.15)",
-  },
-
-  hiddenInput: {
-    display: "none",
-  },
-};
 export default AddProject;

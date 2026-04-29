@@ -72,7 +72,7 @@ function ProjectDetails() {
     if (!project && id) {
       fetchProjectById(id);
     }
-  }, [id]);
+  }, [id, project, fetchProjectById]);
 
   const fetchProjectById = useCallback(async (projectId) => {
     try {
@@ -94,7 +94,7 @@ function ProjectDetails() {
   const [drawings, setDrawings] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const [showPaymentForm, setShowPaymentForm] = useState(false);
+
   const [paymentData, setPaymentData] = useState({
     amount: "",
     date: "",
