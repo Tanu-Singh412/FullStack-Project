@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 
 import MDTypography from "components/MDTypography";
@@ -30,14 +30,6 @@ export default function useProjectData() {
   const location = useLocation();
   const params = new URLSearchParams(location.search);
   const target = params.get("target");
-  const [viewClientProjects, setViewClientProjects] = useState([]);
-  const [selectedProject, setSelectedProject] = useState(null);
-  const [selectedImage, setSelectedImage] = useState(null);
-  const [paymentProject, setPaymentProject] = useState(null);
-  const [paymentType, setPaymentType] = useState("add");
-  const [paymentAmount, setPaymentAmount] = useState("");
-  const [imageIndex, setImageIndex] = useState(0);
-  const [selectedDescription, setSelectedDescription] = useState(null);
   const [deleteId, setDeleteId] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -48,29 +40,7 @@ export default function useProjectData() {
     return () => window.removeEventListener("searchChanged", handleSearch);
   }, []);
 
-  const openPaymentDialog = (project, type) => {
-    setPaymentProject(project);
-    setPaymentType(type);
-    setPaymentAmount("");
-  };
 
-  const handleAddPayment = async () => {
-    if (!paymentAmount || !paymentProject) return;
-
-    const amount = paymentType === "subtract" ? -Math.abs(paymentAmount) : Math.abs(paymentAmount);
-
-    await fetch(`https://fullstack-project-1-n510.onrender.com/api/projects/${paymentProject._id}/payment`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ amount }),
-    });
-
-    setPaymentProject(null);
-    setPaymentAmount("");
-    loadData();
-  };
 
   const columns = [
     { Header: "S.No.", accessor: "serial", width: "5%" },
@@ -84,20 +54,20 @@ export default function useProjectData() {
   ];
 
   // Edit project
-  const editProject = (p) => {
+  const editProject = useCallback((p) => {
     navigate("/projects", { state: p });
-  };
+  }, [navigate]);
 
   // Delete project
-  const deleteProject = async (id) => {
+  const deleteProject = useCallback(async (id) => {
     await fetch(`https://fullstack-project-1-n510.onrender.com/api/projects/${id}`, {
       method: "DELETE",
     });
     loadData();
-  };
+  }, [loadData]);
 
   // Update project status
-  const handleStatusChange = async (id, value) => {
+  const handleStatusChange = useCallback(async (id, value) => {
     setProjects((prev) => prev.map((p) => (p._id === id ? { ...p, status: value } : p)));
 
     await fetch(`https://fullstack-project-1-n510.onrender.com/api/projects/${id}`, {
@@ -105,46 +75,19 @@ export default function useProjectData() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ status: value }),
     });
-  };
+  }, []);
 
   // Load projects from backend
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     const res = await fetch("https://fullstack-project-1-n510.onrender.com/api/projects");
     const data = await res.json();
     setProjects(data);
-  };
-
-  const openImage = (img, index) => {
-    setSelectedImage(img);
-    setImageIndex(index);
-  };
-
-  const handleNext = () => {
-    const imgs = selectedProject?.images || [];
-    const next = (imageIndex + 1) % imgs.length;
-    setImageIndex(next);
-    setSelectedImage(imgs[next]);
-  };
-
-  const handlePrev = () => {
-    const imgs = selectedProject?.images || [];
-    const prev = (imageIndex - 1 + imgs.length) % imgs.length;
-    setImageIndex(prev);
-    setSelectedImage(imgs[prev]);
-  };
+  }, []);
 
   // Function to format project data into table rows
-  const formatRows = (data) => {
+  const formatRows = useCallback((data) => {
     return data.map((p, i) => {
-      const date = new Date(p.createdAt).toLocaleDateString("en-IN", { day: 'numeric', month: 'short' });
       const currentStatus = p.status || "Pending";
-
-      const downloadDWG = (file) => {
-        const link = document.createElement("a");
-        link.href = file.url;
-        link.download = file.name || "drawing.dwg";
-        link.click();
-      };
 
       return {
         serial: <MDTypography variant="caption" fontWeight="bold" sx={{ color: "#3b82f6" }}>{i + 1}</MDTypography>,
@@ -290,7 +233,7 @@ export default function useProjectData() {
         ),
       };
     });
-  };
+  }, [editProject, handleStatusChange, navigate, target]);
 
   // Update rows whenever projects or search term changes
   useEffect(() => {
@@ -300,12 +243,12 @@ export default function useProjectData() {
       p.projectId?.toLowerCase().includes(searchTerm.toLowerCase())
     );
     setRows(formatRows(filtered));
-  }, [projects, searchTerm]);
+  }, [projects, searchTerm, formatRows]);
 
   // Initial load
   useEffect(() => {
     loadData();
-  }, []);
+  }, [loadData]);
 
   return {
     columns,
