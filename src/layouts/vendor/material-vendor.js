@@ -16,10 +16,9 @@ import AddCircleIcon from "@mui/icons-material/AddCircle";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 import VerifiedIcon from "@mui/icons-material/Verified";
 import MDBox from "components/MDBox";
-import MDTypography from "components/MDTypography";
 
 import { useParams, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
@@ -41,17 +40,17 @@ function VendorList() {
 
   const cleanCategory = categoryId?.trim().toLowerCase();
 
-  const fetchVendors = () => {
+  const fetchVendors = useCallback(() => {
     if (!cleanCategory) return;
     fetch(`https://fullstack-project-1-n510.onrender.com/api/vendors?category=${cleanCategory}`)
       .then((res) => res.json())
       .then((res) => setVendors(res.data || []))
       .catch((err) => console.log(err));
-  };
+  }, [cleanCategory]);
 
   useEffect(() => {
     fetchVendors();
-  }, [cleanCategory]);
+  }, [fetchVendors]);
 
   const handleDelete = async (e, id) => {
     e.stopPropagation();

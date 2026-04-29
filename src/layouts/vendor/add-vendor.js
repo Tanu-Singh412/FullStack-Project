@@ -245,7 +245,7 @@ function AddVendor() {
                   >
                     {preview ? (
                       <MDBox sx={{ position: "relative", width: 120, height: 120, mx: "auto" }}>
-                        <img src={preview} style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "50%" }} />
+                        <img src={preview} style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "50%" }} alt="Vendor Preview" />
                       </MDBox>
                     ) : (
                       <MDBox>

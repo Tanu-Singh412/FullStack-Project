@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
@@ -34,7 +34,6 @@ import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import MDBox from "components/MDBox";
-import MDTypography from "components/MDTypography";
 
 const ROW_COLORS = [
   { bg: "#fff7ed", border: "#fed7aa", rateColor: "#f97316" },
@@ -59,18 +58,18 @@ function VendorDetail() {
   const [whatsappOpen, setWhatsappOpen] = useState(false);
   const [whatsappMessage, setWhatsappMessage] = useState("");
 
-  const fetchVendor = () => {
+  const fetchVendor = useCallback(() => {
     fetch(`https://fullstack-project-1-n510.onrender.com/api/vendors/${id}`)
       .then((res) => res.json())
       .then((res) => { setVendor(res.data); setPreview(res.data.image || ""); })
       .catch((err) => console.error(err));
-  };
+  }, [id]);
 
   useEffect(() => {
     fetchVendor();
     fetch("https://fullstack-project-1-n510.onrender.com/api/clients").then(res => res.json()).then(data => setClients(data));
     fetch("https://fullstack-project-1-n510.onrender.com/api/vendors").then(res => res.json()).then(data => setAllVendors(data.data || data));
-  }, [id]);
+  }, [fetchVendor]);
 
   const convertToBase64 = (file) => new Promise((resolve, reject) => {
     const reader = new FileReader(); reader.readAsDataURL(file);

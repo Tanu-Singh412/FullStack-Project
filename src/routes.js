@@ -2,7 +2,7 @@ import Dashboard from "layouts/dashboard";
 import Tables from "layouts/tables";
 import ProjectTables from "layouts/projectTables";
 import Projects from "layouts/project";
-import Add_clients from "layouts/Client/add_client";
+import AddClients from "layouts/Client/add_client";
 import Billing from "layouts/billing";
 import VendorHome from "layouts/vendor";
 import AddVendor from "layouts/vendor/add-vendor";
@@ -37,7 +37,7 @@ const routes = [
     key: "add_clients",
     icon: <Icon fontSize="small">person_add</Icon>,
     route: "/add-clients",
-    component: <Add_clients />,
+    component: <AddClients />,
   },
 
   {
