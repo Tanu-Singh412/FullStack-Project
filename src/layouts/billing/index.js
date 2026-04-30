@@ -304,7 +304,7 @@ const styles = {
   page: { width: "210mm", minHeight: "297mm", padding: "50px", background: "#fff", fontFamily: "Inter, sans-serif", color: "#111" },
   headerRow: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "40px", borderBottom: "3px solid #e0e0e0", paddingBottom: "25px" },
   logo: { height: "70px", objectFit: "contain" },
-  invoiceTitle: { fontSize: "24px", fontWeight: "900", color: "#2c3e50", letterSpacing: "1px" },
+  invoiceTitle: { fontSize: "24px", fontWeight: "900", color: "#000", letterSpacing: "1px" },
   metaText: { fontSize: "14px", marginBottom: "4px", fontWeight: "600" },
   flexRow: { display: "flex", justifyContent: "space-between", marginBottom: "30px" },
   senderBox: { width: "48%" },
