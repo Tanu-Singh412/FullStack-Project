@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 
 import Card from "@mui/material/Card";
 import Switch from "@mui/material/Switch";
-import Grid from "@mui/material/Grid";
 
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
@@ -32,7 +31,7 @@ function Basic() {
     if (isAuthenticated()) {
       navigate("/dashboard");
     }
-  }, []);
+  }, [navigate]);
   const handleLogin = () => {
     const strength = getPasswordStrength(form.password);
 

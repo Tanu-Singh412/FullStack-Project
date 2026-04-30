@@ -1,9 +1,8 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
-import Avatar from "@mui/material/Avatar";
 import {
   Card,
   Grid,
@@ -21,12 +20,9 @@ import {
   MenuItem,
   FormControl,
   CircularProgress,
-  InputAdornment,
 } from "@mui/material";
-import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
-import SearchIcon from "@mui/icons-material/Search";
 import DownloadIcon from "@mui/icons-material/Download";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -124,7 +120,6 @@ export default function InvoicePage() {
   const pdfRef = useRef();
   const navigate = useNavigate();
   const [invoices, setInvoices] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [search, setSearch] = useState("");
@@ -137,8 +132,7 @@ export default function InvoicePage() {
   const total = subtotal + sgstAmount + cgstAmount;
   const totals = { subtotal: subtotal.toFixed(2), sgst: sgstAmount.toFixed(2), cgst: cgstAmount.toFixed(2), total: total.toFixed(2) };
 
-  const loadInvoices = async () => {
-    setLoading(true);
+  const loadInvoices = useCallback(async () => {
     try {
       const response = await fetchInvoices(search, filter);
       if (response.success) {
@@ -149,10 +143,10 @@ export default function InvoicePage() {
           setData(prev => ({ ...prev, invoiceNo: prev.invoiceNo || `INV-${String(nextNo).padStart(4, '0')}` }));
         }
       }
-    } catch (err) { console.error(err); } finally { setLoading(false); }
-  };
+    } catch (err) { console.error(err); }
+  }, [search, filter, data._id, data.invoiceNo]);
 
-  useEffect(() => { loadInvoices(); }, [search, filter]);
+  useEffect(() => { loadInvoices(); }, [loadInvoices]);
 
   const handleSaveAndDownload = async () => {
     if (!data.billingName || !data.invoiceNo || !data.items[0].name) {
