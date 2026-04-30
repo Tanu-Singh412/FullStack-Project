@@ -354,7 +354,7 @@ function AddProject() {
                       {images.map((img, index) => (
                         <Grid item key={index}>
                           <MDBox position="relative">
-                            <img src={img.url} width="120" height="100" alt={`Project Image ${index + 1}`} />
+                            <img src={img.url} width="120" height="100" alt={`Project ${index + 1}`} />
 
                             <IconButton
                               color="error"

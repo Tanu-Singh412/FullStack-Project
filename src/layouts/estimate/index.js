@@ -18,17 +18,13 @@ import {
   InputAdornment,
   Icon,
 } from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import SaveIcon from "@mui/icons-material/Save";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
-import CloseIcon from "@mui/icons-material/Close";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import EditIcon from "@mui/icons-material/Edit";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import BusinessIcon from "@mui/icons-material/Business";
-import PersonIcon from "@mui/icons-material/Person";
-import LocationOnIcon from "@mui/icons-material/LocationOn";
 import AspectRatioIcon from "@mui/icons-material/AspectRatio";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
@@ -61,20 +57,16 @@ export default function EstimatePage() {
   ]);
 
   const [estimates, setEstimates] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [editId, setEditId] = useState(null);
   const [search, setSearch] = useState("");
   /* ================= FETCH ALL ================= */
   const loadEstimates = async () => {
-    setLoading(true);
     try {
       const res = await fetch(API);
       const data = await res.json();
       setEstimates(data);
     } catch (err) {
       console.error("Error fetching estimates:", err);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -187,11 +179,6 @@ export default function EstimatePage() {
   );
   /* ================= PDF ================= */
   const generatePDF = (est = null) => {
-    const data = est || {
-      ...form,
-      items,
-      totalEstimate: total,
-    };
     const doc = new jsPDF();
     const pageWidth = doc.internal.pageSize.getWidth();
 

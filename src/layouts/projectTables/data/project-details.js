@@ -64,16 +64,6 @@ function ProjectDetails() {
   const [editScopeId, setEditScopeId] = useState(null);
   const [tab, setTab] = useState(0);
 
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const t = params.get("tab");
-    if (t) setTab(parseInt(t));
-
-    if (!project && id) {
-      fetchProjectById(id);
-    }
-  }, [id, project, fetchProjectById]);
-
   const fetchProjectById = useCallback(async (projectId) => {
     try {
       const res = await fetch(`${Base_API}/projects/${projectId}`);
@@ -86,6 +76,16 @@ function ProjectDetails() {
       console.error("Failed to fetch project", err);
     }
   }, []);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const t = params.get("tab");
+    if (t) setTab(parseInt(t));
+
+    if (!project && id) {
+      fetchProjectById(id);
+    }
+  }, [id, project, fetchProjectById]);
 
   const [drawingType, setDrawingType] = useState(null);
   const [openUpload, setOpenUpload] = useState(false);
