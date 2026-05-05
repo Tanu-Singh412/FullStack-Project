@@ -9,7 +9,7 @@ exports.addProject = async (req, res) => {
 
 if (req.files?.images) {
   images = req.files.images.map(
-    (f) => "https://full-stack-project-r5o9.vercel.app/uploads/" + f.filename
+    (f) => "http://localhost:5000/uploads/" + f.filename
   );
 }
 let dwgFile = null;
@@ -19,13 +19,13 @@ if (req.files && req.files.dwgFile) {
 
   dwgFile = {
     name: file.originalname,
-    url: "https://full-stack-project-r5o9.vercel.app/uploads/" + file.filename,
+    url: "http://localhost:5000/uploads/" + file.filename,
   };
 }
     // =========================
     // GENERATE UNIQUE PROJECT ID
     // =========================
-    const lastProject = await Project.findOne().sort({
+    const lastProject = await Project.findOne({ tenantId: req.tenantId }).sort({
       createdAt: -1,
     });
 
@@ -45,6 +45,7 @@ if (req.files && req.files.dwgFile) {
     // =========================
   const project = new Project({
   ...req.body,
+  tenantId: req.tenantId, // ✅ Inject Tenant ID
   totalAmount: Number(req.body.totalAmount || 0),
   images,
   dwgFile,
@@ -70,7 +71,11 @@ if (req.files && req.files.dwgFile) {
 // GET
 exports.getProjects = async (req, res) => {
   try {
-    const data = await Project.find().sort({ createdAt: -1 });
+    const filter = req.role === "superadmin" ? {} : { tenantId: req.tenantId };
+    const data = await Project.find(filter)
+      .populate("tenantId", "companyName") // ✅ Populate Tenant Name
+      .select("-images -civilImages -interiorImages")
+      .sort({ createdAt: -1 });
 
     const updated = data.map((p) => {
       const totalPaid = (p.payments || []).reduce(
@@ -94,7 +99,8 @@ exports.getProjects = async (req, res) => {
 };
 exports.getProjectById = async (req, res) => {
   try {
-    const project = await Project.findById(req.params.id);
+    const filter = req.role === "superadmin" ? { _id: req.params.id } : { _id: req.params.id, tenantId: req.tenantId };
+    const project = await Project.findOne(filter);
 
     if (!project) {
       return res.status(404).json({ msg: "Project not found" });
@@ -103,7 +109,9 @@ exports.getProjectById = async (req, res) => {
     const Client = require("../models/Client");
     let clientData = null;
     if (project.clientId) {
-      clientData = await Client.findOne({ clientId: project.clientId });
+      clientData = await Client.findOne({ clientId: project.clientId, tenantId: project.tenantId });
+    } else if (project.clientName) {
+      clientData = await Client.findOne({ name: project.clientName, tenantId: project.tenantId });
     }
 
     // ================= CALCULATE =================
@@ -128,6 +136,7 @@ const response = {
     "",
 
   clientName: project.clientName || "",
+  clientId: project.clientId || clientData?.clientId || "",
 };
     res.json(response);
 
@@ -143,9 +152,10 @@ exports.deleteProject =
 
     try {
 
-      await Project.findByIdAndDelete(
-        req.params.id
-      );
+      await Project.findOneAndDelete({
+        _id: req.params.id,
+        tenantId: req.tenantId
+      });
 
       res.json({
         msg: "Deleted",
@@ -164,48 +174,59 @@ exports.deleteProject =
 // UPDATE
 exports.updateProject = async (req, res) => {
   try {
-    const existingProject = await Project.findById(req.params.id)
-
-    // ✅ images user kept
-    let existingImages = [];
-    if (req.body.existingImages) {
-      existingImages = JSON.parse(req.body.existingImages);
+    const existingProject = await Project.findOne({ _id: req.params.id, tenantId: req.tenantId });
+    if (!existingProject) {
+      return res.status(404).json({ msg: "Project not found" });
     }
 
-    // ✅ new uploaded images
-    let newImages = [];
-    if (req.files?.images) {
-      newImages = req.files.images.map(
-        (f) => "https://full-stack-project-r5o9.vercel.app/uploads/" + f.filename
-      );
+    // Build update object - only include fields that were actually sent
+    const update = {};
+
+    // Text fields - only update if explicitly provided
+    const textFields = ["projectName", "clientName", "clientId", "description", "status", "phone"];
+    textFields.forEach(field => {
+      if (req.body[field] !== undefined) {
+        update[field] = req.body[field];
+      }
+    });
+
+    // Numeric fields - preserve existing if not sent
+    if (req.body.totalAmount !== undefined) {
+      update.totalAmount = Number(req.body.totalAmount);
+    }
+    if (req.body.visitCounter !== undefined) {
+      update.visitCounter = Number(req.body.visitCounter);
     }
 
-    // ✅ FINAL images = kept + new
-    const images = [...existingImages, ...newImages];
+    // Handle images only if explicitly sent (FormData with files)
+    if (req.body.existingImages !== undefined || req.files?.images) {
+      let existingImages = [];
+      if (req.body.existingImages) {
+        existingImages = JSON.parse(req.body.existingImages);
+      }
+      let newImages = [];
+      if (req.files?.images) {
+        newImages = req.files.images.map(
+          (f) => "http://localhost:5000/uploads/" + f.filename
+        );
+      }
+      update.images = [...existingImages, ...newImages];
+    }
 
-    // ================= DWG =================
-    let dwgFile = existingProject?.dwgFile || null;
-
+    // Handle DWG file only if uploaded
     if (req.files?.dwgFile) {
       const file = req.files.dwgFile[0];
-      dwgFile = {
+      update.dwgFile = {
         name: file.originalname,
-        url: "https://full-stack-project-r5o9.vercel.app/uploads/" + file.filename,
+        url: "http://localhost:5000/uploads/" + file.filename,
       };
     }
 
-    const body = {
-      ...req.body,
-      images,
-      dwgFile,
-      clientId: req.body.clientId || "",
-      phone: req.body.phone,
-      totalAmount: Number(req.body.totalAmount || 0),
-    };
-
-    const data = await Project.findByIdAndUpdate(req.params.id, body, {
-      new: true,
-    });
+    const data = await Project.findOneAndUpdate(
+      { _id: req.params.id, tenantId: req.tenantId },
+      update,
+      { returnDocument: "after" }
+    );
 
     res.json(data);
   } catch (err) {
@@ -217,7 +238,7 @@ exports.addPayment = async (req, res) => {
   try {
     const { amount, date, note } = req.body;
 
-    const project = await Project.findById(req.params.id);
+    const project = await Project.findOne({ _id: req.params.id, tenantId: req.tenantId });
 
     if (!project) {
       return res.status(404).json({ msg: "Project not found" });
@@ -240,7 +261,7 @@ exports.addPayment = async (req, res) => {
 // ADD SCOPE
 exports.addScope = async (req, res) => {
   try {
-    const project = await Project.findById(req.params.projectId); // ✅ FIX
+    const project = await Project.findOne({ _id: req.params.projectId, tenantId: req.tenantId });
 
     if (!project) {
       return res.status(404).json({ msg: "Project not found" });
@@ -347,7 +368,7 @@ exports.addDrawing = async (req, res) => {
 
     const images = (req.files || []).map(
       (f) =>
-        `${process.env.BASE_URL || "https://full-stack-project-r5o9.vercel.app"}/uploads/${f.filename}`
+        `${process.env.BASE_URL || "http://localhost:5000"}/uploads/${f.filename}`
     );
 
     if (type === "civil") {
@@ -426,7 +447,7 @@ exports.updateDrawing = async (req, res) => {
 
     const newImages = (req.files || []).map(
       (f) =>
-        `${process.env.BASE_URL || "https://full-stack-project-r5o9.vercel.app"}/uploads/${f.filename}`
+        `${process.env.BASE_URL || "http://localhost:5000"}/uploads/${f.filename}`
     );
 
     if (type === "civil") {

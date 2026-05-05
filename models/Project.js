@@ -31,6 +31,7 @@ const scopeSchema = new mongoose.Schema({
 
 const projectSchema = new mongoose.Schema(
   {
+    tenantId: { type: mongoose.Schema.Types.ObjectId, ref: "Tenant", required: true },
     projectName: String,
     clientName: String,
     description: String,
@@ -56,9 +57,8 @@ dwgFile: {
       default: "Pending",
     },
     projectId: {
-  type: String,
-  unique: true,
-},
+      type: String,
+    },
 clientId: {
   type: String,
 },
@@ -86,5 +86,7 @@ client: {
   },
   
 );
+
+projectSchema.index({ tenantId: 1, projectId: 1 }, { unique: true });
 
 module.exports = mongoose.model("Project", projectSchema);

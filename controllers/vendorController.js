@@ -3,10 +3,10 @@ const Vendor = require("../models/vendor");
 // ================= ADD VENDOR =================
 exports.addVendor = async (req, res) => {
   try {
-    const data = { ...req.body };
+    const data = { ...req.body, tenantId: req.tenantId }; // ✅ Inject Tenant ID
 
     if (req.file) {
-      data.image = "https://full-stack-project-r5o9.vercel.app/uploads/" + req.file.filename;
+      data.image = "http://localhost:5000/uploads/" + req.file.filename;
     }
 
     if (data.category) {
@@ -33,11 +33,16 @@ exports.getVendors = async (req, res) => {
   try {
     const { category } = req.query;
 
+    const filterRole = req.role === "superadmin" ? {} : { tenantId: req.tenantId };
     const filter = category
-      ? { category: { $regex: new RegExp(`^${category}$`, "i") } }
-      : {};
+      ? { ...filterRole, category: { $regex: new RegExp(`^${category}$`, "i") } }
+      : filterRole;
 
-    const data = await Vendor.find(filter);
+    let query = Vendor.find(filter);
+    if (req.role === "superadmin") {
+      query = query.populate("tenantId", "companyName");
+    }
+    const data = await query;
 
     res.json({ data });
   } catch (err) {
@@ -48,7 +53,8 @@ exports.getVendors = async (req, res) => {
 // ================= GET SINGLE VENDOR =================
 exports.getVendorById = async (req, res) => {
   try {
-    const data = await Vendor.findById(req.params.id);
+    const filter = req.role === "superadmin" ? { _id: req.params.id } : { _id: req.params.id, tenantId: req.tenantId };
+    const data = await Vendor.findOne(filter);
 
     if (!data) {
       return res.status(404).json({ message: "Vendor not found" });
@@ -66,7 +72,7 @@ exports.updateVendor = async (req, res) => {
     const updatedData = { ...req.body };
 
     if (req.file) {
-      updatedData.image = "https://full-stack-project-r5o9.vercel.app/uploads/" + req.file.filename;
+      updatedData.image = "http://localhost:5000/uploads/" + req.file.filename;
     }
 
     if (updatedData.category) {
@@ -77,10 +83,10 @@ exports.updateVendor = async (req, res) => {
       updatedData.materials = JSON.parse(updatedData.materials);
     }
 
-    const updated = await Vendor.findByIdAndUpdate(
-      req.params.id,
+    const updated = await Vendor.findOneAndUpdate(
+      { _id: req.params.id, tenantId: req.tenantId },
       updatedData,
-      { new: true }
+      { returnDocument: "after" }
     );
 
     res.json({ data: updated });
@@ -92,7 +98,7 @@ exports.updateVendor = async (req, res) => {
 // ================= DELETE VENDOR =================
 exports.deleteVendor = async (req, res) => {
   try {
-    await Vendor.findByIdAndDelete(req.params.id);
+    await Vendor.findOneAndDelete({ _id: req.params.id, tenantId: req.tenantId });
 
     res.json({ message: "Vendor deleted successfully" });
   } catch (err) {

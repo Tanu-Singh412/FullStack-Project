@@ -22,6 +22,10 @@ const {
 } = require("../controllers/projectController");
 
 const upload = require("../middleware/upload");
+const { verifyTenant } = require("../middleware/authMiddleware");
+
+// PROTECT ALL PROJECT ROUTES
+router.use(verifyTenant);
 
 // CREATE PROJECT
 router.post(

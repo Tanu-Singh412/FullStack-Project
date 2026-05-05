@@ -10,11 +10,19 @@ const itemSchema = new mongoose.Schema({
 });
 
 const estimateSchema = new mongoose.Schema({
+  tenantId: { type: mongoose.Schema.Types.ObjectId, ref: "Tenant", required: true },
   projectTitle: String,
   ownerName: String,
   location: String,
   plotArea: Number,
   totalEstimate: Number,
+  
+  // Profile Fields
+  company: String,
+  address: String,
+  phone: String,
+  logo: String,
+
   notes: String,
   description: String,
   items: [itemSchema],

@@ -9,7 +9,10 @@ const {
 } = require(
   "../controllers/clientController"
 );
+const { verifyTenant } = require("../middleware/authMiddleware");
 
+// PROTECT ALL CLIENT ROUTES
+router.use(verifyTenant);
 
 // base = /api/clients
 

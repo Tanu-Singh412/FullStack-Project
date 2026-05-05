@@ -10,7 +10,7 @@ exports.addClient = async (req, res) => {
     // =========================
     // GENERATE UNIQUE CLIENT ID
     // =========================
-    const lastClient = await Client.findOne().sort({
+    const lastClient = await Client.findOne({ tenantId: req.tenantId }).sort({
       createdAt: -1,
     });
 
@@ -29,6 +29,7 @@ exports.addClient = async (req, res) => {
     // PREPARE BODY
     // =========================
     const body = {
+      tenantId: req.tenantId, // ✅ Inject Tenant ID
       name: req.body.name || "",
       phone: req.body.phone || "",
       email: req.body.email || "",
@@ -63,9 +64,11 @@ exports.getClients =
   async (req, res) => {
 
     try {
-
+      const filter = req.role === "superadmin" ? {} : { tenantId: req.tenantId };
       const data =
-        await Client.find().sort({ _id: -1 });
+        await Client.find(filter)
+          .populate("tenantId", "companyName") // ✅ Populate Tenant Name
+          .sort({ _id: -1 });
 
       res.json(data);
 
@@ -86,9 +89,10 @@ exports.deleteClient =
 
     try {
 
-      await Client.findByIdAndDelete(
-        req.params.id
-      );
+      await Client.findOneAndDelete({
+        _id: req.params.id,
+        tenantId: req.tenantId
+      });
 
       res.json({
         msg: "Deleted",
@@ -120,7 +124,7 @@ exports.updateClient =
 
       const data =
         await Client.findOneAndUpdate(
-          { _id: req.params.id },
+          { _id: req.params.id, tenantId: req.tenantId },
           body,
           {
             returnDocument: "after",

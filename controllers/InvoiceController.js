@@ -3,7 +3,41 @@ const Invoice = require("../models/Invoice");
 /* ================= CREATE ================= */
 exports.createInvoice = async (req, res) => {
   try {
-    const invoice = new Invoice(req.body);
+    let body = { ...req.body };
+    
+    // Parse items if it's a string (from FormData)
+    if (typeof body.items === "string") {
+      body.items = JSON.parse(body.items);
+    }
+
+    // Handle Logo File
+    if (req.file) {
+      body.logo = `${process.env.BASE_URL || "http://localhost:5000"}/uploads/${req.file.filename}`;
+    }
+
+    let invoiceNo = body.invoiceNo;
+
+    // IF NO INVOICE NO, GENERATE AUTOMATICALLY
+    if (!invoiceNo) {
+      const lastInvoice = await Invoice.findOne({ tenantId: req.tenantId }).sort({ createdAt: -1 });
+      let nextNumber = 1001;
+
+      if (lastInvoice && lastInvoice.invoiceNo) {
+        // Extract number from INV-XXXX or similar
+        const match = lastInvoice.invoiceNo.match(/\d+/);
+        if (match) {
+          nextNumber = parseInt(match[0]) + 1;
+        }
+      }
+      invoiceNo = `INV-${nextNumber}`;
+    }
+
+    const invoice = new Invoice({ 
+      ...body, 
+      invoiceNo, // ✅ Inject Generated No
+      tenantId: req.tenantId 
+    });
+    
     await invoice.save();
 
     res.status(201).json({
@@ -28,7 +62,8 @@ exports.getInvoices = async (req, res) => {
       endDate,
     } = req.query;
 
-    let query = {};
+    const filterRole = req.role === "superadmin" ? {} : { tenantId: req.tenantId };
+    let query = { ...filterRole };
 
     /* 🔍 SEARCH */
     if (search) {
@@ -36,6 +71,18 @@ exports.getInvoices = async (req, res) => {
         { invoiceName: { $regex: search, $options: "i" } },
         { invoiceNo: { $regex: search, $options: "i" } },
       ];
+
+      // If SuperAdmin, also search by Tenant Company Name
+      if (req.role === "superadmin") {
+        const Tenant = require("../models/Tenant");
+        const matchingTenants = await Tenant.find({
+          companyName: { $regex: search, $options: "i" }
+        }).select("_id");
+        
+        if (matchingTenants.length > 0) {
+          query.$or.push({ tenantId: { $in: matchingTenants.map(t => t._id) } });
+        }
+      }
     }
 
     /* 📅 DATE FILTER */
@@ -70,7 +117,9 @@ exports.getInvoices = async (req, res) => {
       };
     }
 
-    const invoices = await Invoice.find(query).sort({ createdAt: -1 });
+    const invoices = await Invoice.find(query)
+      .populate("tenantId", "companyName")
+      .sort({ createdAt: -1 });
 
     res.json({
       success: true,
@@ -88,7 +137,8 @@ exports.getInvoices = async (req, res) => {
 /* ================= GET SINGLE ================= */
 exports.getInvoiceById = async (req, res) => {
   try {
-    const invoice = await Invoice.findById(req.params.id);
+    const filter = req.role === "superadmin" ? { _id: req.params.id } : { _id: req.params.id, tenantId: req.tenantId };
+    const invoice = await Invoice.findOne(filter);
 
     if (!invoice) {
       return res.status(404).json({ message: "Invoice not found" });
@@ -103,10 +153,20 @@ exports.getInvoiceById = async (req, res) => {
 /* ================= UPDATE ================= */
 exports.updateInvoice = async (req, res) => {
   try {
-    const updated = await Invoice.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      { new: true, runValidators: true }
+    let body = { ...req.body };
+
+    if (typeof body.items === "string") {
+      body.items = JSON.parse(body.items);
+    }
+
+    if (req.file) {
+      body.logo = `${process.env.BASE_URL || "http://localhost:5000"}/uploads/${req.file.filename}`;
+    }
+
+    const updated = await Invoice.findOneAndUpdate(
+      { _id: req.params.id, tenantId: req.tenantId },
+      body,
+      { returnDocument: "after", runValidators: true }
     );
 
     res.json({
@@ -124,7 +184,7 @@ exports.updateInvoice = async (req, res) => {
 /* ================= DELETE ================= */
 exports.deleteInvoice = async (req, res) => {
   try {
-    await Invoice.findByIdAndDelete(req.params.id);
+    await Invoice.findOneAndDelete({ _id: req.params.id, tenantId: req.tenantId });
 
     res.json({
       success: true,

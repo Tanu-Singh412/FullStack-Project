@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 
 const vendorSchema = new mongoose.Schema({
+  tenantId: { type: mongoose.Schema.Types.ObjectId, ref: "Tenant", required: true },
   vendorName: { type: String, required: true },
   image: String,
   phone: { type: String, required: true },

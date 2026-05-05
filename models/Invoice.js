@@ -9,14 +9,16 @@ const itemSchema = new mongoose.Schema({
 
 const invoiceSchema = new mongoose.Schema(
   {
+    tenantId: { type: mongoose.Schema.Types.ObjectId, ref: "Tenant", required: true },
     invoiceName: { type: String, required: true },
     email: String,
     company: String,
     address: String,
     gstin: String,
     phone: String,
+    logo: String,
 
-    invoiceNo: { type: String, required: true, unique: true },
+    invoiceNo: { type: String, required: true },
     date: { type: Date, required: true },
 
     clientGstin: String,
@@ -31,5 +33,7 @@ const invoiceSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+invoiceSchema.index({ tenantId: 1, invoiceNo: 1 }, { unique: true });
 
 module.exports = mongoose.model("Invoice", invoiceSchema);

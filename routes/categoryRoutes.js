@@ -8,6 +8,10 @@ const {
   updateCategory,
   deleteCategory,
 } = require("../controllers/categoryController");
+const { verifyTenant } = require("../middleware/authMiddleware");
+
+// PROTECT ALL CATEGORY ROUTES
+router.use(verifyTenant);
 
 router.get("/", getCategories);
 router.post("/", upload.single("image"), addCategory);

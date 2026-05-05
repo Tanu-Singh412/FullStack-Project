@@ -8,6 +8,7 @@ const projectRoutes = require("./routes/projectRoutes");
 const vendorRoutes = require("./routes/vendorRoutes");
 const categoryRoutes = require("./routes/categoryRoutes")
 const invoiceRoutes = require("./routes/InvoiceRoutes");
+const authRoutes = require("./routes/authRoutes");
 
 const app = express();
 
@@ -16,7 +17,7 @@ connectDB();
 
 // Middleware
 app.use(cors({
-  origin: "https://frontend-navy-iota-27.vercel.app",
+  origin: ["http://localhost:3000", "http://localhost:3001"],
   credentials: true,
 }));
 app.use(express.json({ limit: "50mb" }));
@@ -25,11 +26,12 @@ app.use(express.urlencoded({ limit: "50mb", extended: true }));
 // Static
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use("/api/clients", clientRoutes);
-app.use("/api/projects", projectRoutes); 
+app.use("/api/projects", projectRoutes);
 app.use("/api/vendors", vendorRoutes);
 app.use("/api/vendor-categories", categoryRoutes);
 app.use("/api/invoices", invoiceRoutes);
 app.use("/api/estimate", require("./routes/estimateRoutes"));
+app.use("/api/auth", authRoutes);
 
 
 // Test route

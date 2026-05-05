@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 
 const clientSchema = new mongoose.Schema({
+  tenantId: { type: mongoose.Schema.Types.ObjectId, ref: "Tenant", required: true },
 
   name: String,
   phone: String,
@@ -14,15 +15,16 @@ const clientSchema = new mongoose.Schema({
   type: String,
   default: "Active",
 },
-clientId: {
-  type: String,
-  unique: true,
-},
+  clientId: {
+    type: String,
+  },
 
 },
 {
-    timestamps: true, // ✅ ADD THIS
+    timestamps: true,
   });
+
+clientSchema.index({ tenantId: 1, clientId: 1 }, { unique: true });
 
 module.exports =
   mongoose.model(
